@@ -1,4 +1,3 @@
-
 import React, { useState } from "react";
 import { Button } from "../components/ui/button";
 import { Input } from "../components/ui/input";
@@ -7,6 +6,7 @@ import { useQuery } from "@tanstack/react-query";
 import API from "../services/api";
 import { useAuth } from "../contexts/AuthContext";
 import Header from "../components/Header";
+import { useNavigate } from "react-router-dom";
 
 interface Doctor {
     id: number;
@@ -18,6 +18,7 @@ interface Doctor {
 
 const Appointment: React.FC = () => {
     const { user } = useAuth();
+    const navigate = useNavigate();
 
     const [formData, setFormData] = useState({
         fecha: "",
@@ -54,13 +55,11 @@ const Appointment: React.FC = () => {
             return;
         }
 
-
         if (!formData.fecha || !formData.hora || !formData.tipo || !formData.doctorId) {
             console.error("Todos los campos son obligatorios.");
             alert("Por favor, completa todos los campos antes de enviar.");
             return;
         }
-
 
         const appointmentData = {
             fecha: formData.fecha,
@@ -76,6 +75,8 @@ const Appointment: React.FC = () => {
         try {
             const response = await API.post("/citas", appointmentData);
             console.log("Respuesta del servidor:", response.data);
+            alert("¡Cita agendada correctamente!");
+            navigate("/");
         } catch (error: any) {
             console.error("Error al agendar cita:", error);
             console.error("Status:", error.response?.status);
@@ -164,4 +165,3 @@ const Appointment: React.FC = () => {
 };
 
 export default Appointment;
-
