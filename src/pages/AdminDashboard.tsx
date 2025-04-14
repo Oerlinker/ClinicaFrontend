@@ -3,7 +3,7 @@ import Header from "../components/Header";
 import { useAuth } from "../contexts/AuthContext";
 import { Accordion, AccordionItem, AccordionTrigger, AccordionContent } from "../components/ui/accordion";
 import AdminDashboardContent from "./AdminDashboardContent";
-import AdminEmpleadosDashboard from "./AdminEmpleadosDashBoard"; // Asegúrate de que la ruta sea la correcta
+import AdminEmpleadosDashboard from "./AdminEmpleadosDashBoard";
 
 const AdminDashboard: React.FC = () => {
     const { user } = useAuth();

@@ -60,7 +60,7 @@ const EmpleadoRegister: React.FC = () => {
                 apellido: formData.apellido,
                 email: formData.email,
                 password: formData.password,
-                cargoId: Number(formData.cargoId), // enviar cargoId directamente
+                cargoId: Number(formData.cargoId),
                 especialidad: formData.especialidad,
                 fechaContratacion: formData.fechaContratacion,
                 salario: formData.salario,

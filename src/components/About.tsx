@@ -15,7 +15,7 @@ const About = () => {
                     </div>
 
                     <div className="md:w-1/2">
-                        <h2 className="text-3xl font-bold text-gray-800 mb-4">Sobre EyeHub Clinic</h2>
+                        <h2 className="text-3xl font-bold text-gray-800 mb-4">Sobre la Clinica Horus</h2>
                         <div className="w-20 h-1 bg-blue-600 mb-6"></div>
 
                         <p className="text-gray-600 mb-4">

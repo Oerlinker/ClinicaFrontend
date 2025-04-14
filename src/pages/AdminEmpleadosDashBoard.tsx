@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { Button } from "../components/ui/button";
 import EmpleadoSection from "./EmpleadoSection";
-import EmpleadoRegister from "./EmpleadoRegisterData"; // Renombrado para mayor claridad
+import EmpleadoRegister from "./EmpleadoRegisterData";
 
 const AdminEmpleadosDashboard: React.FC = () => {
 

@@ -1,4 +1,4 @@
-// src/contexts/AuthContext.tsx
+
 import React, { createContext, useContext, useState, ReactNode } from "react";
 
 interface Rol {
@@ -6,6 +6,8 @@ interface Rol {
     nombre: string;
 }
 interface Usuario {
+    token: string;
+    id: number;
     username: string;
     email: string;
     nombre: string;
@@ -13,16 +15,16 @@ interface Usuario {
     rol: Rol;
 }
 
-// Definimos la interfaz de nuestro contexto
+
 interface AuthContextType {
     user: Usuario | null;
     setUser: (user: Usuario | null) => void;
 }
 
-// Creamos el contexto
+
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
-// Creamos el proveedor del contexto
+
 export const AuthProvider = ({ children }: { children: ReactNode }) => {
     const [user, setUser] = useState<Usuario | null>(() => {
         const storedUser = localStorage.getItem("user");
@@ -39,7 +41,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     );
 };
 
-// Hook para usar el contexto
+
 export const useAuth = (): AuthContextType => {
     const context = useContext(AuthContext);
     if (!context) {

@@ -26,9 +26,9 @@ const Contact = () => {
                         </div>
                         <h3 className="text-xl font-semibold mb-2">Nuestra Ubicacion</h3>
                         <p className="text-gray-600 mb-4">
-                            123 Vision Street<br/>
-                            Medical District<br/>
-                            New York, NY 10001
+                            Avenida Alemana 5to anillo<br/>
+                            Santa Cruz<br/>
+                            Santa Cruz-Bolivia
                         </p>
                         <Button variant="link" className="text-blue-600">
                             Nuestra Direccion
@@ -46,9 +46,9 @@ const Contact = () => {
                         </div>
                         <h3 className="text-xl font-semibold mb-2">Horarios de Atencion</h3>
                         <ul className="text-gray-600 mb-4 space-y-1">
-                            <li>Monday - Friday: 8am - 6pm</li>
-                            <li>Saturday: 9am - 2pm</li>
-                            <li>Sunday: Closed</li>
+                            <li>Lunes-viernes: 8am - 4pm</li>
+                            <li>Sabado: 9am - 2pm</li>
+                            <li>Domingo: Closed</li>
                         </ul>
                         <Button variant="link" className="text-blue-600">
                             Request Appointment
@@ -66,9 +66,8 @@ const Contact = () => {
                         </div>
                         <h3 className="text-xl font-semibold mb-2">Informacion de Contacto</h3>
                         <p className="text-gray-600 mb-4">
-                            Phone: (555) 123-4567<br/>
-                            Email: info@eyehub.com<br/>
-                            Fax: (555) 123-4568
+                            Telefono: +591 65890361<br/>
+                            Email: oerlinker@gmail.com<br/>
                         </p>
                         <Button variant="link" className="text-blue-600">
                             Call Now

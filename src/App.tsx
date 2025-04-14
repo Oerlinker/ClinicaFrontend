@@ -11,6 +11,7 @@ import { AuthProvider } from "./contexts/AuthContext";
 import UserDashboard from "./pages/UserDashboard";
 import PrivateRoute from "./components/PrivateRoute";
 import AdminDashboard from "./pages/AdminDashboard";
+import Appointment from "./pages/Appointment";
 
 const queryClient = new QueryClient();
 
@@ -25,6 +26,7 @@ const App = () => (
                         <Route path="/" element={<Index />} />
                         <Route path="/login" element={<Login />} />
                         <Route path="/register" element={<Register />} />
+                        <Route path="/Appointment" element={<Appointment />} />
                         <Route path="/dashboard" element={
                             <PrivateRoute>
                             <UserDashboard />

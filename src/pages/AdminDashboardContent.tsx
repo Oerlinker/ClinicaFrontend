@@ -22,7 +22,7 @@ const AdminDashboardContent: React.FC = () => {
         },
     });
 
-    // Mutaciones
+
     const deleteRoleMutation = useMutation({
         mutationFn: async (id: number) => {
             await API.delete(`/roles/${id}`);
@@ -55,7 +55,7 @@ const AdminDashboardContent: React.FC = () => {
         },
     });
 
-    // Estados para creación y edición
+
     const [showCreateForm, setShowCreateForm] = useState(false);
     const [newRoleName, setNewRoleName] = useState("");
     const [editingRole, setEditingRole] = useState<Role | null>(null);

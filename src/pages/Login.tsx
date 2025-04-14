@@ -1,5 +1,4 @@
 import {Button} from "../components/ui/button";
-import {Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle} from "../components/ui/card";
 import {Input} from "../components/ui/input";
 import {Label} from "../components/ui/label";
 import {Link, useNavigate} from "react-router-dom";
@@ -29,13 +28,18 @@ const Login: React.FC = () => {
             const result = await loginUser(formData);
             console.log("Usuario logeado:", result);
             localStorage.setItem("token", result.token);
-            if(result.user){
-                localStorage.setItem("user", JSON.stringify(result.user));
-                setUser(result.user);
-            }else {
+            if(result.user) {
+                const userWithToken = {
+                    ...result.user,
+                    token: result.token
+                };
+                localStorage.setItem("user", JSON.stringify(userWithToken));
+                setUser(userWithToken);
+            } else {
                 localStorage.removeItem("user");
                 setUser(null);
             }
+
             setError(null);
             navigate("/");
         } catch (err) {
