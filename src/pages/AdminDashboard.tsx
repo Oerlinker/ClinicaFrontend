@@ -4,6 +4,7 @@ import { useAuth } from "../contexts/AuthContext";
 import { Accordion, AccordionItem, AccordionTrigger, AccordionContent } from "../components/ui/accordion";
 import AdminDashboardContent from "./AdminDashboardContent";
 import AdminEmpleadosDashboard from "./AdminEmpleadosDashBoard";
+import AdminBitacora from "./AdminBitacora";
 
 const AdminDashboard: React.FC = () => {
     const { user } = useAuth();
@@ -35,6 +36,12 @@ const AdminDashboard: React.FC = () => {
                         <AccordionTrigger>Gestión de Empleados</AccordionTrigger>
                         <AccordionContent>
                             <AdminEmpleadosDashboard />
+                        </AccordionContent>
+                    </AccordionItem>
+                    <AccordionItem value="bitacora">
+                        <AccordionTrigger>Bitácora</AccordionTrigger>
+                        <AccordionContent>
+                            <AdminBitacora />
                         </AccordionContent>
                     </AccordionItem>
                 </Accordion>
