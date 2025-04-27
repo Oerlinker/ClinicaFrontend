@@ -1,14 +1,27 @@
 import React, {JSX} from "react";
-import { Navigate } from "react-router-dom";
+import { Navigate, useLocation } from "react-router-dom";
 import { useAuth } from "../contexts/AuthContext";
 
 interface PrivateRouteProps {
     children: JSX.Element;
+    requiredRole?: string;
 }
 
-const PrivateRoute: React.FC<PrivateRouteProps> = ({ children }) => {
+const PrivateRoute: React.FC<PrivateRouteProps> = ({ children, requiredRole }) => {
     const { user } = useAuth();
-    return user ? children : <Navigate to="/login" replace />;
+    const location = useLocation();
+
+    if (!user) {
+
+        return <Navigate to="/login" state={{ from: location }} replace />;
+    }
+
+    if (requiredRole && user.rol?.nombre !== requiredRole) {
+
+        return <Navigate to="/no-permission" replace />;
+    }
+
+    return children;
 };
 
 export default PrivateRoute;

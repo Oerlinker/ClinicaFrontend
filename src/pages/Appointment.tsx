@@ -76,13 +76,12 @@ const Appointment: React.FC = () => {
 
         try {
             const response = await API.post("/citas", appointmentData);
-            console.log("Respuesta del servidor:", response.data);
+            const {id, precio} = response.data;
             toast({
                 title: "Cita agendada correctamente!",
                 description: "Redirigiendo a la página de pago...",
             });
-
-            navigate(`/payment/${response.data.id}/${user.id}/${100}/${"USD"}`);
+            navigate(`/payment/${id}/${user.id}/${precio}/USD`);
         } catch (error: any) {
             console.error("Error al agendar cita:", error);
             console.error("Status:", error.response?.status);

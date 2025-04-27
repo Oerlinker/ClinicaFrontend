@@ -13,6 +13,8 @@ import PrivateRoute from "./components/PrivateRoute";
 import AdminDashboard from "./pages/AdminDashboard";
 import Appointment from "./pages/Appointment";
 import PaymentPage from "./pages/PaymentPage";
+import PaymentSuccessPage from "./pages/PaymentSuccessPage";
+import NoPermissionPage from './pages/NoPermissionPage';
 
 const queryClient = new QueryClient();
 
@@ -29,6 +31,8 @@ const App = () => (
                         <Route path="/register" element={<Register/>}/>
                         <Route path="/Appointment" element={<Appointment/>}/>
                         <Route path="/payment/:citaId/:pacienteId/:amount/:currency" element={<PaymentRoute/>}/>
+                        <Route path="/pago-exitoso" element={<PaymentSuccessPage />} />
+                        <Route path="/no-permission" element={<NoPermissionPage />} />
                         <Route path="/dashboard" element={
                             <PrivateRoute>
                                 <UserDashboard/>
