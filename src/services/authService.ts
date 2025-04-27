@@ -26,6 +26,7 @@ export const registerUser = async (data: RegisterData) => {
 export const loginUser = async (data: LoginData) => {
     try {
         const response = await API.post("/auth/login", data);
+        console.log("Respuesta del backend:", response.data);
         return response.data;
     } catch (error: any) {
         throw error.response?.data || error.message;
