@@ -142,7 +142,7 @@ const AdminBitacora = () => {
                                         )}
                                     </Button>
                                 </PopoverTrigger>
-                                <PopoverContent className="w-auto p-0" style={{width: '300px'}} align="center"
+                                <PopoverContent className="w-auto p-0 popover-content-width" align="center"
                                                 side="bottom">
                                     <Calendar
                                         defaultMonth={dateRange?.from}
