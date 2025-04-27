@@ -1,5 +1,5 @@
-import React, {useState, useEffect} from "react";
-import {useQuery} from "@tanstack/react-query";
+import React, { useState, useEffect } from "react";
+import { useQuery } from "@tanstack/react-query";
 import API from "../services/api";
 import {
     Table,
@@ -9,12 +9,12 @@ import {
     TableHeader,
     TableRow,
 } from "../components/ui/table";
-import {Card, CardContent, CardHeader, CardTitle} from "../components/ui/card";
-import {Input} from "../components/ui/input";
-import {Label} from "../components/ui/label";
-import {Button} from "../components/ui/button";
-import {format, parseISO} from "date-fns";
-import {useToast} from "../hooks/use-toast";
+import { Card, CardContent, CardHeader, CardTitle } from "../components/ui/card";
+import { Input } from "../components/ui/input";
+import { Label } from "../components/ui/label";
+import { Button } from "../components/ui/button";
+import { format, parseISO } from "date-fns";
+import { useToast } from "../hooks/use-toast";
 import * as XLSX from "xlsx";
 import jsPDF from "jspdf";
 import "jspdf-autotable";
@@ -31,13 +31,13 @@ const AdminBitacora: React.FC = () => {
     const [desde, setDesde] = useState<string>("");   // yyyy-MM-dd
     const [hasta, setHasta] = useState<string>("");
     const [bitacoras, setBitacoras] = useState<Bitacora[]>([]);
-    const {toast} = useToast();
+    const { toast } = useToast();
 
-    const {data, isLoading, error, refetch} = useQuery({
+    const { data, isLoading, error, refetch } = useQuery({
         queryKey: ["bitacoras", userId, desde, hasta],
         queryFn: async () => {
-            let url = "/bitacoras";
 
+            let url = "/bitacoras";
             if (userId && desde && hasta) {
                 url = `/bitacoras/usuario/${userId}/fecha?desde=${desde}&hasta=${hasta}`;
             } else if (userId) {
@@ -45,32 +45,20 @@ const AdminBitacora: React.FC = () => {
             } else if (desde && hasta) {
                 url = `/bitacoras/fecha?desde=${desde}&hasta=${hasta}`;
             }
-
-            try {
-                const res = await API.get<Bitacora[]>(url);
-                return res.data;
-            } catch (err: any) {
-                toast({
-                    title: "Error al obtener bitácoras",
-                    description: err.message,
-                    variant: "destructive",
-                });
-                throw err;
-            }
+            const res = await API.get<Bitacora[]>(url);
+            return res.data;
         },
-        enabled: false,
+
+        enabled: true,
     });
+
 
     useEffect(() => {
         if (data) setBitacoras(data);
     }, [data]);
 
     const handleSearch = () => {
-        // sólo dispara la consulta si hay algo seleccionado
-        if (!userId && !(desde && hasta)) {
-            toast({title: "Selecciona al menos un filtro", variant: "default"});
-            return;
-        }
+
         refetch();
     };
 
@@ -112,7 +100,7 @@ const AdminBitacora: React.FC = () => {
                     <CardTitle>Bitácora de Actividades</CardTitle>
                 </CardHeader>
                 <CardContent>
-                    {/* Filtros: columna en móvil, fila en desktop */}
+
                     <div className="flex flex-col md:flex-row md:items-end space-y-4 md:space-y-0 md:space-x-4 mb-6">
                         {/* Filtrar por Usuario */}
                         <div className="flex flex-col">
@@ -126,7 +114,6 @@ const AdminBitacora: React.FC = () => {
                             />
                         </div>
 
-                        {/* Filtrar por Fecha Desde */}
                         <div className="flex flex-col">
                             <Label htmlFor="desde">Desde</Label>
                             <Input
@@ -137,7 +124,6 @@ const AdminBitacora: React.FC = () => {
                             />
                         </div>
 
-                        {/* Filtrar por Fecha Hasta */}
                         <div className="flex flex-col">
                             <Label htmlFor="hasta">Hasta</Label>
                             <Input
@@ -148,7 +134,6 @@ const AdminBitacora: React.FC = () => {
                             />
                         </div>
 
-                        {/* Botones */}
                         <div className="flex space-x-2">
                             <Button onClick={handleSearch}>Buscar</Button>
                             <Button onClick={() => exportToExcel(bitacoras, "bitacora")}>
@@ -160,7 +145,7 @@ const AdminBitacora: React.FC = () => {
                         </div>
                     </div>
 
-                    {/* Tabla con scroll horizontal */}
+
                     <div className="overflow-x-auto">
                         <Table>
                             <TableHeader>
