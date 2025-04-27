@@ -50,18 +50,12 @@ const App = () => (
 );
 
 function PaymentRoute() {
-    const {citaId, pacienteId, amount, currency} = useParams();
-
     return (
         <PrivateRoute>
-            <PaymentPage
-                citaId={Number(citaId)}
-                pacienteId={Number(pacienteId)}
-                amount={Number(amount)}
-                currency={currency || "USD"}
-            />
+            <PaymentPage />
         </PrivateRoute>
     );
 }
+
 
 export default App;
