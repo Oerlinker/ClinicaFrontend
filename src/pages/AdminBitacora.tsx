@@ -1,5 +1,7 @@
-import React, {useState, useEffect} from "react";
-import {useQuery} from "@tanstack/react-query";
+// src/pages/AdminBitacora.tsx
+
+import React, { useState, useEffect } from "react";
+import { useQuery } from "@tanstack/react-query";
 import API from "../services/api";
 import {
     Table,
@@ -9,37 +11,36 @@ import {
     TableHeader,
     TableRow,
 } from "../components/ui/table";
-import {Card, CardContent, CardHeader, CardTitle} from "../components/ui/card";
-import {Input} from "../components/ui/input";
-import {Label} from "../components/ui/label";
-import {Button} from "../components/ui/button";
-import {Calendar} from "../components/ui/calendar";
-import {cn} from "../lib/utils";
-import {format} from "date-fns";
-import {es} from "date-fns/locale";
-import {CalendarIcon} from "lucide-react";
-import {Popover, PopoverContent, PopoverTrigger} from "../components/ui/popover";
-import {DateRange} from "react-day-picker";
-import {useToast} from "../hooks/use-toast";
+import { Card, CardContent, CardHeader, CardTitle } from "../components/ui/card";
+import { Input } from "../components/ui/input";
+import { Label } from "../components/ui/label";
+import { Button } from "../components/ui/button";
+import { Calendar } from "../components/ui/calendar";
+import { cn } from "../lib/utils";
+import { format, parseISO } from "date-fns";
+import { es } from "date-fns/locale";
+import { CalendarIcon } from "lucide-react";
+import { Popover, PopoverContent, PopoverTrigger } from "../components/ui/popover";
+import { DateRange } from "react-day-picker";
+import { useToast } from "../hooks/use-toast";
 import * as XLSX from "xlsx";
 import jsPDF from "jspdf";
 import "jspdf-autotable";
 
 interface Bitacora {
     id: number;
-    usuarioId?: number;
-    userId?: number;
+    usuario: { id: number; username?: string };
     fecha: string;
     accion: string;
 }
 
 const AdminBitacora: React.FC = () => {
     const [userId, setUserId] = useState<string>("");
-    const [dateRange, setDateRange] = useState<DateRange | undefined>(undefined);
+    const [dateRange, setDateRange] = useState<DateRange | undefined>();
     const [bitacoras, setBitacoras] = useState<Bitacora[]>([]);
-    const {toast} = useToast();
+    const { toast } = useToast();
 
-    const {data, isLoading, error, refetch} = useQuery({
+    const { data, isLoading, error, refetch } = useQuery({
         queryKey: ["bitacoras", userId, dateRange],
         queryFn: async () => {
             let url = "/bitacoras";
@@ -55,8 +56,8 @@ const AdminBitacora: React.FC = () => {
                 url = `/bitacoras/fecha?desde=${desde}&hasta=${hasta}`;
             }
             try {
-                const response = await API.get(url);
-                return response.data as Bitacora[];
+                const res = await API.get<Bitacora[]>(url);
+                return res.data;
             } catch (err: any) {
                 toast({
                     title: "Error al obtener bitácoras",
@@ -70,31 +71,34 @@ const AdminBitacora: React.FC = () => {
     });
 
     useEffect(() => {
-        if (data) {
-            setBitacoras(data);
-        }
+        if (data) setBitacoras(data);
     }, [data]);
 
-    const handleSearch = () => {
-        refetch();
-    };
+    const handleSearch = () => refetch();
 
-    const exportToExcel = (data: any[], filename: string) => {
-        const ws = XLSX.utils.json_to_sheet(data);
+    const exportToExcel = (data: Bitacora[], filename: string) => {
+        // Convertimos a plain object para Excel
+        const sheetData = data.map(b => ({
+            ID: b.id,
+            "Usuario ID": b.usuario.id,
+            Fecha: format(parseISO(b.fecha), "dd/MM/yyyy HH:mm:ss"),
+            Acción: b.accion,
+        }));
+        const ws = XLSX.utils.json_to_sheet(sheetData);
         const wb = XLSX.utils.book_new();
         XLSX.utils.book_append_sheet(wb, ws, "Bitácora");
         XLSX.writeFile(wb, `${filename}.xlsx`);
     };
 
-    const exportToPDF = (data: any[], filename: string) => {
+    const exportToPDF = (data: Bitacora[], filename: string) => {
         const doc = new jsPDF();
         (doc as any).autoTable({
             head: [["ID", "Usuario ID", "Fecha", "Acción"]],
-            body: data.map(item => [
-                item.id,
-                item.usuarioId ?? item.userId,
-                new Date(item.fecha).toLocaleString("es-BO"),
-                item.accion,
+            body: data.map(b => [
+                b.id,
+                b.usuario.id,
+                format(parseISO(b.fecha), "dd/MM/yyyy HH:mm:ss"),
+                b.accion,
             ]),
         });
         doc.save(`${filename}.pdf`);
@@ -110,7 +114,7 @@ const AdminBitacora: React.FC = () => {
                     <CardTitle>Bitácora de Actividades</CardTitle>
                 </CardHeader>
                 <CardContent>
-                    {/* Controles: apilados en móvil, en fila en desktop */}
+                    {/* Filtros: columna en móvil, fila en desktop */}
                     <div className="flex flex-col md:flex-row md:items-end md:space-x-4 space-y-4 md:space-y-0 mb-6">
                         {/* ID de Usuario */}
                         <div className="flex flex-col">
@@ -123,7 +127,6 @@ const AdminBitacora: React.FC = () => {
                                 placeholder="ID del usuario"
                             />
                         </div>
-
                         {/* Rango de Fechas */}
                         <div className="relative flex flex-col">
                             <Label>Rango de Fechas</Label>
@@ -136,48 +139,36 @@ const AdminBitacora: React.FC = () => {
                                             !dateRange?.from && "text-muted-foreground"
                                         )}
                                     >
-                                        <CalendarIcon className="mr-2 h-4 w-4"/>
+                                        <CalendarIcon className="mr-2 h-4 w-4" />
                                         {dateRange?.from
                                             ? dateRange.to
-                                                ? `${format(dateRange.from, "dd 'de' MMM yyyy", {locale: es})} – ${format(
+                                                ? `${format(dateRange.from, "dd 'de' MMM yyyy", { locale: es })} – ${format(
                                                     dateRange.to,
                                                     "dd 'de' MMM yyyy",
-                                                    {locale: es}
+                                                    { locale: es }
                                                 )}`
-                                                : format(dateRange.from, "dd 'de' MMM yyyy", {locale: es})
+                                                : format(dateRange.from, "dd 'de' MMM yyyy", { locale: es })
                                             : "Seleccionar fechas"}
                                     </Button>
                                 </PopoverTrigger>
-                                <PopoverContent
-                                    side="bottom"
-                                    align="start"
-                                    sideOffset={6}
-                                    className="w-[260px] p-0"
-                                >
+                                <PopoverContent side="bottom" align="start" sideOffset={6} className="w-[260px] p-0">
                                     <Calendar
                                         locale={es}
                                         mode="range"
                                         defaultMonth={dateRange?.from}
                                         selected={dateRange}
                                         onSelect={setDateRange}
-                                        disabled={date =>
-                                            date > new Date() || date < new Date("2023-01-01")
-                                        }
+                                        disabled={date => date > new Date() || date < new Date("2023-01-01")}
                                         initialFocus
                                     />
                                 </PopoverContent>
                             </Popover>
                         </div>
-
-                        {/* Botones de acción */}
+                        {/* Botones */}
                         <div className="flex space-x-2">
                             <Button onClick={handleSearch}>Buscar</Button>
-                            <Button onClick={() => exportToExcel(bitacoras, "bitacora")}>
-                                Exportar Excel
-                            </Button>
-                            <Button onClick={() => exportToPDF(bitacoras, "bitacora")}>
-                                Exportar PDF
-                            </Button>
+                            <Button onClick={() => exportToExcel(bitacoras, "bitacora")}>Exportar Excel</Button>
+                            <Button onClick={() => exportToPDF(bitacoras, "bitacora")}>Exportar PDF</Button>
                         </div>
                     </div>
 
@@ -196,8 +187,8 @@ const AdminBitacora: React.FC = () => {
                                 {bitacoras.map(b => (
                                     <TableRow key={b.id}>
                                         <TableCell>{b.id}</TableCell>
-                                        <TableCell>{b.usuarioId ?? b.userId}</TableCell>
-                                        <TableCell>{new Date(b.fecha).toLocaleString("es-BO")}</TableCell>
+                                        <TableCell>{b.usuario.id}</TableCell>
+                                        <TableCell>{format(parseISO(b.fecha), "dd/MM/yyyy HH:mm:ss")}</TableCell>
                                         <TableCell>{b.accion}</TableCell>
                                     </TableRow>
                                 ))}
