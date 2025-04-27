@@ -75,18 +75,6 @@ const UserDashboard: React.FC = () => {
                             <span className="text-gray-600">{user.email}</span>
                         </div>
                     </div>
-
-                    <div className="bg-white shadow rounded-lg p-6 flex flex-col justify-center items-center">
-                        <h2 className="text-2xl font-semibold text-gray-800 mb-4">
-                            Acciones
-                        </h2>
-                        <Link to="/Appointment">
-                            <Button className="bg-blue-600 hover:bg-blue-700">
-                                <Calendar className="mr-2 h-4 w-4"/>
-                                Reservar Cita
-                            </Button>
-                        </Link>
-                    </div>
                 </div>
                 <div className="bg-white shadow rounded-lg p-6 mt-6">
                     <h2 className="text-2xl font-semibold text-gray-800 mb-4">
