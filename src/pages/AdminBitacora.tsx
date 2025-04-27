@@ -36,6 +36,7 @@ const AdminBitacora = () => {
     const [dateRange, setDateRange] = useState<DateRange | undefined>(undefined);
     const [bitacoras, setBitacoras] = useState<Bitacora[]>([]);
     const {toast} = useToast()
+    const [isCalendarOpen, setIsCalendarOpen] = useState(false);
 
     const {data, isLoading, error, refetch} = useQuery({
         queryKey: ["bitacoras", userId, dateRange],
@@ -118,32 +119,30 @@ const AdminBitacora = () => {
                         </div>
                         <div>
                             <Label>Rango de Fechas:</Label>
-                            <Popover>
-                                <PopoverTrigger asChild>
-                                    <Button
-                                        className={cn(
-                                            "w-[300px] justify-start text-left font-normal",
-                                            !dateRange?.from && "text-muted-foreground"
-                                        )}
-                                        variant={"outline"}
-                                    >
-                                        <CalendarIcon className="mr-2 h-4 w-4"/>
-                                        {dateRange?.from ? (
-                                            dateRange.to ? (
-                                                `${format(dateRange.from, "LLL dd, y")} - ${format(
-                                                    dateRange.to,
-                                                    "LLL dd, y"
-                                                )}`
-                                            ) : (
-                                                format(dateRange.from, "LLL dd, y")
-                                            )
-                                        ) : (
-                                            <span>Pick a date</span>
-                                        )}
-                                    </Button>
-                                </PopoverTrigger>
-                                <PopoverContent className="w-auto p-0 popover-content-width" align="center"
-                                                side="bottom">
+                            <Button
+                                className={cn(
+                                    "w-[300px] justify-start text-left font-normal",
+                                    !dateRange?.from && "text-muted-foreground"
+                                )}
+                                variant={"outline"}
+                                onClick={() => setIsCalendarOpen(!isCalendarOpen)}
+                            >
+                                <CalendarIcon className="mr-2 h-4 w-4"/>
+                                {dateRange?.from ? (
+                                    dateRange.to ? (
+                                        `${format(dateRange.from, "LLL dd, y")} - ${format(
+                                            dateRange.to,
+                                            "LLL dd, y"
+                                        )}`
+                                    ) : (
+                                        format(dateRange.from, "LLL dd, y")
+                                    )
+                                ) : (
+                                    <span>Pick a date</span>
+                                )}
+                            </Button>
+                            {isCalendarOpen && (
+                                <div className="mt-2">
                                     <Calendar
                                         defaultMonth={dateRange?.from}
                                         disabled={(date) =>
@@ -154,8 +153,8 @@ const AdminBitacora = () => {
                                         onSelect={setDateRange}
                                         selected={dateRange}
                                     />
-                                </PopoverContent>
-                            </Popover>
+                                </div>
+                            )}
                         </div>
                         <div className="flex items-end space-x-2">
                             <Button onClick={() => handleSearch()}>Buscar</Button>
