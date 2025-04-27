@@ -52,7 +52,7 @@ const AppointmentsPage: React.FC = () => {
                                 <TableHead>Doctor</TableHead>
                                 <TableHead>Tipo</TableHead>
                                 <TableHead>Estado</TableHead>
-                                <TableHead>Pago</TableHead>
+
                             </TableRow>
                         </TableHeader>
                         <TableBody>
@@ -65,17 +65,7 @@ const AppointmentsPage: React.FC = () => {
                                     </TableCell>
                                     <TableCell>{cita.tipo}</TableCell>
                                     <TableCell>{cita.estado}</TableCell>
-                                    <TableCell>
-                                        {cita.estado === 'AGENDADA' ? (
-                                            <Link
-                                                to={`/payment/${cita.id}/${user!.id}/${cita.precio}/USD`}
-                                            >
-                                                <Button size="sm">Pagar</Button>
-                                            </Link>
-                                        ) : (
-                                            '--'
-                                        )}
-                                    </TableCell>
+
                                 </TableRow>
                             ))}
                         </TableBody>
