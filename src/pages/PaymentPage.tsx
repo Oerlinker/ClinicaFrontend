@@ -2,24 +2,17 @@ import React, {useEffect, useState} from 'react'
 import {loadStripe, Stripe} from '@stripe/stripe-js'
 import {Elements, CardElement, useStripe, useElements} from '@stripe/react-stripe-js'
 import axios from 'axios'
-import {useNavigate} from 'react-router-dom'
+import {useNavigate, useParams} from 'react-router-dom'
 
-interface Props {
-    citaId: number
-    pacienteId: number
-    amount: number
-    currency: string
-}
-
-
-type ConfigResp = { publicKey: string }
-type CreateIntentReq = {
-    amount: number
-    currency: string
-    citaId: number
-    pacienteId: number
-}
+interface ConfigResp { publicKey: string }
 type CreateIntentResp = { clientSecret: string }
+
+type PaymentRouteParams = {
+    citaId: string;
+    pacienteId: string;
+    amount: string;
+    currency: string;
+}
 
 const CheckoutForm: React.FC<{ clientSecret: string }> = ({clientSecret}) => {
     const stripe = useStripe()
@@ -68,33 +61,49 @@ const CheckoutForm: React.FC<{ clientSecret: string }> = ({clientSecret}) => {
     )
 }
 
-const PaymentPage: React.FC<Props> = ({citaId, pacienteId, amount, currency}) => {
-    const [stripePromise, setStripePromise] = useState<Promise<Stripe | null>>(Promise.resolve(null))
+const PaymentPage: React.FC = () => {
+    // extraemos params de la URL
+    const {citaId, pacienteId, amount, currency} = useParams<PaymentRouteParams>()
+    const [stripePromise, setStripePromise] = useState<Promise<Stripe|null> | null>(null)
     const [clientSecret, setClientSecret] = useState<string>('')
 
     useEffect(() => {
+        async function init() {
+            try {
 
-        axios.get<ConfigResp>('/api/payments/config')
-            .then(res => setStripePromise(loadStripe(res.data.publicKey)))
-            .catch(console.error)
+                const {data: {publicKey}} = await axios.get<ConfigResp>('/api/payments/config')
+                const stripe = await loadStripe(publicKey)
+                setStripePromise(Promise.resolve(stripe))
 
 
-        const payload: CreateIntentReq = {amount, currency, citaId, pacienteId}
-        axios.post<CreateIntentResp>('/api/payments/create-payment-intent', payload)
-            .then(res => setClientSecret(res.data.clientSecret))
-            .catch(err => console.error('Error creando intent:', err))
+                const payload = {
+                    amount: Number(amount),
+                    currency,
+                    citaId: Number(citaId),
+                    pacienteId: Number(pacienteId)
+                }
+                const {data} = await axios.post<CreateIntentResp>('/api/payments/create-payment-intent', payload)
+                setClientSecret(data.clientSecret)
+            } catch (err) {
+                console.error('Error inicializando pago:', err)
+            }
+        }
+        init()
     }, [citaId, pacienteId, amount, currency])
 
-    if (!clientSecret) return <div>Cargando método de pago…</div>
+
+    if (!stripePromise || !clientSecret) {
+        return <div>Cargando método de pago…</div>
+    }
 
     return (
         <div className="max-w-md mx-auto p-6">
             <h2 className="text-2xl mb-4">Paga tu cita</h2>
             <Elements stripe={stripePromise} options={{clientSecret}}>
-                <CheckoutForm clientSecret={clientSecret}/>
+                <CheckoutForm clientSecret={clientSecret} />
             </Elements>
         </div>
     )
 }
 
-export default PaymentPage
+export default PaymentPage;
