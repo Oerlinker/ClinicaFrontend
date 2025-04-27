@@ -1,12 +1,12 @@
-import React, {useEffect, useState} from "react";
-import {loadStripe, Stripe} from "@stripe/stripe-js";
+import React, { useEffect, useState } from "react";
+import { loadStripe, Stripe } from "@stripe/stripe-js";
 import {
     Elements,
     CardElement,
     useStripe,
     useElements,
 } from "@stripe/react-stripe-js";
-import {useNavigate} from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 
 
 interface ConfigResponse {
@@ -27,7 +27,7 @@ interface PaymentPageProps {
 }
 
 
-const CheckoutForm: React.FC<{ clientSecret: string }> = ({clientSecret}) => {
+const CheckoutForm: React.FC<{ clientSecret: string }> = ({ clientSecret }) => {
     const stripe = useStripe();
     const elements = useElements();
     const [error, setError] = useState<string | null>(null);
@@ -44,7 +44,7 @@ const CheckoutForm: React.FC<{ clientSecret: string }> = ({clientSecret}) => {
         if (!card) return;
 
         const result = await stripe.confirmCardPayment(clientSecret, {
-            payment_method: {card},
+            payment_method: { card },
         });
 
         if (result.error) {
@@ -60,7 +60,7 @@ const CheckoutForm: React.FC<{ clientSecret: string }> = ({clientSecret}) => {
 
     return (
         <form onSubmit={handleSubmit} className="max-w-md mx-auto p-4">
-            <CardElement options={{hidePostalCode: true}}/>
+            <CardElement options={{ hidePostalCode: true }} />
             <button
                 type="submit"
                 disabled={!stripe || processing || succeeded}
@@ -78,22 +78,31 @@ const CheckoutForm: React.FC<{ clientSecret: string }> = ({clientSecret}) => {
 };
 
 
-const PaymentPage: React.FC<PaymentPageProps> = ({citaId, pacienteId, amount, currency}) => {
+const PaymentPage: React.FC<PaymentPageProps> = ({ citaId, pacienteId, amount, currency }) => {
     const [stripePromise, setStripePromise] = useState<Promise<Stripe | null> | null>(null);
     const [clientSecret, setClientSecret] = useState<string>("");
+    const [error, setError] = useState<string | null>(null);
 
     useEffect(() => {
-
         fetch("/api/payments/config")
-            .then((res) => res.json())
+            .then((res) => {
+                if (!res.ok) {
+                    throw new Error(`HTTP error! status: ${res.status}`);
+                }
+                return res.json();
+            })
             .then((config: ConfigResponse) => {
                 setStripePromise(loadStripe(config.publicKey));
+            })
+            .catch(err => {
+                console.error("Error fetching /api/payments/config", err);
+                setError("Failed to load Stripe configuration.");
             });
 
 
         fetch("/api/payments/create-payment-intent", {
             method: "POST",
-            headers: {"Content-Type": "application/json"},
+            headers: { "Content-Type": "application/json" },
             body: JSON.stringify({
                 amount,
                 currency,
@@ -101,17 +110,30 @@ const PaymentPage: React.FC<PaymentPageProps> = ({citaId, pacienteId, amount, cu
                 pacienteId,
             }),
         })
-            .then((res) => res.json())
+            .then((res) => {
+                if (!res.ok) {
+                    throw new Error(`HTTP error! status: ${res.status}`);
+                }
+                return res.json();
+            })
             .then((data: CreatePaymentResponse) => {
                 setClientSecret(data.clientSecret);
+            })
+            .catch(err => {
+                console.error("Error fetching /api/payments/create-payment-intent", err);
+                setError("Failed to create payment intent.");
             });
     }, [citaId, pacienteId, amount, currency]);
+
+    if (error) {
+        return <div>Error: {error}</div>;
+    }
 
     if (!stripePromise || !clientSecret) return <div>Cargando...</div>;
 
     return (
-        <Elements stripe={stripePromise} options={{clientSecret}}>
-            <CheckoutForm clientSecret={clientSecret}/>
+        <Elements stripe={stripePromise} options={{ clientSecret }}>
+            <CheckoutForm clientSecret={clientSecret} />
         </Elements>
     );
 };
