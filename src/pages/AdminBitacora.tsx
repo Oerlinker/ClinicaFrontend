@@ -1,5 +1,5 @@
-import React, {useState, useEffect} from "react";
-import {useQuery} from "@tanstack/react-query";
+import React, { useState, useEffect } from "react";
+import { useQuery } from "@tanstack/react-query";
 import API from "../services/api";
 import {
     Table,
@@ -8,21 +8,22 @@ import {
     TableHead,
     TableHeader,
     TableRow,
-} from "../components/ui/table"
-import {Card, CardContent, CardHeader, CardTitle} from "../components/ui/card"
-import {Input} from "../components/ui/input"
-import {Label} from "../components/ui/label"
-import {Button} from "../components/ui/button"
-import {Calendar} from "../components/ui/calendar"
-import {cn} from "../lib/utils"
-import {format} from "date-fns"
-import {CalendarIcon} from "lucide-react"
-import {Popover, PopoverContent, PopoverTrigger} from "../components/ui/popover"
-import {DateRange} from "react-day-picker"
-import {useToast} from "../hooks/use-toast"
-import * as XLSX from 'xlsx';
-import jsPDF from 'jspdf';
-import 'jspdf-autotable';
+} from "../components/ui/table";
+import { Card, CardContent, CardHeader, CardTitle } from "../components/ui/card";
+import { Input } from "../components/ui/input";
+import { Label } from "../components/ui/label";
+import { Button } from "../components/ui/button";
+import { Calendar } from "../components/ui/calendar";
+import { cn } from "../lib/utils";
+import { format } from "date-fns";
+import { es } from "date-fns/locale";
+import { CalendarIcon } from "lucide-react";
+import { Popover, PopoverContent, PopoverTrigger } from "../components/ui/popover";
+import { DateRange } from "react-day-picker";
+import { useToast } from "../hooks/use-toast";
+import * as XLSX from "xlsx";
+import jsPDF from "jspdf";
+import "jspdf-autotable";
 
 interface Bitacora {
     id: number;
@@ -35,13 +36,12 @@ const AdminBitacora = () => {
     const [userId, setUserId] = useState<string>("");
     const [dateRange, setDateRange] = useState<DateRange | undefined>(undefined);
     const [bitacoras, setBitacoras] = useState<Bitacora[]>([]);
-    const {toast} = useToast()
+    const { toast } = useToast();
 
-    const {data, isLoading, error, refetch} = useQuery({
+    const { data, isLoading, error, refetch } = useQuery({
         queryKey: ["bitacoras", userId, dateRange],
         queryFn: async () => {
             let url = "/bitacoras";
-
             if (userId && dateRange?.from && dateRange?.to) {
                 const desde = format(dateRange.from, "yyyy-MM-dd");
                 const hasta = format(dateRange.to, "yyyy-MM-dd");
@@ -53,16 +53,15 @@ const AdminBitacora = () => {
                 const hasta = format(dateRange.to, "yyyy-MM-dd");
                 url = `/bitacoras/fecha?desde=${desde}&hasta=${hasta}`;
             }
-
             try {
                 const response = await API.get(url);
                 return response.data;
             } catch (err: any) {
                 toast({
-                    title: "Error!",
-                    description: "Hubo un error al obtener las bitacoras",
+                    title: "Error al obtener bitácoras",
+                    description: err.message,
                     variant: "destructive",
-                })
+                });
                 throw err;
             }
         },
@@ -70,32 +69,33 @@ const AdminBitacora = () => {
     });
 
     useEffect(() => {
-        if (data) {
-            setBitacoras(data);
-        }
+        if (data) setBitacoras(data);
     }, [data]);
 
-    const handleSearch = async () => {
-        await refetch();
-    };
+    const handleSearch = () => refetch();
 
     const exportToExcel = (data: any[], filename: string) => {
         const ws = XLSX.utils.json_to_sheet(data);
         const wb = XLSX.utils.book_new();
-        XLSX.utils.book_append_sheet(wb, ws, 'Bitacora');
+        XLSX.utils.book_append_sheet(wb, ws, "Bitácora");
         XLSX.writeFile(wb, `${filename}.xlsx`);
     };
 
     const exportToPDF = (data: any[], filename: string) => {
         const doc = new jsPDF();
         (doc as any).autoTable({
-            head: [['ID', 'Usuario ID', 'Fecha', 'Acción']],
-            body: data.map(item => [item.id, item.usuarioId, new Date(item.fecha).toLocaleString(), item.accion]),
+            head: [["ID", "Usuario ID", "Fecha", "Acción"]],
+            body: data.map((item) => [
+                item.id,
+                item.usuarioId,
+                new Date(item.fecha).toLocaleString(),
+                item.accion,
+            ]),
         });
         doc.save(`${filename}.pdf`);
     };
 
-    if (isLoading) return <div>Cargando bitácoras...</div>;
+    if (isLoading) return <div>Cargando bitácoras…</div>;
     if (error) return <div>Error al cargar bitácoras</div>;
 
     return (
@@ -105,9 +105,11 @@ const AdminBitacora = () => {
                     <CardTitle>Bitácora de Actividades</CardTitle>
                 </CardHeader>
                 <CardContent>
-                    <div className="grid gap-4 grid-cols-1 md:grid-cols-3">
+                    {/* Layout mejorado: 4 columnas en md */}
+                    <div className="grid gap-4 grid-cols-1 md:grid-cols-4 mb-4">
+                        {/* ID de Usuario */}
                         <div>
-                            <Label htmlFor="userId">ID de Usuario:</Label>
+                            <Label htmlFor="userId">ID de Usuario</Label>
                             <Input
                                 type="number"
                                 id="userId"
@@ -116,34 +118,33 @@ const AdminBitacora = () => {
                                 placeholder="ID del usuario"
                             />
                         </div>
+                        {/* Rango de Fechas */}
                         <div>
-                            <Label>Rango de Fechas:</Label>
+                            <Label>Rango de Fechas</Label>
                             <Popover>
                                 <PopoverTrigger asChild>
                                     <Button
-                                        variant={"outline"}
+                                        variant="outline"
                                         className={cn(
-                                            "w-[300px] justify-start text-left font-normal",
+                                            "w-full md:w-64 justify-start text-left font-normal",
                                             !dateRange?.from && "text-muted-foreground"
                                         )}
                                     >
-                                        <CalendarIcon className="mr-2 h-4 w-4"/>
-                                        {dateRange?.from ? (
-                                            dateRange.to ? (
-                                                `${format(dateRange.from, "LLL dd, y")} - ${format(
+                                        <CalendarIcon className="mr-2 h-4 w-4" />
+                                        {dateRange?.from
+                                            ? dateRange.to
+                                                ? `${format(dateRange.from, "dd 'de' MMMM yyyy", { locale: es })} - ${format(
                                                     dateRange.to,
-                                                    "LLL dd, y"
+                                                    "dd 'de' MMMM yyyy",
+                                                    { locale: es }
                                                 )}`
-                                            ) : (
-                                                format(dateRange.from, "LLL dd, y")
-                                            )
-                                        ) : (
-                                            <span>Pick a date</span>
-                                        )}
+                                                : format(dateRange.from, "dd 'de' MMMM yyyy", { locale: es })
+                                            : "Seleccionar fechas"}
                                     </Button>
                                 </PopoverTrigger>
-                                <PopoverContent className="w-auto p-0" align="start">
+                                <PopoverContent align="start" className="w-auto p-0">
                                     <Calendar
+                                        locale={es}
                                         mode="range"
                                         defaultMonth={dateRange?.from}
                                         selected={dateRange}
@@ -156,13 +157,19 @@ const AdminBitacora = () => {
                                 </PopoverContent>
                             </Popover>
                         </div>
-                        <div className="flex items-end space-x-2">
-                            <Button onClick={() => handleSearch()}>Buscar</Button>
-                            <Button onClick={() => exportToExcel(bitacoras, 'bitacora')}>Exportar a Excel</Button>
-                            <Button onClick={() => exportToPDF(bitacoras, 'bitacora')}>Exportar a PDF</Button>
+                        {/* Botones de acción (ocupan 2 columnas en md) */}
+                        <div className="md:col-span-2 flex items-end space-x-2">
+                            <Button onClick={handleSearch}>Buscar</Button>
+                            <Button onClick={() => exportToExcel(bitacoras, "bitacora")}>
+                                Exportar Excel
+                            </Button>
+                            <Button onClick={() => exportToPDF(bitacoras, "bitacora")}>
+                                Exportar PDF
+                            </Button>
                         </div>
                     </div>
-                    <div className="mt-4 overflow-x-auto">
+                    {/* Tabla con overflow en móvil */}
+                    <div className="overflow-x-auto">
                         <Table>
                             <TableHeader>
                                 <TableRow>
@@ -173,12 +180,14 @@ const AdminBitacora = () => {
                                 </TableRow>
                             </TableHeader>
                             <TableBody>
-                                {bitacoras.map((bitacora) => (
-                                    <TableRow key={bitacora.id}>
-                                        <TableCell>{bitacora.id}</TableCell>
-                                        <TableCell>{bitacora.usuarioId}</TableCell>
-                                        <TableCell>{new Date(bitacora.fecha).toLocaleString()}</TableCell>
-                                        <TableCell>{bitacora.accion}</TableCell>
+                                {bitacoras.map((b) => (
+                                    <TableRow key={b.id}>
+                                        <TableCell>{b.id}</TableCell>
+                                        <TableCell>{b.usuarioId}</TableCell>
+                                        <TableCell>
+                                            {new Date(b.fecha).toLocaleString("es-BO")}
+                                        </TableCell>
+                                        <TableCell>{b.accion}</TableCell>
                                     </TableRow>
                                 ))}
                             </TableBody>
