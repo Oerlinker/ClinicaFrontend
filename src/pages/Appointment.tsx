@@ -1,12 +1,13 @@
-import React, { useState } from "react";
-import { Button } from "../components/ui/button";
-import { Input } from "../components/ui/input";
-import { Label } from "../components/ui/label";
-import { useQuery } from "@tanstack/react-query";
+import React, {useState} from "react";
+import {Button} from "../components/ui/button";
+import {Input} from "../components/ui/input";
+import {Label} from "../components/ui/label";
+import {useQuery} from "@tanstack/react-query";
 import API from "../services/api";
-import { useAuth } from "../contexts/AuthContext";
+import {useAuth} from "../contexts/AuthContext";
 import Header from "../components/Header";
-import { useNavigate } from "react-router-dom";
+import {useNavigate} from "react-router-dom";
+import {useToast} from "../hooks/use-toast";
 
 interface Doctor {
     id: number;
@@ -17,8 +18,9 @@ interface Doctor {
 }
 
 const Appointment: React.FC = () => {
-    const { user } = useAuth();
+    const {user} = useAuth();
     const navigate = useNavigate();
+    const {toast} = useToast();
 
     const [formData, setFormData] = useState({
         fecha: "",
@@ -66,8 +68,8 @@ const Appointment: React.FC = () => {
             hora: formData.hora,
             estado: "AGENDADA",
             tipo: formData.tipo,
-            paciente: { id: user.id },
-            doctor: { id: Number(formData.doctorId) },
+            paciente: {id: user.id},
+            doctor: {id: Number(formData.doctorId)},
         };
 
         console.log("Datos enviados al servidor:", appointmentData);
@@ -75,19 +77,27 @@ const Appointment: React.FC = () => {
         try {
             const response = await API.post("/citas", appointmentData);
             console.log("Respuesta del servidor:", response.data);
-            alert("¡Cita agendada correctamente!");
-            navigate("/");
+            toast({
+                title: "Cita agendada correctamente!",
+                description: "Redirigiendo a la página de pago...",
+            });
+
+            navigate(`/payment/${response.data.id}/${user.id}/${100}/${"USD"}`);
         } catch (error: any) {
             console.error("Error al agendar cita:", error);
             console.error("Status:", error.response?.status);
             console.error("Respuesta completa:", error.response?.data);
-            alert("Error al agendar la cita. Por favor, verifica los datos e inténtalo nuevamente.");
+            toast({
+                title: "Error al agendar la cita.",
+                description: "Por favor, verifica los datos e inténtalo nuevamente.",
+                variant: "destructive",
+            });
         }
     };
 
     return (
         <div className="min-h-screen flex flex-col">
-            <Header />
+            <Header/>
             <main className="flex-grow bg-gray-50 flex flex-col items-center justify-center p-4">
                 <h2 className="text-2xl font-bold mb-4">Agendar Cita</h2>
                 <form onSubmit={handleSubmit} className="max-w-md w-full bg-white shadow rounded p-4">
