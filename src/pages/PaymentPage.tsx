@@ -1,10 +1,13 @@
 import React, {useEffect, useState} from 'react'
 import {loadStripe, Stripe} from '@stripe/stripe-js'
 import {Elements, CardElement, useStripe, useElements} from '@stripe/react-stripe-js'
-import axios from 'axios'
+import API from '../services/api'  // usamos API con baseURL configurada
 import {useNavigate, useParams} from 'react-router-dom'
 
-interface ConfigResp { publicKey: string }
+interface ConfigResp {
+    publicKey: string
+}
+
 type CreateIntentResp = { clientSecret: string }
 
 type PaymentRouteParams = {
@@ -62,16 +65,15 @@ const CheckoutForm: React.FC<{ clientSecret: string }> = ({clientSecret}) => {
 }
 
 const PaymentPage: React.FC = () => {
-    // extraemos params de la URL
     const {citaId, pacienteId, amount, currency} = useParams<PaymentRouteParams>()
-    const [stripePromise, setStripePromise] = useState<Promise<Stripe|null> | null>(null)
+    const [stripePromise, setStripePromise] = useState<Promise<Stripe | null> | null>(null)
     const [clientSecret, setClientSecret] = useState<string>('')
 
     useEffect(() => {
         async function init() {
             try {
 
-                const {data: {publicKey}} = await axios.get<ConfigResp>('/api/payments/config')
+                const {data: {publicKey}} = await API.get<ConfigResp>('/payments/config')
                 const stripe = await loadStripe(publicKey)
                 setStripePromise(Promise.resolve(stripe))
 
@@ -82,15 +84,15 @@ const PaymentPage: React.FC = () => {
                     citaId: Number(citaId),
                     pacienteId: Number(pacienteId)
                 }
-                const {data} = await axios.post<CreateIntentResp>('/api/payments/create-payment-intent', payload)
+                const {data} = await API.post<CreateIntentResp>('/payments/create-payment-intent', payload)
                 setClientSecret(data.clientSecret)
             } catch (err) {
                 console.error('Error inicializando pago:', err)
             }
         }
+
         init()
     }, [citaId, pacienteId, amount, currency])
-
 
     if (!stripePromise || !clientSecret) {
         return <div>Cargando método de pago…</div>
@@ -100,7 +102,7 @@ const PaymentPage: React.FC = () => {
         <div className="max-w-md mx-auto p-6">
             <h2 className="text-2xl mb-4">Paga tu cita</h2>
             <Elements stripe={stripePromise} options={{clientSecret}}>
-                <CheckoutForm clientSecret={clientSecret} />
+                <CheckoutForm clientSecret={clientSecret}/>
             </Elements>
         </div>
     )
