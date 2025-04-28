@@ -1,11 +1,10 @@
-import React, {useState} from "react";
-import {useQuery, useMutation, useQueryClient} from "@tanstack/react-query";
+import React, { useState } from "react";
+import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import API from "../services/api";
-import {Button} from "../components/ui/button";
-import {Card, CardContent, CardHeader, CardTitle} from "../components/ui/card";
-import {Table, TableBody, TableCell, TableHead, TableHeader, TableRow} from "../components/ui/table";
-import {Input} from "../components/ui/input";
-
+import { Button } from "../components/ui/button";
+import { Card, CardContent, CardHeader, CardTitle } from "../components/ui/card";
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "../components/ui/table";
+import { Input } from "../components/ui/input";
 
 interface Especialidad {
     id: number;
@@ -16,7 +15,7 @@ type EmpleadoData = {
     id: number;
     usuario: { nombre: string; apellido: string };
     cargo: { id: number; nombre: string };
-    especialidad: { id: number; nombre: string };
+    especialidad?: { id: number; nombre: string } | null;
     fechaContratacion?: string;
     salario?: number;
 };
@@ -30,7 +29,7 @@ const EmpleadosSection: React.FC = () => {
         salario: "",
     });
 
-    const {data: empleados, isLoading, error} = useQuery<EmpleadoData[]>({
+    const { data: empleados, isLoading, error } = useQuery<EmpleadoData[]>({
         queryKey: ["empleados"],
         queryFn: async () => {
             const response = await API.get("/empleados");
@@ -38,8 +37,7 @@ const EmpleadosSection: React.FC = () => {
         },
     });
 
-    // ← NUEVO: cargar especialidades
-    const {data: especialidades, isLoading: loadingEsp, error: errorEsp} = useQuery<Especialidad[]>({
+    const { data: especialidades, isLoading: loadingEsp, error: errorEsp } = useQuery<Especialidad[]>({
         queryKey: ["especialidades"],
         queryFn: async () => {
             const res = await API.get("/especialidades");
@@ -48,12 +46,12 @@ const EmpleadosSection: React.FC = () => {
     });
 
     const updateEmpleadoMutation = useMutation({
-        mutationFn: async ({id, data}: { id: number; data: any }) => {
+        mutationFn: async ({ id, data }: { id: number; data: any }) => {
             const response = await API.put(`/empleados/${id}`, data);
             return response.data;
         },
         onSuccess: () => {
-            queryClient.invalidateQueries({queryKey: ["empleados"]});
+            queryClient.invalidateQueries({ queryKey: ["empleados"] });
             setEditingEmpleado(null);
         },
     });
@@ -63,15 +61,14 @@ const EmpleadosSection: React.FC = () => {
             await API.delete(`/empleados/${id}`);
         },
         onSuccess: () => {
-            queryClient.invalidateQueries({queryKey: ["empleados"]});
+            queryClient.invalidateQueries({ queryKey: ["empleados"] });
         },
     });
-
 
     const handleEdit = (empleado: EmpleadoData) => {
         setEditingEmpleado(empleado);
         setFormData({
-            especialidadId: empleado.especialidad.id.toString(),
+            especialidadId: empleado.especialidad?.id.toString() || "",
             fechaContratacion: empleado.fechaContratacion || "",
             salario: empleado.salario?.toString() || "",
         });
@@ -88,14 +85,13 @@ const EmpleadosSection: React.FC = () => {
         e.preventDefault();
         if (!editingEmpleado) return;
 
-
         const payload = {
             cargo: editingEmpleado.cargo,
-            especialidad: {id: Number(formData.especialidadId)},
+            especialidadId: formData.especialidadId ? Number(formData.especialidadId) : null,
             fechaContratacion: formData.fechaContratacion,
             salario: formData.salario,
         };
-        updateEmpleadoMutation.mutate({id: editingEmpleado.id, data: payload});
+        updateEmpleadoMutation.mutate({ id: editingEmpleado.id, data: payload });
     };
 
     if (isLoading) return <div>Cargando empleados...</div>;
@@ -111,7 +107,6 @@ const EmpleadosSection: React.FC = () => {
                     <form onSubmit={handleSubmit} className="mb-4">
                         <h2 className="text-xl font-bold mb-4">Editar Empleado</h2>
 
-
                         <div className="mb-4">
                             <label htmlFor="especialidadId">Especialidad</label>
                             {loadingEsp ? (
@@ -123,11 +118,8 @@ const EmpleadosSection: React.FC = () => {
                                     id="especialidadId"
                                     value={formData.especialidadId}
                                     onChange={handleChange}
-                                    required
                                 >
-                                    <option value="" disabled>
-                                        Selecciona una especialidad
-                                    </option>
+                                    <option value="">— sin especialidad —</option>
                                     {especialidades!.map((e) => (
                                         <option key={e.id} value={e.id.toString()}>
                                             {e.nombre}
@@ -136,7 +128,6 @@ const EmpleadosSection: React.FC = () => {
                                 </select>
                             )}
                         </div>
-
 
                         <div className="mb-4">
                             <label htmlFor="fechaContratacion">Fecha de Contratación</label>
@@ -182,11 +173,11 @@ const EmpleadosSection: React.FC = () => {
                                         {empleado.usuario.nombre} {empleado.usuario.apellido}
                                     </TableCell>
                                     <TableCell>{empleado.cargo.nombre}</TableCell>
-                                    <TableCell>{empleado.especialidad.nombre}</TableCell>
-                                    <TableCell>{empleado.fechaContratacion || "-"}</TableCell>
                                     <TableCell>
-                                        {empleado.salario ? `$${empleado.salario}` : "-"}
+                                        {empleado.especialidad ? empleado.especialidad.nombre : "-"}
                                     </TableCell>
+                                    <TableCell>{empleado.fechaContratacion || "-"}</TableCell>
+                                    <TableCell>{empleado.salario ? `$${empleado.salario}` : "-"}</TableCell>
                                     <TableCell>
                                         <Button
                                             variant="outline"
