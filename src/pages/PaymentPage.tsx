@@ -23,7 +23,7 @@ const PaymentPage: React.FC = () => {
                     pacienteId: Number(pacienteId),
                 }
 
-                const { data } = await API.post<{ url: string }>('/api/payments/create-checkout-session', payload)
+                const { data } = await API.post<{ url: string }>('/payments/create-checkout-session', payload)
                 window.location.href = data.url
             } catch (err) {
                 console.error('Error iniciando Stripe Checkout:', err)
