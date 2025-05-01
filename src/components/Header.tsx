@@ -63,16 +63,15 @@ const Header = () => {
                     </Link>
                 </>
             )}
-            {user && user.rol?.nombre === "EMPLEADO" && user.cargo?.nombre === "Secretaria" && (
-                             <Link
-                               to="/secretaria-dashboard"
-                               className="text-gray-700 hover:text-blue-600 transition-colors"
-                               onClick={closeMobileMenu}
-                            >
-                               Dashboard Secretaria
-                              </Link>
-                        )}
-
+            {user && user.rol?.nombre === "SECRETARIA" && (
+                <Link
+                    to="/secretaria-dashboard"
+                    className="text-gray-700 hover:text-blue-600 transition-colors"
+                    onClick={closeMobileMenu}
+                >
+                    Dashboard Secretaria
+                </Link>
+            )}
             {user && user.rol?.nombre === "DOCTOR" && (
                 <Link to="/doctor-dashboard"
                       className="text-gray-700 hover:text-blue-600 transition-colors"

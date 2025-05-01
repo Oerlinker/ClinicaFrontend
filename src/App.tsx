@@ -44,7 +44,7 @@ const App = () => (
                             path="/doctor-dashboard"
                             element={
                                 <PrivateRoute requiredRole="DOCTOR">
-                                    <DoctorDashboard />
+                                    <DoctorDashboard/>
                                 </PrivateRoute>
                             }
                         />
@@ -63,8 +63,8 @@ const App = () => (
                         <Route
                             path="/secretaria-dashboard"
                             element={
-                                <PrivateRoute requiredRole="EMPLEADO">
-                                    <SecretariaDashboard />
+                                <PrivateRoute requiredRole="SECRETARIA">
+                                    <SecretariaDashboard/>
                                 </PrivateRoute>}/>
                         <Route
                             path="/admin-dashboard"

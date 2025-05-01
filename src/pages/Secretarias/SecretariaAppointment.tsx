@@ -17,10 +17,7 @@ type Usuario = { id: number; nombre: string; apellido: string };
 
 const SecretariaAppointment: React.FC = () => {
     const {user} = useAuth();
-    const isSecretaria =
-        !!user &&
-        user.rol?.nombre === "EMPLEADO" &&
-        user.cargo?.nombre === "Secretaria";
+    const isSecretaria = Boolean(user && user.rol?.nombre === "SECRETARIA");
 
     const navigate = useNavigate();
     const qc = useQueryClient();
@@ -39,7 +36,6 @@ const SecretariaAppointment: React.FC = () => {
             API.get<Empleado[]>("/empleados/doctores").then((r) => r.data),
         enabled: isSecretaria,
     });
-
     const {data: pacientes = []}: UseQueryResult<Usuario[], Error> = useQuery<Usuario[], Error>({
         queryKey: ["pacientes"],
         queryFn: () =>
