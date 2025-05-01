@@ -1,5 +1,5 @@
-import React, { useState, useEffect } from "react";
-import { useQuery } from "@tanstack/react-query";
+import React, {useState, useEffect} from "react";
+import {useQuery} from "@tanstack/react-query";
 import API from "../services/api";
 import {
     Table,
@@ -9,12 +9,12 @@ import {
     TableHeader,
     TableRow,
 } from "../components/ui/table";
-import { Card, CardContent, CardHeader, CardTitle } from "../components/ui/card";
-import { Input } from "../components/ui/input";
-import { Label } from "../components/ui/label";
-import { Button } from "../components/ui/button";
-import { format, parseISO } from "date-fns";
-import { useToast } from "../hooks/use-toast";
+import {Card, CardContent, CardHeader, CardTitle} from "../components/ui/card";
+import {Input} from "../components/ui/input";
+import {Label} from "../components/ui/label";
+import {Button} from "../components/ui/button";
+import {format, parseISO} from "date-fns";
+import {useToast} from "../hooks/use-toast";
 import * as XLSX from "xlsx";
 import jsPDF from "jspdf";
 import "jspdf-autotable";
@@ -24,6 +24,7 @@ interface Bitacora {
     usuario: { id: number };
     fecha: string;
     accion: string;
+    ip: string;
 }
 
 const AdminBitacora: React.FC = () => {
@@ -31,9 +32,9 @@ const AdminBitacora: React.FC = () => {
     const [desde, setDesde] = useState<string>("");   // yyyy-MM-dd
     const [hasta, setHasta] = useState<string>("");
     const [bitacoras, setBitacoras] = useState<Bitacora[]>([]);
-    const { toast } = useToast();
+    const {toast} = useToast();
 
-    const { data, isLoading, error, refetch } = useQuery({
+    const {data, isLoading, error, refetch} = useQuery({
         queryKey: ["bitacoras", userId, desde, hasta],
         queryFn: async () => {
 
@@ -68,6 +69,7 @@ const AdminBitacora: React.FC = () => {
                 ID: b.id,
                 "Usuario ID": b.usuario.id,
                 Fecha: format(parseISO(b.fecha), "dd/MM/yyyy HH:mm:ss"),
+                IP: b.ip || 'N/A',
                 Acción: b.accion,
             }))
         );
@@ -84,6 +86,7 @@ const AdminBitacora: React.FC = () => {
                 b.id,
                 b.usuario.id,
                 format(parseISO(b.fecha), "dd/MM/yyyy HH:mm:ss"),
+                b.ip || 'N/A',
                 b.accion,
             ]),
         });
@@ -153,6 +156,7 @@ const AdminBitacora: React.FC = () => {
                                     <TableHead>ID</TableHead>
                                     <TableHead>Usuario ID</TableHead>
                                     <TableHead>Fecha</TableHead>
+                                    <TableHead>IP</TableHead>
                                     <TableHead>Acción</TableHead>
                                 </TableRow>
                             </TableHeader>
@@ -164,6 +168,7 @@ const AdminBitacora: React.FC = () => {
                                         <TableCell>
                                             {format(parseISO(b.fecha), "dd/MM/yyyy HH:mm:ss")}
                                         </TableCell>
+                                        <TableCell>{b.ip || 'N/A'}</TableCell>
                                         <TableCell>{b.accion}</TableCell>
                                     </TableRow>
                                 ))}
