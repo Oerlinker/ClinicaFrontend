@@ -252,11 +252,10 @@ const EmpleadoRegister: React.FC = () => {
                     />
                 </div>
 
-
                 <Button
-                    type="submit"
-                    className="w-full bg-blue-600 hover:bg-blue-700"
-                >
+                         type="submit"
+                         className="w-full bg-blue-600 hover:bg-blue-700"
+                         >
                     Registrar Empleado
                 </Button>
             </form>

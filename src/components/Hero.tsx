@@ -16,7 +16,7 @@ const Hero = () => {
                         vanguardia..
                     </p>
                     <div className="flex space-x-4">
-                        <Link to="/appointment">
+                        <Link to="/login">
                             <Button className="bg-blue-600 text-white hover:bg-blue-700 px-6 py-2">
                                 Reservar Cita
                             </Button>
