@@ -18,6 +18,7 @@ import NoPermissionPage from './pages/NoPermissionPage';
 import CitaReport from "./pages/Reportes/CitaReport";
 import DoctorDashboard from "./pages/Doctores/DoctorDashboard";
 import SecretariaDashboard from "./pages/Secretarias/SecretariaDashboard";
+import SecretariaAppointment from "./pages/Secretarias/SecretariaAppointment";
 
 const queryClient = new QueryClient();
 
@@ -66,6 +67,14 @@ const App = () => (
                                 <PrivateRoute requiredRole="SECRETARIA">
                                     <SecretariaDashboard/>
                                 </PrivateRoute>}/>
+                        <Route
+                            path="/secretaria-dashboard/nueva-cita"
+                            element={
+                                <PrivateRoute requiredRole="SECRETARIA">
+                                    <SecretariaAppointment />
+                                </PrivateRoute>
+                            }
+                        />
                         <Route
                             path="/admin-dashboard"
                             element={
