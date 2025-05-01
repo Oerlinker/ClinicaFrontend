@@ -32,13 +32,13 @@ const Header = () => {
 
     const renderNavLinks = () => (
         <>
-            <Link to="/" 
+            <Link to="/"
                   className="text-gray-700 hover:text-blue-600 transition-colors"
                   onClick={closeMobileMenu}>
                 Home
             </Link>
 
-         
+
             {(!user || (user && user.rol?.nombre !== "ADMIN")) && (
                 <>
                     <Link to="/services"
@@ -46,12 +46,12 @@ const Header = () => {
                           onClick={closeMobileMenu}>
                         Servicios
                     </Link>
-                    <Link to="/doctors" 
+                    <Link to="/doctors"
                           className="text-gray-700 hover:text-blue-600 transition-colors"
                           onClick={closeMobileMenu}>
                         Nuestros Doctores
                     </Link>
-                    <Link to="/about" 
+                    <Link to="/about"
                           className="text-gray-700 hover:text-blue-600 transition-colors"
                           onClick={closeMobileMenu}>
                         Sobre Nosotros
@@ -64,9 +64,16 @@ const Header = () => {
                 </>
             )}
 
+            {user && user.rol?.nombre === "DOCTOR" && (
+                <Link to="/doctor-dashboard"
+                      className="text-gray-700 hover:text-blue-600 transition-colors"
+                      onClick={closeMobileMenu}>
+                    Dashboard Doctor
+                </Link>
+            )}
 
             {user && user.rol?.nombre === "ADMIN" && (
-                <Link to="/admin-dashboard" 
+                <Link to="/admin-dashboard"
                       className="text-gray-700 hover:text-blue-600 transition-colors"
                       onClick={closeMobileMenu}>
                     Dashboard Admin
@@ -97,8 +104,8 @@ const Header = () => {
                             strokeLinejoin="round"
                             className="mr-2 h-6 w-6"
                         >
-                            <path d="M2 12s3-7 10-7 10 7 10 7-3 7-10 7-10-7-10-7Z" />
-                            <circle cx="12" cy="12" r="3" />
+                            <path d="M2 12s3-7 10-7 10 7 10 7-3 7-10 7-10-7-10-7Z"/>
+                            <circle cx="12" cy="12" r="3"/>
                         </svg>
                         Clinica Horus
                     </Link>
@@ -137,12 +144,12 @@ const Header = () => {
 
 
                 {isMobile && (
-                    <button 
+                    <button
                         onClick={toggleMobileMenu}
                         className="md:hidden p-2 text-blue-600"
                         aria-label="Toggle menu"
                     >
-                        {mobileMenuOpen ? <X size={24} /> : <Menu size={24} />}
+                        {mobileMenuOpen ? <X size={24}/> : <Menu size={24}/>}
                     </button>
                 )}
             </div>
@@ -155,7 +162,7 @@ const Header = () => {
                         <div className="flex flex-col space-y-3">
                             {renderNavLinks()}
                         </div>
-                        
+
 
                         <div className="pt-3 border-t border-gray-200">
                             {user ? (
@@ -168,7 +175,8 @@ const Header = () => {
                             ) : (
                                 <div className="flex flex-col space-y-2">
                                     <Link to="/login" onClick={closeMobileMenu}>
-                                        <Button variant="outline" className="w-full border-blue-600 text-blue-600 hover:bg-blue-600 hover:text-white">
+                                        <Button variant="outline"
+                                                className="w-full border-blue-600 text-blue-600 hover:bg-blue-600 hover:text-white">
                                             Login
                                         </Button>
                                     </Link>

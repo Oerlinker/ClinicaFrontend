@@ -53,7 +53,7 @@ const AdminDashboard: React.FC = () => {
                         </AccordionContent>
                     </AccordionItem>
 
-                    {/* ← Nueva sección */}
+
                     <AccordionItem value="reportes">
                         <AccordionTrigger>Reportes de Citas</AccordionTrigger>
                         <AccordionContent>

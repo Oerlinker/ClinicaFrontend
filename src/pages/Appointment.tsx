@@ -59,7 +59,11 @@ const Appointment: React.FC = () => {
 
         if (!formData.fecha || !formData.hora || !formData.tipo || !formData.doctorId) {
             console.error("Todos los campos son obligatorios.");
-            alert("Por favor, completa todos los campos antes de enviar.");
+            toast({
+                title: "Error",
+                description: "Por favor, completa todos los campos antes de enviar.",
+                variant: "destructive",
+            });
             return;
         }
 

@@ -16,6 +16,9 @@ import PaymentPage from "./pages/PaymentPage";
 import PaymentSuccessPage from "./pages/PaymentSuccessPage";
 import NoPermissionPage from './pages/NoPermissionPage';
 import CitaReport from "./pages/Reportes/CitaReport";
+import DoctorAppointments from "./pages/Doctores/DoctorAppointments";
+import AppointmentsPage from "./pages/AppointmentPage";
+import DoctorDashboard from "./pages/Doctores/DoctorDashboard";
 
 const queryClient = new QueryClient();
 
@@ -30,19 +33,40 @@ const App = () => (
                         <Route path="/" element={<Index/>}/>
                         <Route path="/login" element={<Login/>}/>
                         <Route path="/register" element={<Register/>}/>
-                        <Route path="/Appointment" element={<Appointment/>}/>
                         <Route path="/payment/:citaId/:pacienteId/:amount/:currency" element={<PaymentRoute/>}/>
-                        <Route path="/pago-exitoso" element={<PaymentSuccessPage />} />
-                        <Route path="/no-permission" element={<NoPermissionPage />} />
-                        <Route path="/reportes/citas" element={<CitaReport />} />
-                        <Route path="/dashboard" element={
-                            <PrivateRoute>
-                                <UserDashboard/>
-                            </PrivateRoute>}/>
-                        <Route path="/admin-dashboard" element={
-                            <PrivateRoute>
-                                <AdminDashboard/>
-                            </PrivateRoute>}/>
+                        <Route path="/pago-exitoso" element={<PaymentSuccessPage/>}/>
+                        <Route path="/no-permission" element={<NoPermissionPage/>}/>
+                        <Route path="/reportes/citas"
+                               element={
+                                   <PrivateRoute requiredRole="ADMIN">
+                                       <CitaReport/>
+                                   </PrivateRoute>}/>
+                        <Route
+                            path="/doctor-dashboard"
+                            element={
+                                <PrivateRoute requiredRole="DOCTOR">
+                                    <DoctorDashboard />
+                                </PrivateRoute>
+                            }
+                        />
+                        <Route
+                            path="/Appointment"
+                            element={
+                                <PrivateRoute requiredRole="PACIENTE">
+                                    <Appointment/>
+                                </PrivateRoute>}/>
+                        <Route
+                            path="/dashboard"
+                            element={
+                                <PrivateRoute requiredRole="PACIENTE">
+                                    <UserDashboard/>
+                                </PrivateRoute>}/>
+                        <Route
+                            path="/admin-dashboard"
+                            element={
+                                <PrivateRoute requiredRole="ADMIN">
+                                    <AdminDashboard/>
+                                </PrivateRoute>}/>
                         <Route path="*" element={<NotFound/>}/>
                     </Routes>
                 </BrowserRouter>
@@ -54,7 +78,7 @@ const App = () => (
 function PaymentRoute() {
     return (
         <PrivateRoute>
-            <PaymentPage />
+            <PaymentPage/>
         </PrivateRoute>
     );
 }
