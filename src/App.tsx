@@ -16,9 +16,8 @@ import PaymentPage from "./pages/PaymentPage";
 import PaymentSuccessPage from "./pages/PaymentSuccessPage";
 import NoPermissionPage from './pages/NoPermissionPage';
 import CitaReport from "./pages/Reportes/CitaReport";
-import DoctorAppointments from "./pages/Doctores/DoctorAppointments";
-import AppointmentsPage from "./pages/AppointmentPage";
 import DoctorDashboard from "./pages/Doctores/DoctorDashboard";
+import SecretariaDashboard from "./pages/Secretarias/SecretariaDashboard";
 
 const queryClient = new QueryClient();
 
@@ -60,6 +59,12 @@ const App = () => (
                             element={
                                 <PrivateRoute requiredRole="PACIENTE">
                                     <UserDashboard/>
+                                </PrivateRoute>}/>
+                        <Route
+                            path="/secretaria-dashboard"
+                            element={
+                                <PrivateRoute requiredRole="EMPLEADO">
+                                    <SecretariaDashboard />
                                 </PrivateRoute>}/>
                         <Route
                             path="/admin-dashboard"

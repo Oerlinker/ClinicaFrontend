@@ -5,6 +5,10 @@ interface Rol {
     id: number;
     nombre: string;
 }
+interface Cargo {
+    id: number;
+    nombre: string;
+}
 interface Usuario {
     token: string;
     id: number;
@@ -13,6 +17,7 @@ interface Usuario {
     nombre: string;
     apellido: string;
     rol: Rol;
+    cargo: Cargo;
 }
 
 

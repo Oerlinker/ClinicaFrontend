@@ -7,7 +7,7 @@ import {
     TableBody, TableCell
 } from '../components/ui/table';
 import {Button} from '../components/ui/button';
-import {format, addWeeks, parseISO} from 'date-fns';
+import {format, addWeeks, parseISO, subWeeks} from 'date-fns';
 import {Link} from 'react-router-dom';
 import {useToast} from '../hooks/use-toast';
 
@@ -36,19 +36,17 @@ const AppointmentsPage: React.FC = () => {
     useEffect(() => {
         if (data) {
             const today = new Date();
-            const oneWeekAway = addWeeks(today, 1);
+            const oneWeekAgo = subWeeks(today, 1);
 
             const filteredCitas = data.filter(cita => {
                 const citaDate = parseISO(cita.fecha);
-                return citaDate <= oneWeekAway;
+                return citaDate >= oneWeekAgo || citaDate > today;
             });
 
             setCitas(filteredCitas);
 
-
             const hasAgendadaCitas = filteredCitas.some(cita => cita.estado === 'AGENDADA');
             setShowActionColumn(hasAgendadaCitas);
-
         }
     }, [data]);
 
