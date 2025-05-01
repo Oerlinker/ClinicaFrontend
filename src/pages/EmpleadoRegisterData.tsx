@@ -1,9 +1,10 @@
-import React, { useState } from "react";
-import { useQuery } from "@tanstack/react-query";
+import React, {useState} from "react";
+import {useQuery} from "@tanstack/react-query";
 import API from "../services/api";
-import { Button } from "../components/ui/button";
-import { Input } from "../components/ui/input";
-import { Label } from "../components/ui/label";
+import {Button} from "../components/ui/button";
+import {Input} from "../components/ui/input";
+import {Label} from "../components/ui/label";
+import {useToast} from "../hooks/use-toast";
 
 interface Cargo {
     id: number;
@@ -27,9 +28,10 @@ interface EmpleadoRegisterData {
 }
 
 interface EmpleadoRegisterProps {
-     onSuccess: () => void;
-    }
-const EmpleadoRegister: React.FC<EmpleadoRegisterProps> = ({ onSuccess }) => {
+    onSuccess: () => void;
+}
+
+const EmpleadoRegister: React.FC<EmpleadoRegisterProps> = ({onSuccess}) => {
     const [formData, setFormData] = useState<EmpleadoRegisterData>({
         nombre: "",
         apellido: "",
@@ -41,6 +43,7 @@ const EmpleadoRegister: React.FC<EmpleadoRegisterProps> = ({ onSuccess }) => {
         salario: "",
     });
 
+    const {toast} = useToast();
 
     const {
         data: cargos,
@@ -54,7 +57,6 @@ const EmpleadoRegister: React.FC<EmpleadoRegisterProps> = ({ onSuccess }) => {
         },
     });
 
-
     const {
         data: especialidades,
         isLoading: loadingEsp,
@@ -66,7 +68,6 @@ const EmpleadoRegister: React.FC<EmpleadoRegisterProps> = ({ onSuccess }) => {
             return res.data;
         },
     });
-
 
     const selectedCargo = cargos?.find(
         (c) => c.id.toString() === formData.cargoId
@@ -110,12 +111,24 @@ const EmpleadoRegister: React.FC<EmpleadoRegisterProps> = ({ onSuccess }) => {
             };
             const response = await API.post("/empleados", payload);
             console.log("Empleado registrado:", response.data);
+            toast({
+                title: "Empleado registrado exitosamente!",
+                description: "El empleado ha sido registrado correctamente.",
+            });
             onSuccess();
         } catch (err: any) {
             console.error(
                 "Error al registrar empleado:",
                 err.response?.data || err.message
             );
+            toast({
+                title: "Error al registrar empleado",
+                description:
+                    err.response?.data?.message ||
+                    err.message ||
+                    "Ocurrió un error al registrar el empleado.",
+                variant: "destructive",
+            });
         }
     };
 
@@ -126,7 +139,6 @@ const EmpleadoRegister: React.FC<EmpleadoRegisterProps> = ({ onSuccess }) => {
                 className="max-w-md mx-auto p-4 bg-white shadow rounded"
             >
                 <h2 className="text-xl font-bold mb-4">Registrar Empleado</h2>
-
 
                 <div className="mb-4">
                     <Label htmlFor="nombre">Nombre</Label>
@@ -139,7 +151,6 @@ const EmpleadoRegister: React.FC<EmpleadoRegisterProps> = ({ onSuccess }) => {
                     />
                 </div>
 
-
                 <div className="mb-4">
                     <Label htmlFor="apellido">Apellido</Label>
                     <Input
@@ -150,7 +161,6 @@ const EmpleadoRegister: React.FC<EmpleadoRegisterProps> = ({ onSuccess }) => {
                         required
                     />
                 </div>
-
 
                 <div className="mb-4">
                     <Label htmlFor="email">Email</Label>
@@ -164,7 +174,6 @@ const EmpleadoRegister: React.FC<EmpleadoRegisterProps> = ({ onSuccess }) => {
                     />
                 </div>
 
-
                 <div className="mb-4">
                     <Label htmlFor="password">Contraseña</Label>
                     <Input
@@ -175,7 +184,6 @@ const EmpleadoRegister: React.FC<EmpleadoRegisterProps> = ({ onSuccess }) => {
                         required
                     />
                 </div>
-
 
                 <div className="mb-4">
                     <Label htmlFor="cargoId">Cargo</Label>
@@ -201,7 +209,6 @@ const EmpleadoRegister: React.FC<EmpleadoRegisterProps> = ({ onSuccess }) => {
                         </select>
                     )}
                 </div>
-
 
                 {mostrarEspecialidad && (
                     <div className="mb-4">
@@ -230,7 +237,6 @@ const EmpleadoRegister: React.FC<EmpleadoRegisterProps> = ({ onSuccess }) => {
                     </div>
                 )}
 
-
                 <div className="mb-4">
                     <Label htmlFor="fechaContratacion">
                         Fecha de Contratación (YYYY-MM-DD)
@@ -242,7 +248,6 @@ const EmpleadoRegister: React.FC<EmpleadoRegisterProps> = ({ onSuccess }) => {
                         onChange={handleChange}
                     />
                 </div>
-
 
                 <div className="mb-4">
                     <Label htmlFor="salario">Salario</Label>
@@ -257,9 +262,9 @@ const EmpleadoRegister: React.FC<EmpleadoRegisterProps> = ({ onSuccess }) => {
                 </div>
 
                 <Button
-                         type="submit"
-                         className="w-full bg-blue-600 hover:bg-blue-700"
-                         >
+                    type="submit"
+                    className="w-full bg-blue-600 hover:bg-blue-700"
+                >
                     Registrar Empleado
                 </Button>
             </form>

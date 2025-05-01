@@ -1,10 +1,11 @@
-import React, { useState } from "react";
-import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
+import React, {useState} from "react";
+import {useQuery, useMutation, useQueryClient} from "@tanstack/react-query";
 import API from "../services/api";
-import { Button } from "../components/ui/button";
-import { Card, CardContent, CardHeader, CardTitle } from "../components/ui/card";
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "../components/ui/table";
-import { Input } from "../components/ui/input";
+import {Button} from "../components/ui/button";
+import {Card, CardContent, CardHeader, CardTitle} from "../components/ui/card";
+import {Table, TableBody, TableCell, TableHead, TableHeader, TableRow} from "../components/ui/table";
+import {Input} from "../components/ui/input";
+import {useToast} from "../hooks/use-toast";
 
 interface Especialidad {
     id: number;
@@ -28,8 +29,9 @@ const EmpleadosSection: React.FC = () => {
         fechaContratacion: "",
         salario: "",
     });
+    const {toast} = useToast();
 
-    const { data: empleados, isLoading, error } = useQuery<EmpleadoData[]>({
+    const {data: empleados, isLoading, error} = useQuery<EmpleadoData[]>({
         queryKey: ["empleados"],
         queryFn: async () => {
             const response = await API.get("/empleados");
@@ -37,7 +39,7 @@ const EmpleadosSection: React.FC = () => {
         },
     });
 
-    const { data: especialidades, isLoading: loadingEsp, error: errorEsp } = useQuery<Especialidad[]>({
+    const {data: especialidades, isLoading: loadingEsp, error: errorEsp} = useQuery<Especialidad[]>({
         queryKey: ["especialidades"],
         queryFn: async () => {
             const res = await API.get("/especialidades");
@@ -46,13 +48,24 @@ const EmpleadosSection: React.FC = () => {
     });
 
     const updateEmpleadoMutation = useMutation({
-        mutationFn: async ({ id, data }: { id: number; data: any }) => {
+        mutationFn: async ({id, data}: { id: number; data: any }) => {
             const response = await API.put(`/empleados/${id}`, data);
             return response.data;
         },
         onSuccess: () => {
-            queryClient.invalidateQueries({ queryKey: ["empleados"] });
+            queryClient.invalidateQueries({queryKey: ["empleados"]});
             setEditingEmpleado(null);
+            toast({
+                title: "Empleado actualizado",
+                description: "El empleado ha sido actualizado exitosamente.",
+            });
+        },
+        onError: (error: any) => {
+            toast({
+                title: "Error al actualizar empleado",
+                description: error.message || "Ocurrió un error al actualizar el empleado.",
+                variant: "destructive",
+            });
         },
     });
 
@@ -61,7 +74,18 @@ const EmpleadosSection: React.FC = () => {
             await API.delete(`/empleados/${id}`);
         },
         onSuccess: () => {
-            queryClient.invalidateQueries({ queryKey: ["empleados"] });
+            queryClient.invalidateQueries({queryKey: ["empleados"]});
+            toast({
+                title: "Empleado eliminado",
+                description: "El empleado ha sido eliminado exitosamente.",
+            });
+        },
+        onError: (error: any) => {
+            toast({
+                title: "Error al eliminar empleado",
+                description: error.message || "Ocurrió un error al eliminar el empleado.",
+                variant: "destructive",
+            });
         },
     });
 
@@ -91,7 +115,7 @@ const EmpleadosSection: React.FC = () => {
             fechaContratacion: formData.fechaContratacion,
             salario: formData.salario,
         };
-        updateEmpleadoMutation.mutate({ id: editingEmpleado.id, data: payload });
+        updateEmpleadoMutation.mutate({id: editingEmpleado.id, data: payload});
     };
 
     if (isLoading) return <div>Cargando empleados...</div>;
@@ -120,9 +144,9 @@ const EmpleadosSection: React.FC = () => {
                                     onChange={handleChange}
                                 >
                                     <option value="">— sin especialidad —</option>
-                                    {especialidades!.map((e) => (
-                                        <option key={e.id} value={e.id.toString()}>
-                                            {e.nombre}
+                                    {especialidades?.map((especialidad) => (
+                                        <option key={especialidad.id} value={especialidad.id.toString()}>
+                                            {especialidad.nombre}
                                         </option>
                                     ))}
                                 </select>

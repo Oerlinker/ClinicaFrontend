@@ -1,11 +1,14 @@
-import React, { useState } from "react";
-import { Button } from "../components/ui/button";
+import React, {useState} from "react";
+import {Button} from "../components/ui/button";
 import EmpleadoSection from "./EmpleadoSection";
 import EmpleadoRegister from "./EmpleadoRegisterData";
 
 const AdminEmpleadosDashboard: React.FC = () => {
-
     const [view, setView] = useState<"list" | "register">("list");
+
+    const handleRegistrationSuccess = () => {
+        setView("list");
+    };
 
     return (
         <div className="min-h-screen bg-gray-50">
@@ -25,13 +28,13 @@ const AdminEmpleadosDashboard: React.FC = () => {
                         Registrar Empleado
                     </Button>
                 </div>
-                               {view === "list" ? (
-                                   <EmpleadoSection />
-                              ) : (
-                                   <EmpleadoRegister
-                                    onSuccess={() => setView("list")}  // ← pasamos callback
-                                />
-                             )}
+                {view === "list" ? (
+                    <EmpleadoSection/>
+                ) : (
+                    <EmpleadoRegister
+                        onSuccess={handleRegistrationSuccess}
+                    />
+                )}
             </div>
         </div>
     );
