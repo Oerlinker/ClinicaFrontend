@@ -1,17 +1,16 @@
-import React, {useState} from "react";
-import {useQuery} from "@tanstack/react-query";
+import React, { useState } from "react";
+import { useQuery } from "@tanstack/react-query";
 import API from "../services/api";
-import {Button} from "../components/ui/button";
-import {Input} from "../components/ui/input";
-import {Label} from "../components/ui/label";
+import { Button } from "../components/ui/button";
+import { Input } from "../components/ui/input";
+import { Label } from "../components/ui/label";
 
-
-interface Especialidad {
+interface Cargo {
     id: number;
     nombre: string;
 }
 
-interface Cargo {
+interface Especialidad {
     id: number;
     nombre: string;
 }
@@ -22,7 +21,7 @@ interface EmpleadoRegisterData {
     email: string;
     password: string;
     cargoId: string;
-    especialidadId: string;
+    especialidadId?: string;
     fechaContratacion?: string;
     salario?: string;
 }
@@ -39,11 +38,16 @@ const EmpleadoRegister: React.FC = () => {
         salario: "",
     });
 
-    const {data: cargos, isLoading, error} = useQuery<Cargo[]>({
+
+    const {
+        data: cargos,
+        isLoading: loadingCargos,
+        error: errorCargos,
+    } = useQuery<Cargo[]>({
         queryKey: ["cargos"],
         queryFn: async () => {
-            const response = await API.get("/cargos");
-            return response.data;
+            const res = await API.get("/cargos");
+            return res.data;
         },
     });
 
@@ -51,7 +55,7 @@ const EmpleadoRegister: React.FC = () => {
     const {
         data: especialidades,
         isLoading: loadingEsp,
-        error: errorEsp
+        error: errorEsp,
     } = useQuery<Especialidad[]>({
         queryKey: ["especialidades"],
         queryFn: async () => {
@@ -60,7 +64,16 @@ const EmpleadoRegister: React.FC = () => {
         },
     });
 
-    const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
+
+    const selectedCargo = cargos?.find(
+        (c) => c.id.toString() === formData.cargoId
+    );
+    const mostrarEspecialidad =
+        selectedCargo?.nombre.toLowerCase() === "médico";
+
+    const handleChange = (
+        e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>
+    ) => {
         setFormData({
             ...formData,
             [e.target.id]: e.target.value,
@@ -69,53 +82,102 @@ const EmpleadoRegister: React.FC = () => {
 
     const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault();
+
         if (!formData.cargoId) {
             console.error("No se ha seleccionado un cargo");
             return;
         }
+        if (mostrarEspecialidad && !formData.especialidadId) {
+            console.error("El cargo Médico requiere una especialidad");
+            return;
+        }
+
         try {
-            const response = await API.post("/empleados", {
+            const payload = {
                 nombre: formData.nombre,
                 apellido: formData.apellido,
                 email: formData.email,
                 password: formData.password,
                 cargoId: Number(formData.cargoId),
-                especialidadId: Number(formData.especialidadId),
+                especialidadId: mostrarEspecialidad
+                    ? Number(formData.especialidadId)
+                    : null,
                 fechaContratacion: formData.fechaContratacion,
                 salario: formData.salario,
-            });
+            };
+            const response = await API.post("/empleados", payload);
             console.log("Empleado registrado:", response.data);
         } catch (err: any) {
-            console.error("Error al registrar empleado:", err.response?.data || err.message);
+            console.error(
+                "Error al registrar empleado:",
+                err.response?.data || err.message
+            );
         }
     };
 
     return (
         <div className="min-h-screen bg-gray-50">
-            <form onSubmit={handleSubmit} className="max-w-md mx-auto p-4 bg-white shadow rounded">
+            <form
+                onSubmit={handleSubmit}
+                className="max-w-md mx-auto p-4 bg-white shadow rounded"
+            >
                 <h2 className="text-xl font-bold mb-4">Registrar Empleado</h2>
-                {/* ... campos de nombre, apellido, email, password, cargo ... */}
+
+
                 <div className="mb-4">
                     <Label htmlFor="nombre">Nombre</Label>
-                    <Input id="nombre" placeholder="Nombre" onChange={handleChange} required/>
+                    <Input
+                        id="nombre"
+                        placeholder="Nombre"
+                        value={formData.nombre}
+                        onChange={handleChange}
+                        required
+                    />
                 </div>
+
+
                 <div className="mb-4">
                     <Label htmlFor="apellido">Apellido</Label>
-                    <Input id="apellido" placeholder="Apellido" onChange={handleChange} required/>
+                    <Input
+                        id="apellido"
+                        placeholder="Apellido"
+                        value={formData.apellido}
+                        onChange={handleChange}
+                        required
+                    />
                 </div>
+
+
                 <div className="mb-4">
                     <Label htmlFor="email">Email</Label>
-                    <Input id="email" type="email" placeholder="correo@ejemplo.com" onChange={handleChange} required/>
+                    <Input
+                        id="email"
+                        type="email"
+                        placeholder="correo@ejemplo.com"
+                        value={formData.email}
+                        onChange={handleChange}
+                        required
+                    />
                 </div>
+
+
                 <div className="mb-4">
                     <Label htmlFor="password">Contraseña</Label>
-                    <Input id="password" type="password" onChange={handleChange} required/>
+                    <Input
+                        id="password"
+                        type="password"
+                        value={formData.password}
+                        onChange={handleChange}
+                        required
+                    />
                 </div>
+
+
                 <div className="mb-4">
                     <Label htmlFor="cargoId">Cargo</Label>
-                    {isLoading ? (
+                    {loadingCargos ? (
                         <p>Cargando cargos...</p>
-                    ) : error ? (
+                    ) : errorCargos ? (
                         <p>Error al cargar cargos</p>
                     ) : (
                         <select
@@ -136,42 +198,65 @@ const EmpleadoRegister: React.FC = () => {
                     )}
                 </div>
 
-                {/* ← NUEVO: selector de especialidades */}
-                <div className="mb-4">
-                    <Label htmlFor="especialidadId">Especialidad</Label>
-                    {loadingEsp ? (
-                        <p>Cargando especialidades…</p>
-                    ) : errorEsp ? (
-                        <p>Error cargando especialidades</p>
-                    ) : (
-                        <select
-                            id="especialidadId"
-                            value={formData.especialidadId}
-                            onChange={handleChange}
-                            required
-                        >
-                            <option value="" disabled>
-                                Selecciona una especialidad
-                            </option>
-                            {especialidades!.map((e) => (
-                                <option key={e.id} value={e.id.toString()}>
-                                    {e.nombre}
+
+                {mostrarEspecialidad && (
+                    <div className="mb-4">
+                        <Label htmlFor="especialidadId">Especialidad</Label>
+                        {loadingEsp ? (
+                            <p>Cargando especialidades...</p>
+                        ) : errorEsp ? (
+                            <p>Error al cargar especialidades</p>
+                        ) : (
+                            <select
+                                id="especialidadId"
+                                value={formData.especialidadId}
+                                onChange={handleChange}
+                                required
+                            >
+                                <option value="" disabled>
+                                    Seleccione una especialidad
                                 </option>
-                            ))}
-                        </select>
-                    )}
-                </div>
+                                {especialidades?.map((e) => (
+                                    <option key={e.id} value={e.id.toString()}>
+                                        {e.nombre}
+                                    </option>
+                                ))}
+                            </select>
+                        )}
+                    </div>
+                )}
+
 
                 <div className="mb-4">
-                    <Label htmlFor="fechaContratacion">Fecha de Contratación (YYYY-MM-DD)</Label>
-                    <Input id="fechaContratacion" type="date" onChange={handleChange}/>
+                    <Label htmlFor="fechaContratacion">
+                        Fecha de Contratación (YYYY-MM-DD)
+                    </Label>
+                    <Input
+                        id="fechaContratacion"
+                        type="date"
+                        value={formData.fechaContratacion}
+                        onChange={handleChange}
+                    />
                 </div>
+
+
                 <div className="mb-4">
                     <Label htmlFor="salario">Salario</Label>
-                    <Input id="salario" type="number" step="0.01" placeholder="0.00" onChange={handleChange}/>
+                    <Input
+                        id="salario"
+                        type="number"
+                        step="0.01"
+                        placeholder="0.00"
+                        value={formData.salario}
+                        onChange={handleChange}
+                    />
                 </div>
 
-                <Button type="submit" className="w-full bg-blue-600 hover:bg-blue-700">
+
+                <Button
+                    type="submit"
+                    className="w-full bg-blue-600 hover:bg-blue-700"
+                >
                     Registrar Empleado
                 </Button>
             </form>

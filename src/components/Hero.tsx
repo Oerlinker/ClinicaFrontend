@@ -21,7 +21,7 @@ const Hero = () => {
                                 Reservar Cita
                             </Button>
                         </Link>
-                        <Link to="/services">
+                        <Link to="/register">
                             <Button variant="outline" className="border-blue-600 text-blue-600 hover:bg-blue-50">
                                 Nuestros Servicios
                             </Button>
