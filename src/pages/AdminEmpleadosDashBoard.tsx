@@ -25,7 +25,13 @@ const AdminEmpleadosDashboard: React.FC = () => {
                         Registrar Empleado
                     </Button>
                 </div>
-                {view === "list" ? <EmpleadoSection /> : <EmpleadoRegister />}
+                               {view === "list" ? (
+                                   <EmpleadoSection />
+                              ) : (
+                                   <EmpleadoRegister
+                                    onSuccess={() => setView("list")}  // ← pasamos callback
+                                />
+                             )}
             </div>
         </div>
     );

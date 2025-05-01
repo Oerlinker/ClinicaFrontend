@@ -26,7 +26,10 @@ interface EmpleadoRegisterData {
     salario?: string;
 }
 
-const EmpleadoRegister: React.FC = () => {
+interface EmpleadoRegisterProps {
+     onSuccess: () => void;
+    }
+const EmpleadoRegister: React.FC<EmpleadoRegisterProps> = ({ onSuccess }) => {
     const [formData, setFormData] = useState<EmpleadoRegisterData>({
         nombre: "",
         apellido: "",
@@ -107,6 +110,7 @@ const EmpleadoRegister: React.FC = () => {
             };
             const response = await API.post("/empleados", payload);
             console.log("Empleado registrado:", response.data);
+            onSuccess();
         } catch (err: any) {
             console.error(
                 "Error al registrar empleado:",
