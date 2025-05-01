@@ -144,12 +144,12 @@ const SecretariaAppointment: React.FC = () => {
                             onChange={handleChange}
                             className="w-full"
                         >
-                            <option value="CONSULTA">Consulta</option>
-                            <option value="RUTINA">Rutina</option>
-                            <option value="CONTROL">Control</option>
-                            <option value="PEDIÁTRICA">Pediátrica</option>
-                            <option value="PRE-QUIRÚRGICA">Pre-quirúrgica</option>
-                            <option value="POST-QUIRÚRGICA">Post-quirúrgica</option>
+                            <option value="Consulta">Consulta</option>
+                            <option value="Rutina">Rutina</option>
+                            <option value="Control">Control</option>
+                            <option value="Pediátrica">Pediátrica</option>
+                            <option value="Pre-Quirúrgica">Pre-quirúrgica</option>
+                            <option value="Post-Quirúrgica">Post-quirúrgica</option>
                         </select>
                     </div>
                     <Button type="submit" className="w-full">
