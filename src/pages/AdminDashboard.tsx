@@ -1,10 +1,16 @@
 import React from "react";
 import Header from "../components/Header";
 import { useAuth } from "../contexts/AuthContext";
-import { Accordion, AccordionItem, AccordionTrigger, AccordionContent } from "../components/ui/accordion";
+import {
+    Accordion,
+    AccordionItem,
+    AccordionTrigger,
+    AccordionContent,
+} from "../components/ui/accordion";
 import AdminDashboardContent from "./AdminDashboardContent";
 import AdminEmpleadosDashboard from "./AdminEmpleadosDashBoard";
 import AdminBitacora from "./AdminBitacora";
+import CitaReport from "./Reportes/CitaReport";
 
 const AdminDashboard: React.FC = () => {
     const { user } = useAuth();
@@ -32,18 +38,29 @@ const AdminDashboard: React.FC = () => {
                             <AdminDashboardContent />
                         </AccordionContent>
                     </AccordionItem>
+
                     <AccordionItem value="empleados">
                         <AccordionTrigger>Gestión de Empleados</AccordionTrigger>
                         <AccordionContent>
                             <AdminEmpleadosDashboard />
                         </AccordionContent>
                     </AccordionItem>
+
                     <AccordionItem value="bitacora">
                         <AccordionTrigger>Bitácora</AccordionTrigger>
                         <AccordionContent>
                             <AdminBitacora />
                         </AccordionContent>
                     </AccordionItem>
+
+                    {/* ← Nueva sección */}
+                    <AccordionItem value="reportes">
+                        <AccordionTrigger>Reportes de Citas</AccordionTrigger>
+                        <AccordionContent>
+                            <CitaReport />
+                        </AccordionContent>
+                    </AccordionItem>
+
                 </Accordion>
             </main>
         </div>

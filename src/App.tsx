@@ -15,6 +15,7 @@ import Appointment from "./pages/Appointment";
 import PaymentPage from "./pages/PaymentPage";
 import PaymentSuccessPage from "./pages/PaymentSuccessPage";
 import NoPermissionPage from './pages/NoPermissionPage';
+import CitaReport from "./pages/Reportes/CitaReport";
 
 const queryClient = new QueryClient();
 
@@ -33,6 +34,7 @@ const App = () => (
                         <Route path="/payment/:citaId/:pacienteId/:amount/:currency" element={<PaymentRoute/>}/>
                         <Route path="/pago-exitoso" element={<PaymentSuccessPage />} />
                         <Route path="/no-permission" element={<NoPermissionPage />} />
+                        <Route path="/reportes/citas" element={<CitaReport />} />
                         <Route path="/dashboard" element={
                             <PrivateRoute>
                                 <UserDashboard/>
