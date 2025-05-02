@@ -6,7 +6,7 @@ import {
 } from '../../components/ui/table';
 import {Button} from '../../components/ui/button';
 import {useToast} from '../../hooks/use-toast';
-import {format, addWeeks, parseISO} from 'date-fns';
+import {format, parseISO} from 'date-fns';
 import {X} from 'lucide-react';
 
 interface Cita {
@@ -29,11 +29,10 @@ const DoctorAppointments: React.FC = () => {
     useEffect(() => {
         if (data) {
             const today = new Date();
-            const oneWeekAway = addWeeks(today, 1);
 
             const filteredCitas = data.filter(cita => {
                 const citaDate = parseISO(cita.fecha);
-                return citaDate <= oneWeekAway;
+                return citaDate >= today;
             });
 
             setCitas(filteredCitas);
