@@ -19,6 +19,7 @@ import CitaReport from "./pages/Reportes/CitaReport";
 import DoctorDashboard from "./pages/Doctores/DoctorDashboard";
 import SecretariaDashboard from "./pages/Secretarias/SecretariaDashboard";
 import SecretariaAppointment from "./pages/Secretarias/SecretariaAppointment";
+import DisponibilidadForm from "./pages/DisponibilidadForm";
 
 const queryClient = new QueryClient();
 
@@ -46,9 +47,7 @@ const App = () => (
                             element={
                                 <PrivateRoute requiredRole="DOCTOR">
                                     <DoctorDashboard/>
-                                </PrivateRoute>
-                            }
-                        />
+                                </PrivateRoute>}/>
                         <Route
                             path="/Appointment"
                             element={
@@ -71,10 +70,8 @@ const App = () => (
                             path="/secretaria-dashboard/nueva-cita"
                             element={
                                 <PrivateRoute requiredRole="SECRETARIA">
-                                    <SecretariaAppointment />
-                                </PrivateRoute>
-                            }
-                        />
+                                    <SecretariaAppointment/>
+                                </PrivateRoute>}/>
                         <Route
                             path="/admin-dashboard"
                             element={
@@ -82,6 +79,18 @@ const App = () => (
                                     <AdminDashboard/>
                                 </PrivateRoute>}/>
                         <Route path="*" element={<NotFound/>}/>
+                        <Route
+                            path="/admin/disponibilidades/nueva"
+                            element={
+                                <PrivateRoute requiredRole="ADMIN">
+                                    <DisponibilidadForm/>
+                                </PrivateRoute>}/>
+                        <Route
+                            path="/secretaria/disponibilidades/nueva"
+                            element={
+                                <PrivateRoute requiredRole="SECRETARIA">
+                                    <DisponibilidadForm/>
+                                </PrivateRoute>}/>
                     </Routes>
                 </BrowserRouter>
             </AuthProvider>
