@@ -1,14 +1,13 @@
-// src/pages/Appointment.tsx
-import React, { useState, useEffect } from "react";
-import { Button } from "../components/ui/button";
-import { Input } from "../components/ui/input";
-import { Label } from "../components/ui/label";
-import { useQuery } from "@tanstack/react-query";
+import React, {useState, useEffect} from "react";
+import {Button} from "../components/ui/button";
+import {Input} from "../components/ui/input";
+import {Label} from "../components/ui/label";
+import {useQuery} from "@tanstack/react-query";
 import API from "../services/api";
-import { useAuth } from "../contexts/AuthContext";
+import {useAuth} from "../contexts/AuthContext";
 import Header from "../components/Header";
-import { useNavigate } from "react-router-dom";
-import { useToast } from "../hooks/use-toast";
+import {useNavigate} from "react-router-dom";
+import {useToast} from "../hooks/use-toast";
 
 interface Doctor {
     id: number;
@@ -33,9 +32,9 @@ interface CitaData {
 }
 
 const Appointment: React.FC = () => {
-    const { user } = useAuth();
+    const {user} = useAuth();
     const navigate = useNavigate();
-    const { toast } = useToast();
+    const {toast} = useToast();
 
 
     const [formData, setFormData] = useState({
@@ -65,7 +64,7 @@ const Appointment: React.FC = () => {
 
 
     useEffect(() => {
-        const { doctorId, fecha } = formData;
+        const {doctorId, fecha} = formData;
         if (doctorId && fecha) {
             API.get<Disponibilidad>(`/disponibilidades/empleado/${doctorId}/fecha/${fecha}`)
                 .then(res => setDisp(res.data))
@@ -129,7 +128,7 @@ const Appointment: React.FC = () => {
 
     const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault();
-        const { fecha, hora, tipo, doctorId } = formData;
+        const {fecha, hora, tipo, doctorId} = formData;
 
         if (!user || !fecha || !hora || !tipo || !doctorId) {
             toast({
@@ -145,13 +144,13 @@ const Appointment: React.FC = () => {
             hora: `${hora}:00`,
             estado: "AGENDADA",
             tipo,
-            paciente: { id: user.id },
-            doctor: { id: Number(doctorId) },
+            paciente: {id: user.id},
+            doctor: {id: Number(doctorId)},
         };
 
         try {
             const response = await API.post("/citas", appointmentData);
-            const { id, precio } = response.data;
+            const {id, precio} = response.data;
             toast({
                 title: "Cita agendada",
                 description: "Redirigiendo a pago...",
@@ -168,7 +167,7 @@ const Appointment: React.FC = () => {
 
     return (
         <div className="min-h-screen flex flex-col">
-            <Header />
+            <Header/>
             <main className="flex-grow bg-gray-50 flex flex-col items-center justify-center p-4">
                 <h2 className="text-2xl font-bold mb-4">Agendar Cita</h2>
                 <form
@@ -210,11 +209,11 @@ const Appointment: React.FC = () => {
                             </select>
                         ) : formData.doctorId && formData.fecha ? (
                             <p className="text-sm text-gray-500">
-                                No hay turnos disponibles para esta fecha.
+                                No hay turnos disponibles para esta fecha con este doctor.
                             </p>
                         ) : (
                             <p className="text-sm text-gray-500">
-                                Seleccione fecha para ver horarios.
+                                Seleccione la fecha y el doctor para ver horarios.
                             </p>
                         )}
                     </div>

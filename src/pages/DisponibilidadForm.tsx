@@ -3,7 +3,6 @@ import {useQuery, useMutation, useQueryClient} from '@tanstack/react-query';
 import {Label} from '../components/ui/label';
 import {Input} from '../components/ui/input';
 import {Button} from '../components/ui/button';
-import Header from '../components/Header';
 import API from '../services/api';
 import {useToast} from '../hooks/use-toast';
 import {useNavigate} from 'react-router-dom';
@@ -31,7 +30,7 @@ const DisponibilidadForm: React.FC = () => {
     const [horaFin, setHoraFin] = useState<string>('');
     const [cupos, setCupos] = useState<number>(1);
     const [duracionSlot, setDuracionSlot] = useState<number>(30);
-    const { user } = useAuth();
+    const {user} = useAuth();
 
     const {toast} = useToast();
     const navigate = useNavigate();
@@ -94,103 +93,95 @@ const DisponibilidadForm: React.FC = () => {
     };
 
     return (
-        <div className="min-h-screen bg-gray-100">
-            <Header/>
-            <main className="max-w-lg mx-auto p-4">
-                <h1 className="text-2xl font-semibold mb-4">Crear Disponibilidad</h1>
+        <main className="max-w-lg mx-auto p-4">
+            <h1 className="text-2xl font-semibold mb-4">Crear Disponibilidad</h1>
 
-                <form onSubmit={handleSubmit} className="space-y-4 bg-white p-6 rounded shadow">
-                    <div>
-                        <Label htmlFor="doctor">Doctor</Label>
-                        <select
-                            id="doctor"
-                            value={doctorId}
-                            onChange={e => setDoctorId(Number(e.target.value))}
-                            required
-                            className="w-full border rounded p-2"
-                            disabled={isLoading}
-                        >
-                            <option value="" disabled>
-                                {isLoading ? 'Cargando doctores...' : 'Seleccione un doctor'}
+            <form onSubmit={handleSubmit} className="space-y-4 bg-white p-6 rounded shadow">
+                <div>
+                    <Label htmlFor="doctor">Doctor</Label>
+                    <select
+                        id="doctor"
+                        value={doctorId}
+                        onChange={(e) => setDoctorId(Number(e.target.value))}
+                        className="w-full border rounded p-2"
+                        required
+                    >
+                        <option value="">Seleccione un doctor</option>
+                        {doctors.map(doctor => (
+                            <option key={doctor.id} value={doctor.id}>
+                                {doctor.usuario.nombre} {doctor.usuario.apellido}
                             </option>
-                            {doctors.map(doc => (
-                                <option key={doc.id} value={doc.id}>
-                                    {doc.usuario.nombre} {doc.usuario.apellido}
-                                </option>
-                            ))}
-                        </select>
-                    </div>
+                        ))}
+                    </select>
+                </div>
 
+                <div>
+                    <Label htmlFor="fecha">Fecha</Label>
+                    <Input
+                        type="date"
+                        id="fecha"
+                        value={fecha}
+                        onChange={(e) => setFecha(e.target.value)}
+                        className="w-full border rounded p-2"
+                        required
+                    />
+                </div>
+
+                <div className="grid grid-cols-2 gap-4">
                     <div>
-                        <Label htmlFor="fecha">Fecha</Label>
+                        <Label htmlFor="horaInicio">Hora Inicio</Label>
                         <Input
-                            id="fecha"
-                            type="date"
-                            value={fecha}
-                            onChange={e => setFecha(e.target.value)}
+                            type="time"
+                            id="horaInicio"
+                            value={horaInicio}
+                            onChange={(e) => setHoraInicio(e.target.value)}
+                            className="w-full border rounded p-2"
                             required
-                            className="w-full"
                         />
                     </div>
-
-                    <div className="grid grid-cols-2 gap-4">
-                        <div>
-                            <Label htmlFor="horaInicio">Hora Inicio</Label>
-                            <Input
-                                id="horaInicio"
-                                type="time"
-                                value={horaInicio}
-                                onChange={e => setHoraInicio(e.target.value)}
-                                required
-                                className="w-full"
-                            />
-                        </div>
-                        <div>
-                            <Label htmlFor="horaFin">Hora Fin</Label>
-                            <Input
-                                id="horaFin"
-                                type="time"
-                                value={horaFin}
-                                onChange={e => setHoraFin(e.target.value)}
-                                required
-                                className="w-full"
-                            />
-                        </div>
+                    <div>
+                        <Label htmlFor="horaFin">Hora Fin</Label>
+                        <Input
+                            type="time"
+                            id="horaFin"
+                            value={horaFin}
+                            onChange={(e) => setHoraFin(e.target.value)}
+                            className="w-full border rounded p-2"
+                            required
+                        />
                     </div>
+                </div>
 
-                    <div className="grid grid-cols-2 gap-4">
-                        <div>
-                            <Label htmlFor="cupos">Cupos</Label>
-                            <Input
-                                id="cupos"
-                                type="number"
-                                min={1}
-                                value={cupos}
-                                onChange={e => setCupos(Number(e.target.value))}
-                                required
-                                className="w-full"
-                            />
-                        </div>
-                        <div>
-                            <Label htmlFor="duracionSlot">Duración (min)</Label>
-                            <Input
-                                id="duracionSlot"
-                                type="number"
-                                min={1}
-                                value={duracionSlot}
-                                onChange={e => setDuracionSlot(Number(e.target.value))}
-                                required
-                                className="w-full"
-                            />
-                        </div>
+                <div className="grid grid-cols-2 gap-4">
+                    <div>
+                        <Label htmlFor="cupos">Cupos</Label>
+                        <Input
+                            type="number"
+                            id="cupos"
+                            value={cupos}
+                            onChange={(e) => setCupos(Number(e.target.value))}
+                            className="w-full border rounded p-2"
+                            required
+                        />
                     </div>
+                    <div>
+                        <Label htmlFor="duracionSlot">Duración Slot (min)</Label>
+                        <Input
+                            type="number"
+                            id="duracionSlot"
+                            value={duracionSlot}
+                            onChange={(e) => setDuracionSlot(Number(e.target.value))}
+                            className="w-full border rounded p-2"
+                            required
+                        />
+                    </div>
+                </div>
 
-                    <Button type="submit" className="w-full">
-                        Guardar Disponibilidad
-                    </Button>
-                </form>
-            </main>
-        </div>
+                <Button type="submit" className="w-full">
+                    Guardar Disponibilidad
+                </Button>
+            </form>
+        </main>
     );
 };
 

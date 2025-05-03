@@ -8,7 +8,6 @@ import {
     Table, TableHeader, TableRow, TableHead,
     TableBody, TableCell
 } from "../../components/ui/table";
-import {Button} from "../../components/ui/button";
 import DisponibilidadForm from "../DisponibilidadForm";
 import {
     Accordion,
@@ -56,9 +55,7 @@ const SecretariaDashboard: React.FC = () => {
                         <AccordionTrigger>Gestionar Citas</AccordionTrigger>
                         <AccordionContent>
                             <div className="flex justify-between items-center mb-6">
-                                <Link to="/secretaria-dashboard/nueva-cita">
-                                    <Button>+ Agendar Cita</Button>
-                                </Link>
+
                             </div>
                             <div className="overflow-x-auto bg-white rounded shadow">
                                 <Table>
