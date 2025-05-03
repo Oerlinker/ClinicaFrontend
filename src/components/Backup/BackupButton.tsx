@@ -10,7 +10,7 @@ const BackupButton: React.FC = () => {
     const handleBackup = async () => {
         setIsLoading(true);
         try {
-            const response = await API.post('/api/admin/backup/create', {}, {
+            const response = await API.post('/admin/backup/create', {}, {
                 responseType: 'blob',
             });
 
