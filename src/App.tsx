@@ -20,6 +20,8 @@ import DoctorDashboard from "./pages/Doctores/DoctorDashboard";
 import SecretariaDashboard from "./pages/Secretarias/SecretariaDashboard";
 import SecretariaAppointment from "./pages/Secretarias/SecretariaAppointment";
 import DisponibilidadForm from "./pages/DisponibilidadForm";
+import DisponibilidadReport from "./pages/Reportes/DisponibilidadReport";
+
 
 const queryClient = new QueryClient();
 
@@ -42,6 +44,12 @@ const App = () => (
                                    <PrivateRoute requiredRole="ADMIN">
                                        <CitaReport/>
                                    </PrivateRoute>}/>
+                        <Route
+                           path="/reportes/disponibilidades"
+                           element={
+                             <PrivateRoute requiredRole="ADMIN">
+                                  <DisponibilidadReport/>
+                                 </PrivateRoute>}/>
                         <Route
                             path="/doctor-dashboard"
                             element={

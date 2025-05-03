@@ -1,4 +1,3 @@
-
 import React from "react";
 import Header from "../components/Header";
 import {useAuth} from "../contexts/AuthContext";
@@ -13,6 +12,7 @@ import AdminEmpleadosDashboard from "./AdminEmpleadosDashBoard";
 import AdminBitacora from "./AdminBitacora";
 import CitaReport from "./Reportes/CitaReport";
 import DisponibilidadForm from "./DisponibilidadForm";
+import DisponibilidadReport from "./Reportes/DisponibilidadReport";
 
 const AdminDashboard: React.FC = () => {
     const {user} = useAuth();
@@ -60,6 +60,12 @@ const AdminDashboard: React.FC = () => {
                         <AccordionTrigger>Reportes de Citas</AccordionTrigger>
                         <AccordionContent>
                             <CitaReport/>
+                        </AccordionContent>
+                    </AccordionItem>
+                    <AccordionItem value="reportes-disp">
+                        <AccordionTrigger>Reportes de Disponibilidades</AccordionTrigger>
+                        <AccordionContent>
+                            <DisponibilidadReport/>
                         </AccordionContent>
                     </AccordionItem>
                     <AccordionItem value="Disponibilidades">

@@ -87,7 +87,7 @@ const Appointment: React.FC = () => {
             return;
         }
 
-        // Convertir horas a minutos
+
         const [h0, m0] = disp.horaInicio.slice(0, 5).split(":").map(Number);
         const [h1, m1] = disp.horaFin.slice(0, 5).split(":").map(Number);
         const startMin = h0 * 60 + m0;
