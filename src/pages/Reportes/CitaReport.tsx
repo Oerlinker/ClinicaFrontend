@@ -61,8 +61,8 @@ const CitaReport: React.FC = () => {
                     <Label htmlFor="estado">Estado</Label>
                     <select id="estado" onChange={handleChange} className="w-full border rounded p-2">
                         <option value="">— Todos —</option>
-                        <option value="AGENDADA">Pendiente</option>
-                        <option value="REALZIADA">Realizada</option>
+                        <option value="AGENDADA">Agendada</option>
+                        <option value="REALIZADA">Realizada</option>
                         <option value="CANCELADA">Cancelado</option>
                     </select>
                 </div>

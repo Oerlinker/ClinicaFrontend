@@ -127,7 +127,7 @@ const SecretariaAppointment: React.FC = () => {
             }
             return await API.post("/citas", {
                 fecha: form.fecha,
-                hora: form.hora,
+                hora: `${form.hora}:00`,
                 estado: "Agendada",
                 tipo: form.tipo,
                 paciente: {id: Number(form.pacienteId)},

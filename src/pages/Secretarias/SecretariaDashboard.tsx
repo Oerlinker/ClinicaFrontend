@@ -55,7 +55,6 @@ const SecretariaDashboard: React.FC = () => {
                         <AccordionTrigger>Gestionar Citas</AccordionTrigger>
                         <AccordionContent>
                             <div className="flex justify-between items-center mb-6">
-
                             </div>
                             <div className="overflow-x-auto bg-white rounded shadow">
                                 <Table>
