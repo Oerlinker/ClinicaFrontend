@@ -38,14 +38,14 @@ const DisponibilidadReport: React.FC = () => {
     const { data: doctores = [] } = useQuery<Doctor[]>({
         queryKey: ["disp-report-doctores"],
         queryFn: () =>
-            API.get<Doctor[]>("/api/empleados/doctores").then(r => r.data),
+            API.get<Doctor[]>("/empleados/doctores").then(r => r.data),
     });
 
 
     const { data: filas, isFetching } = useQuery<Disponibilidad[]>({
         queryKey: ["disp-report", filter],
         queryFn: () =>
-            API.post<Disponibilidad[]>("/api/reportes/disponibilidades", {
+            API.post<Disponibilidad[]>("/reportes/disponibilidades", {
                 doctorId: filter.doctorId ? Number(filter.doctorId) : undefined,
                 fechaDesde: filter.fechaDesde,
                 fechaHasta: filter.fechaHasta,

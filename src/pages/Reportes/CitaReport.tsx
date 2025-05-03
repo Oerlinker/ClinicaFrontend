@@ -50,7 +50,7 @@ const CitaReport: React.FC = () => {
     const {data: citas = [], isFetching} = useQuery<Cita[]>({
         queryKey: ["citas-report", filter],
         queryFn: () =>
-            API.post<Cita[]>("/api/reportes/citas", {
+            API.post<Cita[]>("/reportes/citas", {
                 doctorId: filter.doctorId ? Number(filter.doctorId) : undefined,
                 fechaDesde: filter.fechaDesde,
                 fechaHasta: filter.fechaHasta,
@@ -61,7 +61,7 @@ const CitaReport: React.FC = () => {
     const {data: doctores = []} = useQuery<Doctor[]>({
         queryKey: ["citas-report-doctores"],
         queryFn: () =>
-            API.get<Doctor[]>("/api/empleados/doctores").then(r => r.data),
+            API.get<Doctor[]>("/empleados/doctores").then(r => r.data),
     });
 
     const handleChange = (
