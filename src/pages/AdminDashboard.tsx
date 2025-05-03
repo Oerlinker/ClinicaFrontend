@@ -11,6 +11,7 @@ import AdminDashboardContent from "./AdminDashboardContent";
 import AdminEmpleadosDashboard from "./AdminEmpleadosDashBoard";
 import AdminBitacora from "./AdminBitacora";
 import CitaReport from "./Reportes/CitaReport";
+import DisponibilidadForm from "./DisponibilidadForm";
 
 const AdminDashboard: React.FC = () => {
     const { user } = useAuth();
@@ -58,6 +59,12 @@ const AdminDashboard: React.FC = () => {
                         <AccordionTrigger>Reportes de Citas</AccordionTrigger>
                         <AccordionContent>
                             <CitaReport />
+                        </AccordionContent>
+                    </AccordionItem>
+                    <AccordionItem value="Disponibilidades">
+                        <AccordionTrigger>Reportes de Citas</AccordionTrigger>
+                        <AccordionContent>
+                            <DisponibilidadForm />
                         </AccordionContent>
                     </AccordionItem>
 

@@ -9,6 +9,14 @@ import {
     TableBody, TableCell
 } from "../../components/ui/table";
 import {Button} from "../../components/ui/button";
+import DisponibilidadForm from "../DisponibilidadForm";
+import {
+    Accordion,
+    AccordionItem,
+    AccordionTrigger,
+    AccordionContent,
+} from "../../components/ui/accordion";
+import SecretariaAppointment from "./SecretariaAppointment";
 
 type Cita = {
     id: number;
@@ -42,40 +50,59 @@ const SecretariaDashboard: React.FC = () => {
         <div className="min-h-screen bg-gray-50">
             <Header/>
             <main className="container mx-auto px-4 py-8">
-                <div className="flex justify-between items-center mb-6">
-                    <h1 className="text-3xl font-bold">Dashboard Secretaria</h1>
-                    <Link to="/secretaria-dashboard/nueva-cita">
-                        <Button>+ Agendar Cita</Button>
-                    </Link>
-                </div>
-                <div className="overflow-x-auto bg-white rounded shadow">
-                    <Table>
-                        <TableHeader>
-                            <TableRow>
-                                <TableHead>Fecha</TableHead>
-                                <TableHead>Hora</TableHead>
-                                <TableHead>Paciente</TableHead>
-                                <TableHead>Doctor</TableHead>
-                                <TableHead>Tipo</TableHead>
-                                <TableHead>Estado</TableHead>
-                                <TableHead>Precio</TableHead>
-                            </TableRow>
-                        </TableHeader>
-                        <TableBody>
-                            {citas.map(c => (
-                                <TableRow key={c.id}>
-                                    <TableCell>{c.fecha}</TableCell>
-                                    <TableCell>{c.hora.slice(11, 16)}</TableCell>
-                                    <TableCell>{c.paciente.nombre} {c.paciente.apellido}</TableCell>
-                                    <TableCell>{c.doctor.usuario.nombre} {c.doctor.usuario.apellido}</TableCell>
-                                    <TableCell>{c.tipo}</TableCell>
-                                    <TableCell>{c.estado}</TableCell>
-                                    <TableCell>${c.precio}</TableCell>
-                                </TableRow>
-                            ))}
-                        </TableBody>
-                    </Table>
-                </div>
+                <h1 className="text-3xl font-bold">Dashboard Secretaria</h1>
+                <Accordion type="single" collapsible>
+                    <AccordionItem value="citas">
+                        <AccordionTrigger>Gestionar Citas</AccordionTrigger>
+                        <AccordionContent>
+                            <div className="flex justify-between items-center mb-6">
+                                <Link to="/secretaria-dashboard/nueva-cita">
+                                    <Button>+ Agendar Cita</Button>
+                                </Link>
+                            </div>
+                            <div className="overflow-x-auto bg-white rounded shadow">
+                                <Table>
+                                    <TableHeader>
+                                        <TableRow>
+                                            <TableHead>Fecha</TableHead>
+                                            <TableHead>Hora</TableHead>
+                                            <TableHead>Paciente</TableHead>
+                                            <TableHead>Doctor</TableHead>
+                                            <TableHead>Tipo</TableHead>
+                                            <TableHead>Estado</TableHead>
+                                            <TableHead>Precio</TableHead>
+                                        </TableRow>
+                                    </TableHeader>
+                                    <TableBody>
+                                        {citas.map(c => (
+                                            <TableRow key={c.id}>
+                                                <TableCell>{c.fecha}</TableCell>
+                                                <TableCell>{c.hora.slice(11, 16)}</TableCell>
+                                                <TableCell>{c.paciente.nombre} {c.paciente.apellido}</TableCell>
+                                                <TableCell>{c.doctor.usuario.nombre} {c.doctor.usuario.apellido}</TableCell>
+                                                <TableCell>{c.tipo}</TableCell>
+                                                <TableCell>{c.estado}</TableCell>
+                                                <TableCell>${c.precio}</TableCell>
+                                            </TableRow>
+                                        ))}
+                                    </TableBody>
+                                </Table>
+                            </div>
+                        </AccordionContent>
+                    </AccordionItem>
+                    <AccordionItem value="nueva-cita">
+                        <AccordionTrigger>Agendar Nueva Cita</AccordionTrigger>
+                        <AccordionContent>
+                            <SecretariaAppointment/>
+                        </AccordionContent>
+                    </AccordionItem>
+                    <AccordionItem value="disponibilidad">
+                        <AccordionTrigger>Gestionar Disponibilidad</AccordionTrigger>
+                        <AccordionContent>
+                            <DisponibilidadForm/>
+                        </AccordionContent>
+                    </AccordionItem>
+                </Accordion>
             </main>
         </div>
     );
