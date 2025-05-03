@@ -7,6 +7,7 @@ import Header from '../components/Header';
 import API from '../services/api';
 import {useToast} from '../hooks/use-toast';
 import {useNavigate} from 'react-router-dom';
+import {useAuth} from '../contexts/AuthContext';
 
 
 interface Doctor {
@@ -30,6 +31,7 @@ const DisponibilidadForm: React.FC = () => {
     const [horaFin, setHoraFin] = useState<string>('');
     const [cupos, setCupos] = useState<number>(1);
     const [duracionSlot, setDuracionSlot] = useState<number>(30);
+    const { user } = useAuth();
 
     const {toast} = useToast();
     const navigate = useNavigate();
@@ -54,7 +56,13 @@ const DisponibilidadForm: React.FC = () => {
                 variant: 'default',
             });
             queryClient.invalidateQueries({queryKey: ['disponibilidades']});
-            navigate('/admin-dashboard');
+            if (user?.rol?.nombre === "ADMIN") {
+                navigate('/admin-dashboard');
+            } else if (user?.rol?.nombre === "SECRETARIA") {
+                navigate('/secretaria-dashboard');
+            } else {
+                navigate('/'); // Default navigation
+            }
         },
         onError: (err: any) => {
             toast({

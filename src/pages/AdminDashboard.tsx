@@ -62,7 +62,7 @@ const AdminDashboard: React.FC = () => {
                         </AccordionContent>
                     </AccordionItem>
                     <AccordionItem value="Disponibilidades">
-                        <AccordionTrigger>Reportes de Citas</AccordionTrigger>
+                        <AccordionTrigger>Disponibilidades</AccordionTrigger>
                         <AccordionContent>
                             <DisponibilidadForm />
                         </AccordionContent>
