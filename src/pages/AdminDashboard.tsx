@@ -1,5 +1,6 @@
 import React from "react";
 import Header from "../components/Header";
+import BackupButton from "../components/Backup/BackupButton";
 import {useAuth} from "../contexts/AuthContext";
 import {
     Accordion,
@@ -55,6 +56,12 @@ const AdminDashboard: React.FC = () => {
                         </AccordionContent>
                     </AccordionItem>
 
+                    <AccordionItem value="backup">
+                        <AccordionTrigger>Backup de la Base de Datos</AccordionTrigger>
+                        <AccordionContent>
+                            <BackupButton/>
+                        </AccordionContent>
+                    </AccordionItem>
 
                     <AccordionItem value="reportes">
                         <AccordionTrigger>Reportes de Citas</AccordionTrigger>
