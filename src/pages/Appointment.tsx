@@ -1,13 +1,14 @@
-import React, {useState} from "react";
-import {Button} from "../components/ui/button";
-import {Input} from "../components/ui/input";
-import {Label} from "../components/ui/label";
-import {useQuery} from "@tanstack/react-query";
+// src/pages/Appointment.tsx
+import React, { useState, useEffect } from "react";
+import { Button } from "../components/ui/button";
+import { Input } from "../components/ui/input";
+import { Label } from "../components/ui/label";
+import { useQuery } from "@tanstack/react-query";
 import API from "../services/api";
-import {useAuth} from "../contexts/AuthContext";
+import { useAuth } from "../contexts/AuthContext";
 import Header from "../components/Header";
-import {useNavigate} from "react-router-dom";
-import {useToast} from "../hooks/use-toast";
+import { useNavigate } from "react-router-dom";
+import { useToast } from "../hooks/use-toast";
 
 interface Doctor {
     id: number;
@@ -17,10 +18,25 @@ interface Doctor {
     };
 }
 
+interface Disponibilidad {
+    fecha: string;
+    horaInicio: string;
+    horaFin: string;
+    duracionSlot: number;
+    cupos: number;
+}
+
+interface CitaData {
+    id: number;
+    fecha: string;
+    hora: string;
+}
+
 const Appointment: React.FC = () => {
-    const {user} = useAuth();
+    const { user } = useAuth();
     const navigate = useNavigate();
-    const {toast} = useToast();
+    const { toast } = useToast();
+
 
     const [formData, setFormData] = useState({
         fecha: "",
@@ -28,6 +44,12 @@ const Appointment: React.FC = () => {
         tipo: "",
         doctorId: "",
     });
+
+
+    const [disp, setDisp] = useState<Disponibilidad | null>(null);
+    const [citas, setCitas] = useState<CitaData[]>([]);
+    const [slots, setSlots] = useState<string[]>([]);
+
 
     const {
         data: doctors,
@@ -41,6 +63,60 @@ const Appointment: React.FC = () => {
         },
     });
 
+
+    useEffect(() => {
+        const { doctorId, fecha } = formData;
+        if (doctorId && fecha) {
+            API.get<Disponibilidad>(`/disponibilidades/empleado/${doctorId}/fecha/${fecha}`)
+                .then(res => setDisp(res.data))
+                .catch(() => setDisp(null));
+
+            API.get<CitaData[]>(`/citas/doctor/${doctorId}/fecha/${fecha}`)
+                .then(res => setCitas(res.data))
+                .catch(() => setCitas([]));
+        } else {
+            setDisp(null);
+            setCitas([]);
+            setSlots([]);
+        }
+    }, [formData.doctorId, formData.fecha]);
+
+
+    useEffect(() => {
+        if (!disp) {
+            setSlots([]);
+            return;
+        }
+
+        // Convertir horas a minutos
+        const [h0, m0] = disp.horaInicio.slice(0, 5).split(":").map(Number);
+        const [h1, m1] = disp.horaFin.slice(0, 5).split(":").map(Number);
+        const startMin = h0 * 60 + m0;
+        const endMin = h1 * 60 + m1;
+
+
+        const allSlots: string[] = [];
+        for (let t = startMin; t + disp.duracionSlot <= endMin; t += disp.duracionSlot) {
+            const hh = String(Math.floor(t / 60)).padStart(2, "0");
+            const mm = String(t % 60).padStart(2, "0");
+            allSlots.push(`${hh}:${mm}`);
+        }
+
+
+        const booked = citas.map(c =>
+            c.hora.substring(c.hora.indexOf("T") + 1, c.hora.indexOf("T") + 6)
+        );
+
+
+        const available = allSlots.filter(slot => {
+            const usedCount = booked.filter(b => b === slot).length;
+            return usedCount < disp.cupos;
+        });
+
+        setSlots(available);
+    }, [disp, citas]);
+
+
     const handleChange = (
         e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>
     ) => {
@@ -50,49 +126,41 @@ const Appointment: React.FC = () => {
         });
     };
 
+
     const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault();
-        if (!user) {
-            console.error("Usuario no autenticado.");
-            return;
-        }
+        const { fecha, hora, tipo, doctorId } = formData;
 
-        if (!formData.fecha || !formData.hora || !formData.tipo || !formData.doctorId) {
-            console.error("Todos los campos son obligatorios.");
+        if (!user || !fecha || !hora || !tipo || !doctorId) {
             toast({
                 title: "Error",
-                description: "Por favor, completa todos los campos antes de enviar.",
+                description: "Por favor completa todos los campos.",
                 variant: "destructive",
             });
             return;
         }
 
         const appointmentData = {
-            fecha: formData.fecha,
-            hora: formData.hora,
+            fecha,
+            hora: `${hora}:00`,
             estado: "AGENDADA",
-            tipo: formData.tipo,
-            paciente: {id: user.id},
-            doctor: {id: Number(formData.doctorId)},
+            tipo,
+            paciente: { id: user.id },
+            doctor: { id: Number(doctorId) },
         };
-
-        console.log("Datos enviados al servidor:", appointmentData);
 
         try {
             const response = await API.post("/citas", appointmentData);
-            const {id, precio} = response.data;
+            const { id, precio } = response.data;
             toast({
-                title: "Cita agendada correctamente!",
-                description: "Redirigiendo a la página de pago...",
+                title: "Cita agendada",
+                description: "Redirigiendo a pago...",
             });
             navigate(`/payment/${id}/${user.id}/${precio}/USD`);
-        } catch (error: any) {
-            console.error("Error al agendar cita:", error);
-            console.error("Status:", error.response?.status);
-            console.error("Respuesta completa:", error.response?.data);
+        } catch (err: any) {
             toast({
-                title: "Error al agendar la cita.",
-                description: "Por favor, verifica los datos e inténtalo nuevamente.",
+                title: "Error al agendar",
+                description: err.response?.data?.error || err.message,
                 variant: "destructive",
             });
         }
@@ -100,11 +168,15 @@ const Appointment: React.FC = () => {
 
     return (
         <div className="min-h-screen flex flex-col">
-            <Header/>
+            <Header />
             <main className="flex-grow bg-gray-50 flex flex-col items-center justify-center p-4">
                 <h2 className="text-2xl font-bold mb-4">Agendar Cita</h2>
-                <form onSubmit={handleSubmit} className="max-w-md w-full bg-white shadow rounded p-4">
-                    <div className="mb-4">
+                <form
+                    onSubmit={handleSubmit}
+                    className="max-w-md w-full bg-white shadow rounded p-4 space-y-4"
+                >
+
+                    <div>
                         <Label htmlFor="fecha">Fecha</Label>
                         <Input
                             id="fecha"
@@ -112,19 +184,43 @@ const Appointment: React.FC = () => {
                             value={formData.fecha}
                             onChange={handleChange}
                             required
+                            className="w-full"
                         />
                     </div>
-                    <div className="mb-4">
+
+
+                    <div>
                         <Label htmlFor="hora">Hora</Label>
-                        <Input
-                            id="hora"
-                            type="time"
-                            value={formData.hora}
-                            onChange={handleChange}
-                            required
-                        />
+                        {slots.length > 0 ? (
+                            <select
+                                id="hora"
+                                value={formData.hora}
+                                onChange={handleChange}
+                                required
+                                className="w-full border rounded p-2"
+                            >
+                                <option value="" disabled>
+                                    Seleccione un horario
+                                </option>
+                                {slots.map(s => (
+                                    <option key={s} value={s}>
+                                        {s}
+                                    </option>
+                                ))}
+                            </select>
+                        ) : formData.doctorId && formData.fecha ? (
+                            <p className="text-sm text-gray-500">
+                                No hay turnos disponibles para esta fecha.
+                            </p>
+                        ) : (
+                            <p className="text-sm text-gray-500">
+                                Seleccione fecha para ver horarios.
+                            </p>
+                        )}
                     </div>
-                    <div className="mb-4">
+
+
+                    <div>
                         <Label htmlFor="tipo">Tipo de Cita</Label>
                         <select
                             id="tipo"
@@ -143,7 +239,9 @@ const Appointment: React.FC = () => {
                             <option value="Post-quirúrgica">Post-quirúrgica</option>
                         </select>
                     </div>
-                    <div className="mb-4">
+
+
+                    <div>
                         <Label htmlFor="doctorId">Doctor</Label>
                         {doctorsLoading ? (
                             <p>Cargando doctores...</p>
@@ -160,7 +258,7 @@ const Appointment: React.FC = () => {
                                 <option value="" disabled>
                                     Seleccione un doctor
                                 </option>
-                                {doctors?.map((doc) => (
+                                {doctors?.map(doc => (
                                     <option key={doc.id} value={doc.id}>
                                         {doc.usuario.nombre} {doc.usuario.apellido}
                                     </option>
@@ -168,6 +266,7 @@ const Appointment: React.FC = () => {
                             </select>
                         )}
                     </div>
+
                     <Button type="submit" className="w-full bg-blue-600 hover:bg-blue-700">
                         Agendar Cita
                     </Button>
