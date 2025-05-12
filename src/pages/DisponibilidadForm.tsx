@@ -32,6 +32,10 @@ const DisponibilidadForm: React.FC = () => {
     const [duracionSlot, setDuracionSlot] = useState<number>(30);
     const {user} = useAuth();
 
+
+    const [fechaInicio, setFechaInicio] = useState<string>('');
+    const [fechaFin, setFechaFin] = useState<string>('');
+
     const {toast} = useToast();
     const navigate = useNavigate();
     const queryClient = useQueryClient();
@@ -72,6 +76,27 @@ const DisponibilidadForm: React.FC = () => {
         },
     });
 
+
+    const generarTodosMutation = useMutation({
+        mutationFn: (params: { fechaInicio: string, fechaFin: string }) =>
+            API.post(`/disponibilidades/generar-todos?fechaInicio=${params.fechaInicio}&fechaFin=${params.fechaFin}`),
+        onSuccess: () => {
+            toast({
+                title: 'Disponibilidades generadas',
+                description: 'Se generaron disponibilidades para todos los doctores',
+                variant: 'default',
+            });
+            queryClient.invalidateQueries({queryKey: ['disponibilidades']});
+        },
+        onError: (err: any) => {
+            toast({
+                title: 'Error',
+                description: err.response?.data?.error || err.message,
+                variant: 'destructive',
+            });
+        },
+    });
+
     const handleSubmit = (e: React.FormEvent) => {
         e.preventDefault();
         if (!doctorId || !fecha || !horaInicio || !horaFin || !cupos || !duracionSlot) {
@@ -92,11 +117,27 @@ const DisponibilidadForm: React.FC = () => {
         });
     };
 
+    const handleGenerarTodos = (e: React.FormEvent) => {
+        e.preventDefault();
+        if (!fechaInicio || !fechaFin) {
+            toast({
+                title: 'Fechas requeridas',
+                description: 'Ingrese fecha de inicio y fin',
+                variant: 'destructive',
+            });
+            return;
+        }
+        generarTodosMutation.mutate({
+            fechaInicio,
+            fechaFin
+        });
+    };
+
     return (
         <main className="max-w-lg mx-auto p-4">
             <h1 className="text-2xl font-semibold mb-4">Crear Disponibilidad</h1>
 
-            <form onSubmit={handleSubmit} className="space-y-4 bg-white p-6 rounded shadow">
+            <form onSubmit={handleSubmit} className="space-y-4 bg-white p-6 rounded shadow mb-8">
                 <div>
                     <Label htmlFor="doctor">Doctor</Label>
                     <select
@@ -181,6 +222,45 @@ const DisponibilidadForm: React.FC = () => {
                     Guardar Disponibilidad
                 </Button>
             </form>
+
+            {/* Sección para generar disponibilidades masivas */}
+            <div className="bg-white p-6 rounded shadow">
+                <h2 className="text-xl font-semibold mb-4">Generar para todos los doctores</h2>
+                <form onSubmit={handleGenerarTodos} className="space-y-4">
+                    <div className="grid grid-cols-2 gap-4">
+                        <div>
+                            <Label htmlFor="fechaInicio">Fecha Inicio</Label>
+                            <Input
+                                type="date"
+                                id="fechaInicio"
+                                value={fechaInicio}
+                                onChange={(e) => setFechaInicio(e.target.value)}
+                                className="w-full border rounded p-2"
+                                required
+                            />
+                        </div>
+                        <div>
+                            <Label htmlFor="fechaFin">Fecha Fin</Label>
+                            <Input
+                                type="date"
+                                id="fechaFin"
+                                value={fechaFin}
+                                onChange={(e) => setFechaFin(e.target.value)}
+                                className="w-full border rounded p-2"
+                                required
+                            />
+                        </div>
+                    </div>
+
+                    <Button
+                        type="submit"
+                        className="w-full bg-green-600 hover:bg-green-700"
+                        disabled={generarTodosMutation.isPending}
+                    >
+                        {generarTodosMutation.isPending ? 'Generando...' : 'Generar Disponibilidades para Todos'}
+                    </Button>
+                </form>
+            </div>
         </main>
     );
 };
