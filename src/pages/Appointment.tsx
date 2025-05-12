@@ -19,20 +19,17 @@ interface Doctor {
 
 interface DisponibilidadDTO {
     id: number;
-    empleado: {
-        id: number;
-        nombreCompleto: string;
-    };
     fecha: string;
-    cupos: number;
-    duracionSlot: number;
     horaInicio: string;
     horaFin: string;
+    duracionSlot: number;
+    cupos: number;
     slots: {
         hora: string;
         restantes: number;
     }[];
 }
+
 
 const Appointment: React.FC = () => {
     const { user } = useAuth();
@@ -48,7 +45,7 @@ const Appointment: React.FC = () => {
 
     const [slots, setSlots] = useState<string[]>([]);
 
-    // 1) traemos la lista de doctores
+
     const { data: doctors, isLoading: doctorsLoading, error: doctorsError } =
         useQuery<Doctor[]>({
             queryKey: ["doctores"],
@@ -58,27 +55,26 @@ const Appointment: React.FC = () => {
             }
         });
 
-    // 2) cada vez que cambien doctorId o fecha, pedimos los slots al backend
     useEffect(() => {
         const { doctorId, fecha } = formData;
-        if (doctorId && fecha) {
-            API.get<DisponibilidadDTO>(
-                `/disponibilidades/empleado/${doctorId}/slots`,
-                { params: { fecha } }
-            )
-                .then((res) => {
-                    // filtrar sólo los slots con cupos restantes > 0
-                    const disponibles = res.data.slots
-                        .filter((s) => s.restantes > 0)
-                        .map((s) => s.hora);
-                    setSlots(disponibles);
-                })
-                .catch(() => {
-                    setSlots([]);
-                });
-        } else {
+        if (!doctorId || !fecha) {
             setSlots([]);
+            return;
         }
+
+        API.get<DisponibilidadDTO>(
+            `/disponibilidades/empleado/${doctorId}/slots`,
+            { params: { fecha } }
+        )
+            .then(({ data }) => {
+                const disponibles = data.slots
+                    .filter((s) => s.restantes > 0)
+                    .map((s) => s.hora);
+                setSlots(disponibles);
+            })
+            .catch(() => {
+                setSlots([]);
+            });
     }, [formData.doctorId, formData.fecha]);
 
     const handleChange = (
@@ -103,7 +99,7 @@ const Appointment: React.FC = () => {
             return;
         }
 
-        // construimos el payload
+
         const appointmentData = {
             fecha,
             hora: `${hora}:00`,
