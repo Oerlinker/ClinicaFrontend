@@ -6,6 +6,7 @@ import { Input } from "../components/ui/input";
 import { Label } from "../components/ui/label";
 import { Button } from "../components/ui/button";
 import { useToast } from "../hooks/use-toast";
+import DeptEmployees from "./DeptEmployees";
 
 interface Departamento {
     id: number;
@@ -90,6 +91,13 @@ const DeptForm: React.FC<DeptFormProps> = ({ deptId, onSuccess }) => {
                         onChange={e => setDescripcion(e.target.value)}
                     />
                 </div>
+
+                {isEdit && id && (
+                    <div className="mt-6">
+                        <DeptEmployees deptId={id}/>
+                    </div>
+                )}
+
                 <Button type="submit" className="w-full">
                     {isEdit ? "Actualizar" : "Crear"}
                 </Button>
