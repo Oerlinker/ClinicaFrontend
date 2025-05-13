@@ -26,10 +26,9 @@ interface DisponibilidadDTO {
     cupos: number;
     slots: {
         hora: string;
-        restantes: number;
+        cuposRestantes: number;
     }[];
 }
-
 
 const Appointment: React.FC = () => {
     const { user } = useAuth();
@@ -45,15 +44,17 @@ const Appointment: React.FC = () => {
 
     const [slots, setSlots] = useState<string[]>([]);
 
-
-    const { data: doctors, isLoading: doctorsLoading, error: doctorsError } =
-        useQuery<Doctor[]>({
-            queryKey: ["doctores"],
-            queryFn: async () => {
-                const res = await API.get("/empleados/doctores");
-                return res.data;
-            }
-        });
+    const {
+        data: doctors,
+        isLoading: doctorsLoading,
+        error: doctorsError,
+    } = useQuery<Doctor[]>({
+        queryKey: ["doctores"],
+        queryFn: async () => {
+            const res = await API.get("/empleados/doctores");
+            return res.data;
+        },
+    });
 
     useEffect(() => {
         const { doctorId, fecha } = formData;
@@ -68,7 +69,7 @@ const Appointment: React.FC = () => {
         )
             .then(({ data }) => {
                 const disponibles = data.slots
-                    .filter((s) => s.restantes > 0)
+                    .filter((s) => s.cuposRestantes > 0)
                     .map((s) => s.hora);
                 setSlots(disponibles);
             })
@@ -99,7 +100,6 @@ const Appointment: React.FC = () => {
             return;
         }
 
-
         const appointmentData = {
             fecha,
             hora: `${hora}:00`,
@@ -114,7 +114,7 @@ const Appointment: React.FC = () => {
             const { id, precio } = response.data;
             toast({
                 title: "Cita agendada",
-                description: "Redirigiendo a pago...",
+                description: "Redirigiendo a pago.",
             });
             navigate(`/payment/${id}/${user.id}/${precio}/USD`);
         } catch (err: any) {
@@ -227,7 +227,10 @@ const Appointment: React.FC = () => {
                         )}
                     </div>
 
-                    <Button type="submit" className="w-full bg-blue-600 hover:bg-blue-700">
+                    <Button
+                        type="submit"
+                        className="w-full bg-blue-600 hover:bg-blue-700"
+                    >
                         Agendar Cita
                     </Button>
                 </form>
