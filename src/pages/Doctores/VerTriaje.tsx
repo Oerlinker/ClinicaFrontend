@@ -69,11 +69,8 @@ const VerTriaje: React.FC = () => {
             </div>
 
             <div className="mt-6 flex justify-between">
-                <Link to="/doctores/citas">
+                <Link to="/doctor-dashboard">
                     <Button variant="outline">Volver a Citas</Button>
-                </Link>
-                <Link to={`/triaje/registro/${data!.citaId}`}>
-                    <Button>Editar Triaje</Button>
                 </Link>
             </div>
         </div>
