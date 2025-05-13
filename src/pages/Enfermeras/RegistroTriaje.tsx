@@ -50,7 +50,7 @@ const RegistroTriaje: React.FC = () => {
         comentarios: "",
     });
 
-    // Al montar, traemos todas las citas pendientes de triaje
+
     useEffect(() => {
         API.get<CitaInfo[]>("/citas/pendientes-triaje")
             .then((res) => {
@@ -62,7 +62,7 @@ const RegistroTriaje: React.FC = () => {
             );
     }, []);
 
-    // Filtrar en tiempo real según nombre/apellido
+
     useEffect(() => {
         const txt = busqueda.toLowerCase().trim();
         setFiltradas(
@@ -74,7 +74,7 @@ const RegistroTriaje: React.FC = () => {
         );
     }, [busqueda, citas]);
 
-    // Manejador de inputs de triaje
+
     const handleChange = (
         e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
     ) => {
@@ -85,7 +85,7 @@ const RegistroTriaje: React.FC = () => {
         }));
     };
 
-    // Guardar triaje
+
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
         if (!citaSel) return;
