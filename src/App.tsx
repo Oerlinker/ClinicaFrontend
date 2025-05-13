@@ -21,6 +21,9 @@ import SecretariaDashboard from "./pages/Secretarias/SecretariaDashboard";
 import SecretariaAppointment from "./pages/Secretarias/SecretariaAppointment";
 import DisponibilidadForm from "./pages/DisponibilidadForm";
 import DisponibilidadReport from "./pages/Reportes/DisponibilidadReport";
+import RegistroTriaje from "./pages/Enfermeras/RegistroTriaje";
+import EnfermeraDashboard from "./pages/Enfermeras/EnfermeraDashboard";
+import VerTriaje from "./pages/Doctores/VerTriaje";
 
 
 const queryClient = new QueryClient();
@@ -55,6 +58,18 @@ const App = () => (
                             element={
                                 <PrivateRoute requiredRole="DOCTOR">
                                     <DoctorDashboard/>
+                                </PrivateRoute>}/>
+                        <Route
+                            path="/triaje/ver/:citaId"
+                            element={
+                                <PrivateRoute requiredRole="DOCTOR">
+                                    <VerTriaje/>
+                                </PrivateRoute>}/>
+                        <Route
+                            path="/enfermera-dashboard"
+                            element={
+                                <PrivateRoute requiredRole="ENFERMERA">
+                                    <EnfermeraDashboard/>
                                 </PrivateRoute>}/>
                         <Route
                             path="/Appointment"
@@ -98,6 +113,12 @@ const App = () => (
                             element={
                                 <PrivateRoute requiredRole="SECRETARIA">
                                     <DisponibilidadForm/>
+                                </PrivateRoute>}/>
+                        <Route
+                            path="/triaje/:citaId"
+                            element={
+                                <PrivateRoute requiredRole="ENFERMERA">
+                                    <RegistroTriaje/>
                                 </PrivateRoute>}/>
                     </Routes>
                 </BrowserRouter>

@@ -39,7 +39,7 @@ const Header = () => {
             </Link>
 
 
-            {(!user || (user && user.rol?.nombre !== "ADMIN")) && (
+            {(!user || (user && !["ADMIN", "DOCTOR", "SECRETARIA", "ENFERMERA"].includes(user.rol?.nombre))) && (
                 <>
                     <Link to="/services"
                           className="text-gray-700 hover:text-blue-600 transition-colors"
@@ -92,6 +92,13 @@ const Header = () => {
                       className="text-gray-700 hover:text-blue-600 transition-colors"
                       onClick={closeMobileMenu}>
                     Perfil
+                </Link>
+            )}
+            {user && user.rol?.nombre === "ENFERMERA" && (
+                <Link to="/enfermera-dashboard"
+                      className="text-gray-700 hover:text-blue-600 transition-colors"
+                      onClick={closeMobileMenu}>
+                    Dashboard Enfermera
                 </Link>
             )}
         </>
