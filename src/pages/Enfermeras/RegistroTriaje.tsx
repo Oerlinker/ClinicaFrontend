@@ -98,7 +98,7 @@ const RegistroTriaje: React.FC = () => {
         try {
             await API.post("/triajes", payload);
             toast({ title: "Triaje registrado correctamente" });
-            navigate("/enfermeras-dashboard");
+            navigate("/enfermera-dashboard");
         } catch (err: any) {
             toast({
                 title: "Error al guardar triaje",
