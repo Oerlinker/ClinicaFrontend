@@ -17,7 +17,7 @@ type EmpleadoData = {
     nombre: string;
     apellido: string;
     cargo: string;
-    especialidad?: { id: number; nombre: string } | null;
+    especialidad: string | null;
     departamento: string | null;
     fechaContratacion?: string;
     salario?: number;
@@ -93,7 +93,7 @@ const EmpleadosSection: React.FC = () => {
     const handleEdit = (empleado: EmpleadoData) => {
         setEditingEmpleado(empleado);
         setFormData({
-            especialidadId: empleado.especialidad?.id.toString() || "",
+            especialidadId: empleado.especialidad || "",
             fechaContratacion: empleado.fechaContratacion || "",
             salario: empleado.salario?.toString() || "",
         });
@@ -196,11 +196,9 @@ const EmpleadosSection: React.FC = () => {
                                 <TableRow key={empleado.id}>
                                     <TableCell>{empleado.nombre} {empleado.apellido}</TableCell>
                                     <TableCell>{empleado.cargo || "-"}</TableCell>
-                                    <TableCell>
-                                        {empleado.especialidad ? empleado.especialidad.nombre : "-"}
-                                    </TableCell>
-                                    <TableCell>{empleado.fechaContratacion || "-"}</TableCell>
+                                    <TableCell>{empleado.especialidad || "-"}</TableCell>
                                     <TableCell>{empleado.salario ? `$${empleado.salario}` : "-"}</TableCell>
+                                    <TableCell>{empleado.fechaContratacion || "-"}</TableCell>
                                     <TableCell>
                                         <Button
                                             variant="outline"
