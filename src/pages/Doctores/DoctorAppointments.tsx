@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { useQuery } from "@tanstack/react-query";
-import { Link, useNavigate } from "react-router-dom";
+import { Link } from "react-router-dom";
 import API from "../../services/api";
 import {
     Table,
@@ -12,8 +12,8 @@ import {
 } from "../../components/ui/table";
 import { Button } from "../../components/ui/button";
 import { useToast } from "../../hooks/use-toast";
-import { format, parseISO } from "date-fns";
 import { X } from "lucide-react";
+import { format, parseISO, startOfDay } from "date-fns";
 
 interface Cita {
     id: number;
@@ -25,7 +25,6 @@ interface Cita {
 
 const DoctorAppointments: React.FC = () => {
     const { toast } = useToast();
-    const navigate = useNavigate();
     const [citas, setCitas] = useState<Cita[]>([]);
 
     const [hasTriajeMap, setHasTriajeMap] = useState<Record<number, boolean>>({});
@@ -38,10 +37,10 @@ const DoctorAppointments: React.FC = () => {
 
     useEffect(() => {
         if (data) {
-            const today = new Date();
+            const today = startOfDay(new Date());
             setCitas(
                 data.filter(cita =>
-                    parseISO(cita.fecha) >= today &&
+                    startOfDay(parseISO(cita.fecha)) >= today &&
                     cita.estado === "AGENDADA"
                 )
             );
@@ -157,7 +156,6 @@ const DoctorAppointments: React.FC = () => {
                                         </Button>
                                     )}
 
-                                    {/* Sólo mostrar si ya hay un triaje registrado */}
                                     {hasTriajeMap[cita.id] && (
                                         <Link to={`/triaje/ver/${cita.id}`}>
                                             <Button variant="secondary" size="sm">
