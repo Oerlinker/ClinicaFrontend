@@ -32,7 +32,6 @@ const DeptEmployees: React.FC<Props> = ({ deptId }) => {
         onSuccess: () => {
             qc.invalidateQueries({ queryKey: ["empleados-departamento", deptId] });
             qc.invalidateQueries({ queryKey: ["empleados-sin-departamento"] });
-            qc.invalidateQueries({ queryKey: ["empleados"] });
         },
     });
 
@@ -42,7 +41,6 @@ const DeptEmployees: React.FC<Props> = ({ deptId }) => {
         onSuccess: () => {
             qc.invalidateQueries({ queryKey: ["empleados-departamento", deptId] });
             qc.invalidateQueries({ queryKey: ["empleados-sin-departamento"] });
-            qc.invalidateQueries({ queryKey: ["empleados"] });
         },
     });
 
