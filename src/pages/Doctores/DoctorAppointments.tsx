@@ -40,7 +40,10 @@ const DoctorAppointments: React.FC = () => {
         if (data) {
             const today = new Date();
             setCitas(
-                data.filter(cita => parseISO(cita.fecha) >= today)
+                data.filter(cita =>
+                    parseISO(cita.fecha) >= today &&
+                    cita.estado === "AGENDADA"
+                )
             );
         }
     }, [data]);
