@@ -41,14 +41,12 @@ const AdminDashboard: React.FC = () => {
                             <AdminDashboardContent/>
                         </AccordionContent>
                     </AccordionItem>
-
                     <AccordionItem value="empleados">
                         <AccordionTrigger>Gestión de Empleados</AccordionTrigger>
                         <AccordionContent>
                             <AdminEmpleadosDashboard/>
                         </AccordionContent>
                     </AccordionItem>
-
                     <AccordionItem value="bitacora">
                         <AccordionTrigger>Bitácora</AccordionTrigger>
                         <AccordionContent>

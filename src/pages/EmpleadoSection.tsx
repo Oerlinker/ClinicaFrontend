@@ -196,17 +196,15 @@ const EmpleadosSection: React.FC = () => {
                             {empleados?.map((empleado) => (
                                 <TableRow key={empleado.id}>
                                     <TableCell>
-                                        {empleado.usuario.nombre} {empleado.usuario.apellido}
+                                        {empleado.usuario?.nombre || "—"} {empleado.usuario?.apellido || ""}
                                     </TableCell>
-                                    <TableCell>{empleado.cargo.nombre}</TableCell>
+                                    <TableCell>{empleado.cargo?.nombre || "—"}</TableCell>
                                     <TableCell>
-                                        {empleado.especialidad ? empleado.especialidad.nombre : "-"}
+                                        {empleado.especialidad ? empleado.especialidad.nombre : "—"}
                                     </TableCell>
-                                    <TableCell>{empleado.fechaContratacion || "-"}</TableCell>
-                                    <TableCell>{empleado.salario ? `$${empleado.salario}` : "-"}</TableCell>
-                                    <TableCell>
-                                        {empleado.departamento?.nombre || "—"}
-                                    </TableCell>
+                                    <TableCell>{empleado.fechaContratacion || "—"}</TableCell>
+                                    <TableCell>{empleado.salario ? `$${empleado.salario}` : "—"}</TableCell>
+                                    <TableCell>{empleado.departamento?.nombre || "—"}</TableCell>
                                     <TableCell>
                                         <Button
                                             variant="outline"
