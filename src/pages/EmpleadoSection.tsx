@@ -14,13 +14,14 @@ interface Especialidad {
 
 type EmpleadoData = {
     id: number;
-    usuario: { nombre: string; apellido: string };
-    cargo: { id: number; nombre: string };
+    nombre: string;
+    apellido: string;
+    cargo: string;
     especialidad?: { id: number; nombre: string } | null;
+    departamento: string | null;
     fechaContratacion?: string;
     salario?: number;
 };
-
 const EmpleadosSection: React.FC = () => {
     const queryClient = useQueryClient();
     const [editingEmpleado, setEditingEmpleado] = useState<EmpleadoData | null>(null);
@@ -34,7 +35,7 @@ const EmpleadosSection: React.FC = () => {
     const {data: empleados, isLoading, error} = useQuery<EmpleadoData[]>({
         queryKey: ["empleados"],
         queryFn: async () => {
-            const response = await API.get("/empleados");
+            const response = await API.get("/empleados/todos");
             return response.data;
         },
     });
@@ -193,10 +194,8 @@ const EmpleadosSection: React.FC = () => {
                         <TableBody>
                             {empleados?.map((empleado) => (
                                 <TableRow key={empleado.id}>
-                                    <TableCell>
-                                        {empleado.usuario.nombre} {empleado.usuario.apellido}
-                                    </TableCell>
-                                    <TableCell>{empleado.cargo.nombre}</TableCell>
+                                    <TableCell>{empleado.nombre} {empleado.apellido}</TableCell>
+                                    <TableCell>{empleado.cargo || "-"}</TableCell>
                                     <TableCell>
                                         {empleado.especialidad ? empleado.especialidad.nombre : "-"}
                                     </TableCell>
