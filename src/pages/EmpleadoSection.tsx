@@ -34,7 +34,7 @@ const EmpleadosSection: React.FC = () => {
     const {data: empleados, isLoading, error} = useQuery<EmpleadoData[]>({
         queryKey: ["empleados"],
         queryFn: async () => {
-            const response = await API.get("/empleados");
+            const response = await API.get("/empleados/todos");
             return response.data;
         },
     });
