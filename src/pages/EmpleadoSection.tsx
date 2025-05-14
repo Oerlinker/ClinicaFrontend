@@ -21,6 +21,7 @@ type EmpleadoData = {
     fechaContratacion?: string;
     salario?: number;
 };
+
 const EmpleadosSection: React.FC = () => {
     const queryClient = useQueryClient();
     const [editingEmpleado, setEditingEmpleado] = useState<EmpleadoData | null>(null);
@@ -92,7 +93,7 @@ const EmpleadosSection: React.FC = () => {
     const handleEdit = (empleado: EmpleadoData) => {
         setEditingEmpleado(empleado);
         setFormData({
-            especialidadId: empleado.especialidad?.id.toString() || "",
+            especialidadId: empleado.especialidad?.id?.toString() || "",
             fechaContratacion: empleado.fechaContratacion || "",
             salario: empleado.salario?.toString() || "",
         });
@@ -187,25 +188,23 @@ const EmpleadosSection: React.FC = () => {
                                 <TableHead>Especialidad</TableHead>
                                 <TableHead>Fecha Contratación</TableHead>
                                 <TableHead>Salario</TableHead>
-                                <TableHead>Acciones</TableHead>
                                 <TableHead>Departamento</TableHead>
+                                <TableHead>Acciones</TableHead>
                             </TableRow>
                         </TableHeader>
                         <TableBody>
                             {empleados?.map((empleado) => (
                                 <TableRow key={empleado.id}>
                                     <TableCell>
-                                        {empleado.usuario.nombre} {empleado.usuario.apellido}
+                                        {empleado.usuario?.nombre || "—"} {empleado.usuario?.apellido || ""}
                                     </TableCell>
-                                    <TableCell>{empleado.cargo.nombre}</TableCell>
+                                    <TableCell>{empleado.cargo?.nombre || "—"}</TableCell>
                                     <TableCell>
-                                        {empleado.especialidad ? empleado.especialidad.nombre : "-"}
+                                        {empleado.especialidad ? empleado.especialidad.nombre : "—"}
                                     </TableCell>
-                                    <TableCell>{empleado.fechaContratacion || "-"}</TableCell>
-                                    <TableCell>{empleado.salario ? `$${empleado.salario}` : "-"}</TableCell>
-                                    <TableCell>
-                                        {empleado.departamento?.nombre || "—"}
-                                    </TableCell>
+                                    <TableCell>{empleado.fechaContratacion || "—"}</TableCell>
+                                    <TableCell>{empleado.salario ? `$${empleado.salario}` : "—"}</TableCell>
+                                    <TableCell>{empleado.departamento?.nombre || "—"}</TableCell>
                                     <TableCell>
                                         <Button
                                             variant="outline"
