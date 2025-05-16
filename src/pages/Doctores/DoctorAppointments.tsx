@@ -22,7 +22,7 @@ interface Cita {
     hora: string;
     estado: string;
     paciente: { id: number; nombre: string; apellido: string };
-    empleado: { id: number } | null;
+    doctor: { id: number; nombre?: string; apellido?: string } | null;
 }
 
 const DoctorAppointments: React.FC = () => {
@@ -32,16 +32,16 @@ const DoctorAppointments: React.FC = () => {
 
     const { data, isLoading, error, refetch } = useQuery<Cita[]>({
         queryKey: ["citas-doctor"],
-        queryFn: () => API.get("/citas/mis-citas-doctor").then(r => r.data),
+        queryFn: () => API.get("/citas/mis-citas-doctor").then((r) => r.data),
     });
 
-    // Filtrar solo las agendadas de hoy
+    // Filtrar solo las citas agendadas para hoy
     useEffect(() => {
         if (data) {
             const today = startOfDay(new Date());
             setCitas(
                 data.filter(
-                    cita =>
+                    (cita) =>
                         startOfDay(parseISO(cita.fecha)) >= today &&
                         cita.estado === "AGENDADA"
                 )
@@ -100,7 +100,7 @@ const DoctorAppointments: React.FC = () => {
                         </TableRow>
                     </TableHeader>
                     <TableBody>
-                        {citas.map(cita => (
+                        {citas.map((cita) => (
                             <TableRow key={cita.id}>
                                 <TableCell>
                                     {format(parseISO(cita.fecha), "dd/MM/yyyy")}
@@ -111,7 +111,7 @@ const DoctorAppointments: React.FC = () => {
                                 </TableCell>
                                 <TableCell>{cita.estado}</TableCell>
                                 <TableCell className="flex flex-wrap gap-2 items-center">
-                                    {/* Botones para marcar o cancelar */}
+                                    {/* Marcar realizada / cancelar */}
                                     {cita.estado !== "CANCELADA" &&
                                         cita.estado !== "REALIZADA" && (
                                             <>
@@ -130,15 +130,15 @@ const DoctorAppointments: React.FC = () => {
                                             </>
                                         )}
 
-                                    {/* Siempre mostramos "Ver Triaje" (opcional) */}
+                                    {/* Ver Triaje (opcional) */}
                                     <Link to={`/triaje/ver/${cita.id}`}>
                                         <Button variant="secondary" size="sm">
                                             Ver Triaje
                                         </Button>
                                     </Link>
 
-                                    {/* Siempre mostramos "Registrar Atención" si hay doctor asignado */}
-                                    {cita.empleado && (
+                                    {/* Registrar Atención */}
+                                    {cita.doctor && (
                                         <Button
                                             variant="default"
                                             size="sm"
@@ -154,7 +154,7 @@ const DoctorAppointments: React.FC = () => {
                 </Table>
             </div>
 
-            {/* Modal con el formulario de Atención */}
+            {/* Modal con AtencionForm */}
             {selectedCita && (
                 <div className="fixed inset-0 bg-black/50 flex justify-center items-center z-50">
                     <div className="bg-white rounded-lg shadow p-6 w-full max-w-2xl">
@@ -169,7 +169,6 @@ const DoctorAppointments: React.FC = () => {
                                 ✕
                             </button>
                         </div>
-
                         <AtencionForm
                             citaId={selectedCita.id}
                             onSuccess={() => {
