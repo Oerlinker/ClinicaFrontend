@@ -12,27 +12,26 @@ import {
 } from "../../components/ui/table";
 import { Button } from "../../components/ui/button";
 import { useToast } from "../../hooks/use-toast";
+import { X } from "lucide-react";
 import { format, parseISO, startOfDay } from "date-fns";
 import RegistrarAtencion from "./RegistrarAtencion";
 
-interface CitaDTO {
+interface Cita {
     id: number;
     fecha: string;
     hora: string;
     estado: string;
-    pacienteId: number;
-    pacienteNombre: string;
-    pacienteApellido: string;
-    empleadoId: number;
+    paciente: { id: number; nombre: string; apellido: string };
+    empleado: { id: number };
 }
 
 const DoctorAppointments: React.FC = () => {
     const { toast } = useToast();
-    const [citas, setCitas] = useState<CitaDTO[]>([]);
+    const [citas, setCitas] = useState<Cita[]>([]);
     const [hasTriajeMap, setHasTriajeMap] = useState<Record<number, boolean>>({});
-    const [selectedCita, setSelectedCita] = useState<CitaDTO | null>(null);
+    const [selectedCita, setSelectedCita] = useState<Cita | null>(null);
 
-    const { data, isLoading, error, refetch } = useQuery<CitaDTO[]>({
+    const { data, isLoading, error, refetch } = useQuery<Cita[]>({
         queryKey: ["citas-doctor"],
         queryFn: () => API.get("/citas/mis-citas-doctor").then(r => r.data),
     });
@@ -125,7 +124,9 @@ const DoctorAppointments: React.FC = () => {
                                     {format(parseISO(cita.fecha), "dd/MM/yyyy")}
                                 </TableCell>
                                 <TableCell>{cita.hora.slice(11, 16)}</TableCell>
-                                <TableCell>{cita.pacienteNombre} {cita.pacienteApellido}</TableCell>
+                                <TableCell>
+                                    {cita.paciente.nombre} {cita.paciente.apellido}
+                                </TableCell>
                                 <TableCell>{cita.estado}</TableCell>
                                 <TableCell className="flex flex-wrap gap-2 items-center">
                                     {cita.estado !== "CANCELADA" && cita.estado !== "REALIZADA" && (
@@ -152,13 +153,15 @@ const DoctorAppointments: React.FC = () => {
                                                     Ver Triaje
                                                 </Button>
                                             </Link>
-                                            <Button
-                                                variant="default"
-                                                size="sm"
-                                                onClick={() => setSelectedCita(cita)}
-                                            >
-                                                Registrar Atención
-                                            </Button>
+                                            {cita.empleado?.id && (
+                                                <Button
+                                                    variant="default"
+                                                    size="sm"
+                                                    onClick={() => setSelectedCita(cita)}
+                                                >
+                                                    Registrar Atención
+                                                </Button>
+                                            )}
                                         </>
                                     )}
                                 </TableCell>
@@ -171,18 +174,15 @@ const DoctorAppointments: React.FC = () => {
             {selectedCita && (
                 <div className="fixed inset-0 bg-black/50 flex justify-center items-center z-50">
                     <div className="bg-white rounded-lg shadow p-4 w-full max-w-2xl">
-                       // SOLUCIÓN: Usar propiedades aplanadas del DTO
-                       {selectedCita && (
-                           <RegistrarAtencion
-                               citaId={selectedCita.id}
-                               doctorId={selectedCita.empleadoId}
-                               pacienteId={selectedCita.pacienteId}
-                               onClose={() => {
-                                   setSelectedCita(null);
-                                   refetch();
-                               }}
-                           />
-                       )}
+                        <RegistrarAtencion
+                            citaId={selectedCita.id}
+                            doctorId={selectedCita.empleado.id}
+                            pacienteId={selectedCita.paciente.id}
+                            onClose={() => {
+                                setSelectedCita(null);
+                                refetch();
+                            }}
+                        />
                     </div>
                 </div>
             )}
