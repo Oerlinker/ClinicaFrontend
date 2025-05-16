@@ -12,7 +12,6 @@ import {
 } from "../../components/ui/table";
 import { Button } from "../../components/ui/button";
 import { useToast } from "../../hooks/use-toast";
-import { X } from "lucide-react";
 import { format, parseISO, startOfDay } from "date-fns";
 import RegistrarAtencion from "./RegistrarAtencion";
 
@@ -172,15 +171,17 @@ const DoctorAppointments: React.FC = () => {
             {selectedCita && (
                 <div className="fixed inset-0 bg-black/50 flex justify-center items-center z-50">
                     <div className="bg-white rounded-lg shadow p-4 w-full max-w-2xl">
-                        <RegistrarAtencion
-                            citaId={selectedCita.id}
-                            doctorId={selectedCita.empleado.id}
-                            pacienteId={selectedCita.paciente.id}
-                            onClose={() => {
-                                setSelectedCita(null);
-                                refetch();
-                            }}
-                        />
+                        {selectedCita?.empleado?.id && selectedCita?.paciente?.id && (
+                            <RegistrarAtencion
+                                citaId={selectedCita.id}
+                                doctorId={selectedCita.empleado.id}
+                                pacienteId={selectedCita.paciente.id}
+                                onClose={() => {
+                                    setSelectedCita(null);
+                                    refetch();
+                                }}
+                            />
+                        )}
                     </div>
                 </div>
             )}
