@@ -153,15 +153,13 @@ const DoctorAppointments: React.FC = () => {
                                                     Ver Triaje
                                                 </Button>
                                             </Link>
-                                            {cita.empleado?.id && (
-                                                <Button
-                                                    variant="default"
-                                                    size="sm"
-                                                    onClick={() => setSelectedCita(cita)}
-                                                >
-                                                    Registrar Atención
-                                                </Button>
-                                            )}
+                                            <Button
+                                                variant="default"
+                                                size="sm"
+                                                onClick={() => setSelectedCita(cita)}
+                                            >
+                                                Registrar Atención
+                                            </Button>
                                         </>
                                     )}
                                 </TableCell>
