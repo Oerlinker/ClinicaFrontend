@@ -1,3 +1,4 @@
+// src/pages/DoctorAppointments.tsx
 import React, { useState, useEffect } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { Link } from "react-router-dom";
@@ -21,13 +22,12 @@ interface Cita {
     hora: string;
     estado: string;
     paciente: { id: number; nombre: string; apellido: string };
-    empleado: { id: number };
+    empleado: { id: number } | null;
 }
 
 const DoctorAppointments: React.FC = () => {
     const { toast } = useToast();
     const [citas, setCitas] = useState<Cita[]>([]);
-    const [hasTriajeMap, setHasTriajeMap] = useState<Record<number, boolean>>({});
     const [selectedCita, setSelectedCita] = useState<Cita | null>(null);
 
     const { data, isLoading, error, refetch } = useQuery<Cita[]>({
@@ -35,35 +35,19 @@ const DoctorAppointments: React.FC = () => {
         queryFn: () => API.get("/citas/mis-citas-doctor").then(r => r.data),
     });
 
+    // Filtrar solo las agendadas de hoy
     useEffect(() => {
         if (data) {
             const today = startOfDay(new Date());
             setCitas(
-                data.filter(cita =>
-                    startOfDay(parseISO(cita.fecha)) >= today &&
-                    cita.estado === "AGENDADA"
+                data.filter(
+                    cita =>
+                        startOfDay(parseISO(cita.fecha)) >= today &&
+                        cita.estado === "AGENDADA"
                 )
             );
         }
     }, [data]);
-
-    useEffect(() => {
-        async function checkTriajes() {
-            const map: Record<number, boolean> = {};
-            await Promise.all(
-                citas.map(async cita => {
-                    try {
-                        await API.get(`/triajes/cita/${cita.id}`);
-                        map[cita.id] = true;
-                    } catch {
-                        map[cita.id] = false;
-                    }
-                })
-            );
-            setHasTriajeMap(map);
-        }
-        if (citas.length) checkTriajes();
-    }, [citas]);
 
     const marcarRealizada = async (id: number) => {
         try {
@@ -77,7 +61,6 @@ const DoctorAppointments: React.FC = () => {
             toast({
                 title: "Error",
                 description: "Hubo un error al marcar la cita como realizada.",
-                variant: "destructive",
             });
         }
     };
@@ -127,33 +110,35 @@ const DoctorAppointments: React.FC = () => {
                                     {cita.paciente.nombre} {cita.paciente.apellido}
                                 </TableCell>
                                 <TableCell>{cita.estado}</TableCell>
-                               <TableCell className="flex flex-wrap gap-2 items-center">
-                                    {cita.estado !== "CANCELADA" && cita.estado !== "REALIZADA" && (
-                                        <>
-                                            <Button
-                                                variant="outline"
-                                                onClick={() => marcarRealizada(cita.id)}
-                                            >
-                                                Marcar Realizada
-                                            </Button>
-                                            <Button
-                                                variant="destructive"
-                                                onClick={() => cancelar(cita.id)}
-                                            >
-                                                Cancelar
-                                            </Button>
-                                        </>
-                                    )}
+                                <TableCell className="flex flex-wrap gap-2 items-center">
+                                    {/* Botones para marcar o cancelar */}
+                                    {cita.estado !== "CANCELADA" &&
+                                        cita.estado !== "REALIZADA" && (
+                                            <>
+                                                <Button
+                                                    variant="outline"
+                                                    onClick={() => marcarRealizada(cita.id)}
+                                                >
+                                                    Marcar Realizada
+                                                </Button>
+                                                <Button
+                                                    variant="destructive"
+                                                    onClick={() => cancelar(cita.id)}
+                                                >
+                                                    Cancelar
+                                                </Button>
+                                            </>
+                                        )}
 
-                                    {hasTriajeMap[cita.id] && (
-                                        <Link to={`/triaje/ver/${cita.id}`}>
-                                            <Button variant="secondary" size="sm">
-                                                Ver Triaje
-                                            </Button>
-                                        </Link>
-                                    )}
+                                    {/* Siempre mostramos "Ver Triaje" (opcional) */}
+                                    <Link to={`/triaje/ver/${cita.id}`}>
+                                        <Button variant="secondary" size="sm">
+                                            Ver Triaje
+                                        </Button>
+                                    </Link>
 
-                                    {cita.empleado?.id && (
+                                    {/* Siempre mostramos "Registrar Atención" si hay doctor asignado */}
+                                    {cita.empleado && (
                                         <Button
                                             variant="default"
                                             size="sm"
@@ -169,11 +154,14 @@ const DoctorAppointments: React.FC = () => {
                 </Table>
             </div>
 
+            {/* Modal con el formulario de Atención */}
             {selectedCita && (
                 <div className="fixed inset-0 bg-black/50 flex justify-center items-center z-50">
                     <div className="bg-white rounded-lg shadow p-6 w-full max-w-2xl">
                         <div className="flex justify-between items-center mb-4">
-                            <h3 className="text-lg font-medium">Atender cita #{selectedCita.id}</h3>
+                            <h3 className="text-lg font-medium">
+                                Atender cita #{selectedCita.id}
+                            </h3>
                             <button
                                 className="text-gray-500 hover:text-gray-700"
                                 onClick={() => setSelectedCita(null)}
