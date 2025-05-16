@@ -29,6 +29,7 @@ const DoctorAppointments: React.FC = () => {
     const { toast } = useToast();
     const [citas, setCitas] = useState<Cita[]>([]);
     const [selectedCita, setSelectedCita] = useState<Cita | null>(null);
+    const [hasTriajeMap, setHasTriajeMap] = useState<Record<number, boolean>>({});
 
     const { data, isLoading, error, refetch } = useQuery<Cita[]>({
         queryKey: ["citas-doctor"],
@@ -48,6 +49,35 @@ const DoctorAppointments: React.FC = () => {
             );
         }
     }, [data]);
+
+    // Verificar qué citas tienen triaje
+    const checkTriajes = async (citas: Cita[]) => {
+        try {
+            const promises = citas.map(cita =>
+                API.get(`/triajes/cita/${cita.id}`)
+                    .then(() => ({ id: cita.id, hasTriaje: true }))
+                    .catch(() => ({ id: cita.id, hasTriaje: false }))
+            );
+
+            const results = await Promise.all(promises);
+            const triageMap: Record<number, boolean> = {};
+
+            results.forEach(result => {
+                triageMap[result.id] = result.hasTriaje;
+            });
+
+            setHasTriajeMap(triageMap);
+        } catch (error) {
+            console.error("Error al verificar triajes", error);
+        }
+    };
+
+    // Cargar información de triajes cuando se cargan las citas
+    useEffect(() => {
+        if (citas.length > 0) {
+            checkTriajes(citas);
+        }
+    }, [citas]);
 
     const marcarRealizada = async (id: number) => {
         try {
@@ -130,15 +160,17 @@ const DoctorAppointments: React.FC = () => {
                                             </>
                                         )}
 
-                                    {/* Ver Triaje (opcional) */}
-                                    <Link to={`/triaje/ver/${cita.id}`}>
-                                        <Button variant="secondary" size="sm">
-                                            Ver Triaje
-                                        </Button>
-                                    </Link>
+                                    {/* Ver Triaje (si existe) */}
+                                    {hasTriajeMap[cita.id] && (
+                                        <Link to={`/triaje/ver/${cita.id}`}>
+                                            <Button variant="secondary" size="sm">
+                                                Ver Triaje
+                                            </Button>
+                                        </Link>
+                                    )}
 
-                                    {/* Registrar Atención */}
-                                    {cita.doctor && (
+                                    {/* Registrar Atención solo si hay triaje */}
+                                    {cita.doctor && hasTriajeMap[cita.id] && (
                                         <Button
                                             variant="default"
                                             size="sm"
