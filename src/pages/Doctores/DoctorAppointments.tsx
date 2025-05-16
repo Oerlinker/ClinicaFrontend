@@ -12,9 +12,8 @@ import {
 } from "../../components/ui/table";
 import { Button } from "../../components/ui/button";
 import { useToast } from "../../hooks/use-toast";
-import { X } from "lucide-react";
 import { format, parseISO, startOfDay } from "date-fns";
-import RegistrarAtencion from "./RegistrarAtencion";
+import AtencionForm from "./AtencionForm";
 
 interface Cita {
     id: number;
@@ -173,14 +172,22 @@ const DoctorAppointments: React.FC = () => {
 
             {selectedCita && (
                 <div className="fixed inset-0 bg-black/50 flex justify-center items-center z-50">
-                    <div className="bg-white rounded-lg shadow p-4 w-full max-w-2xl">
-                        <RegistrarAtencion
+                    <div className="bg-white rounded-lg shadow p-6 w-full max-w-2xl">
+                        <div className="flex justify-between items-center mb-4">
+                            <h3 className="text-lg font-medium">Atender cita #{selectedCita.id}</h3>
+                            <button
+                                className="text-gray-500 hover:text-gray-700"
+                                onClick={() => setSelectedCita(null)}
+                            >
+                                ✕
+                            </button>
+                        </div>
+
+                        <AtencionForm
                             citaId={selectedCita.id}
-                            doctorId={selectedCita.empleado.id}
-                            pacienteId={selectedCita.paciente.id}
-                            onClose={() => {
-                                setSelectedCita(null);
-                                refetch();
+                            onSuccess={() => {
+                                refetch();           // recarga lista de citas
+                                setSelectedCita(null); // cierra modal
                             }}
                         />
                     </div>
