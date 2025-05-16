@@ -8,16 +8,15 @@ import { useNavigate } from "react-router-dom";
 import API from "../../services/api";
 import { format, parseISO } from "date-fns";
 
+
 interface CitaInfo {
     id: number;
     fecha: string;
     hora: string;
     tipo: string;
-    paciente: {
-        id: number;
-        nombre: string;
-        apellido: string;
-    };
+    pacienteId: number;
+    pacienteNombre: string;
+    pacienteApellido: string;
 }
 
 interface TriajeCreateDTO {
@@ -67,7 +66,7 @@ const RegistroTriaje: React.FC = () => {
         const txt = busqueda.toLowerCase().trim();
         setFiltradas(
             citas.filter((c) =>
-                `${c.paciente.nombre} ${c.paciente.apellido}`
+                `${c.pacienteNombre} ${c.pacienteApellido}`
                     .toLowerCase()
                     .includes(txt)
             )
@@ -136,11 +135,9 @@ const RegistroTriaje: React.FC = () => {
                             <tbody>
                             {filtradas.map((c) => (
                                 <tr key={c.id} className="hover:bg-gray-50">
+                                    <td className="p-2">{c.pacienteNombre} {c.pacienteApellido}</td>
                                     <td className="p-2">
-                                        {c.paciente.nombre} {c.paciente.apellido}
-                                    </td>
-                                    <td className="p-2">
-                                        {format(parseISO(c.fecha), "dd/MM/yyyy")}
+                                    {format(parseISO(c.fecha), "dd/MM/yyyy")}
                                     </td>
                                     <td className="p-2">{c.hora.slice(11, 16)}</td>
                                     <td className="p-2">{c.tipo}</td>
@@ -163,8 +160,8 @@ const RegistroTriaje: React.FC = () => {
                     <h2 className="text-2xl font-bold">Registro de Triaje</h2>
                     <div className="mb-6">
                         <p>
-                            <strong>Paciente:</strong> {citaSel.paciente.nombre}{" "}
-                            {citaSel.paciente.apellido}
+                            <strong>Paciente:</strong> {citaSel.pacienteNombre}{" "}
+                            {citaSel.pacienteApellido}
                         </p>
                         <p>
                             <strong>Fecha y hora:</strong>{" "}

@@ -15,22 +15,24 @@ import { useToast } from "../../hooks/use-toast";
 import { format, parseISO, startOfDay } from "date-fns";
 import RegistrarAtencion from "./RegistrarAtencion";
 
-interface Cita {
+interface CitaDTO {
     id: number;
     fecha: string;
     hora: string;
     estado: string;
-    paciente: { id: number; nombre: string; apellido: string };
-    empleado: { id: number };
+    pacienteId: number;
+    pacienteNombre: string;
+    pacienteApellido: string;
+    empleadoId: number;
 }
 
 const DoctorAppointments: React.FC = () => {
     const { toast } = useToast();
-    const [citas, setCitas] = useState<Cita[]>([]);
+    const [citas, setCitas] = useState<CitaDTO[]>([]);
     const [hasTriajeMap, setHasTriajeMap] = useState<Record<number, boolean>>({});
-    const [selectedCita, setSelectedCita] = useState<Cita | null>(null);
+    const [selectedCita, setSelectedCita] = useState<CitaDTO | null>(null);
 
-    const { data, isLoading, error, refetch } = useQuery<Cita[]>({
+    const { data, isLoading, error, refetch } = useQuery<CitaDTO[]>({
         queryKey: ["citas-doctor"],
         queryFn: () => API.get("/citas/mis-citas-doctor").then(r => r.data),
     });
@@ -123,9 +125,7 @@ const DoctorAppointments: React.FC = () => {
                                     {format(parseISO(cita.fecha), "dd/MM/yyyy")}
                                 </TableCell>
                                 <TableCell>{cita.hora.slice(11, 16)}</TableCell>
-                                <TableCell>
-                                    {cita.paciente.nombre} {cita.paciente.apellido}
-                                </TableCell>
+                                <TableCell>{cita.pacienteNombre} {cita.pacienteApellido}</TableCell>
                                 <TableCell>{cita.estado}</TableCell>
                                 <TableCell className="flex flex-wrap gap-2 items-center">
                                     {cita.estado !== "CANCELADA" && cita.estado !== "REALIZADA" && (
@@ -171,17 +171,18 @@ const DoctorAppointments: React.FC = () => {
             {selectedCita && (
                 <div className="fixed inset-0 bg-black/50 flex justify-center items-center z-50">
                     <div className="bg-white rounded-lg shadow p-4 w-full max-w-2xl">
-                        {selectedCita?.empleado?.id && selectedCita?.paciente?.id && (
-                            <RegistrarAtencion
-                                citaId={selectedCita.id}
-                                doctorId={selectedCita.empleado.id}
-                                pacienteId={selectedCita.paciente.id}
-                                onClose={() => {
-                                    setSelectedCita(null);
-                                    refetch();
-                                }}
-                            />
-                        )}
+                       // SOLUCIÓN: Usar propiedades aplanadas del DTO
+                       {selectedCita && (
+                           <RegistrarAtencion
+                               citaId={selectedCita.id}
+                               doctorId={selectedCita.empleadoId}
+                               pacienteId={selectedCita.pacienteId}
+                               onClose={() => {
+                                   setSelectedCita(null);
+                                   refetch();
+                               }}
+                           />
+                       )}
                     </div>
                 </div>
             )}
