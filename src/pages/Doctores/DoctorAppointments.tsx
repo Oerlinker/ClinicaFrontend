@@ -127,7 +127,7 @@ const DoctorAppointments: React.FC = () => {
                                     {cita.paciente.nombre} {cita.paciente.apellido}
                                 </TableCell>
                                 <TableCell>{cita.estado}</TableCell>
-                                <TableCell className="flex flex-wrap gap-2 items-center">
+                               <TableCell className="flex flex-wrap gap-2 items-center">
                                     {cita.estado !== "CANCELADA" && cita.estado !== "REALIZADA" && (
                                         <>
                                             <Button
@@ -146,22 +146,21 @@ const DoctorAppointments: React.FC = () => {
                                     )}
 
                                     {hasTriajeMap[cita.id] && (
-                                        <>
-                                            <Link to={`/triaje/ver/${cita.id}`}>
-                                                <Button variant="secondary" size="sm">
-                                                    Ver Triaje
-                                                </Button>
-                                            </Link>
-                                            {cita.empleado?.id && (
-                                                <Button
-                                                    variant="default"
-                                                    size="sm"
-                                                    onClick={() => setSelectedCita(cita)}
-                                                >
-                                                    Registrar Atención
-                                                </Button>
-                                            )}
-                                        </>
+                                        <Link to={`/triaje/ver/${cita.id}`}>
+                                            <Button variant="secondary" size="sm">
+                                                Ver Triaje
+                                            </Button>
+                                        </Link>
+                                    )}
+
+                                    {cita.empleado?.id && (
+                                        <Button
+                                            variant="default"
+                                            size="sm"
+                                            onClick={() => setSelectedCita(cita)}
+                                        >
+                                            Registrar Atención
+                                        </Button>
                                     )}
                                 </TableCell>
                             </TableRow>
@@ -186,8 +185,8 @@ const DoctorAppointments: React.FC = () => {
                         <AtencionForm
                             citaId={selectedCita.id}
                             onSuccess={() => {
-                                refetch();           // recarga lista de citas
-                                setSelectedCita(null); // cierra modal
+                                refetch();
+                                setSelectedCita(null);
                             }}
                         />
                     </div>
