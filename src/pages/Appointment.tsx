@@ -1,3 +1,4 @@
+// src/pages/Appointment.tsx
 import React, { useState, useEffect } from "react";
 import { Button } from "../components/ui/button";
 import { Input } from "../components/ui/input";
@@ -11,10 +12,7 @@ import { useToast } from "../hooks/use-toast";
 
 interface Doctor {
     id: number;
-    usuario: {
-        nombre: string;
-        apellido: string;
-    };
+    usuario: { nombre: string; apellido: string };
 }
 
 interface DisponibilidadDTO {
@@ -24,10 +22,14 @@ interface DisponibilidadDTO {
     horaFin: string;
     duracionSlot: number;
     cupos: number;
-    slots: {
-        hora: string;
-        cuposRestantes: number;
-    }[];
+    slots: { hora: string; cuposRestantes: number }[];
+}
+
+interface Servicio {
+    id: number;
+    nombre: string;
+    descripcion: string;
+    precio: number;
 }
 
 const Appointment: React.FC = () => {
@@ -38,11 +40,12 @@ const Appointment: React.FC = () => {
     const [formData, setFormData] = useState({
         fecha: "",
         hora: "",
-        tipo: "",
+        servicioId: "",
         doctorId: "",
     });
-
     const [slots, setSlots] = useState<string[]>([]);
+    const [servicios, setServicios] = useState<Servicio[]>([]);
+
 
     const {
         data: doctors,
@@ -57,41 +60,46 @@ const Appointment: React.FC = () => {
     });
 
     useEffect(() => {
+        API.get<Servicio[]>("/servicios")
+            .then(({ data }) => setServicios(data))
+            .catch(() =>
+                toast({
+                    title: "Error",
+                    description: "No se pudieron cargar los servicios.",
+                    variant: "destructive",
+                })
+            );
+    }, [toast]);
+
+
+    useEffect(() => {
         const { doctorId, fecha } = formData;
         if (!doctorId || !fecha) {
             setSlots([]);
             return;
         }
-
         API.get<DisponibilidadDTO>(
             `/disponibilidades/empleado/${doctorId}/slots`,
             { params: { fecha } }
         )
             .then(({ data }) => {
-                const disponibles = data.slots
-                    .filter((s) => s.cuposRestantes > 0)
-                    .map((s) => s.hora);
-                setSlots(disponibles);
+                setSlots(
+                    data.slots.filter((s) => s.cuposRestantes > 0).map((s) => s.hora)
+                );
             })
-            .catch(() => {
-                setSlots([]);
-            });
+            .catch(() => setSlots([]));
     }, [formData.doctorId, formData.fecha]);
 
     const handleChange = (
         e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>
     ) => {
-        setFormData({
-            ...formData,
-            [e.target.id]: e.target.value,
-        });
+        setFormData({ ...formData, [e.target.id]: e.target.value });
     };
 
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
-        const { fecha, hora, tipo, doctorId } = formData;
-
-        if (!user || !fecha || !hora || !tipo || !doctorId) {
+        const { fecha, hora, servicioId, doctorId } = formData;
+        if (!user || !fecha || !hora || !servicioId || !doctorId) {
             toast({
                 title: "Error",
                 description: "Por favor completa todos los campos.",
@@ -104,7 +112,7 @@ const Appointment: React.FC = () => {
             fecha,
             hora: `${hora}:00`,
             estado: "AGENDADA",
-            tipo,
+            servicioId: Number(servicioId),
             paciente: { id: user.id },
             doctor: { id: Number(doctorId) },
         };
@@ -179,25 +187,29 @@ const Appointment: React.FC = () => {
                         )}
                     </div>
 
-                    {/* Tipo de cita */}
+                    {/* Servicio (reemplaza al antiguo tipo) */}
                     <div>
-                        <Label htmlFor="tipo">Tipo de Cita</Label>
-                        <select
-                            id="tipo"
-                            value={formData.tipo}
-                            onChange={handleChange}
-                            required
-                            className="border p-2 rounded w-full"
-                        >
-                            <option value="" disabled>
-                                Seleccione un tipo
-                            </option>
-                            <option value="Rutina">Rutina</option>
-                            <option value="Control">Control</option>
-                            <option value="Pediátrica">Pediátrica</option>
-                            <option value="Pre-quirúrgica">Pre-quirúrgica</option>
-                            <option value="Post-quirúrgica">Post-quirúrgica</option>
-                        </select>
+                        <Label htmlFor="servicioId">Servicio</Label>
+                        {servicios.length > 0 ? (
+                            <select
+                                id="servicioId"
+                                value={formData.servicioId}
+                                onChange={handleChange}
+                                required
+                                className="w-full border rounded p-2"
+                            >
+                                <option value="" disabled>
+                                    Seleccione un servicio
+                                </option>
+                                {servicios.map((s) => (
+                                    <option key={s.id} value={s.id}>
+                                        {s.nombre} — ${s.precio / 100}
+                                    </option>
+                                ))}
+                            </select>
+                        ) : (
+                            <p className="text-sm text-gray-500">Cargando servicios...</p>
+                        )}
                     </div>
 
                     {/* Doctor */}
@@ -213,7 +225,7 @@ const Appointment: React.FC = () => {
                                 value={formData.doctorId}
                                 onChange={handleChange}
                                 required
-                                className="border p-2 rounded w-full"
+                                className="w-full border rounded p-2"
                             >
                                 <option value="" disabled>
                                     Seleccione un doctor
