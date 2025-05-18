@@ -1,8 +1,8 @@
 import React, {useState} from 'react';
 import {useQuery, useMutation, useQueryClient} from '@tanstack/react-query';
-import API from '../services/api';
-import {Label} from '../components/ui/label';
-import {Button} from '../components/ui/button';
+import API from '../../services/api';
+import {Label} from '../../components/ui/label';
+import {Button} from '../../components/ui/button';
 import {
     Table,
     TableHeader,
@@ -10,8 +10,8 @@ import {
     TableHead,
     TableBody,
     TableCell,
-} from '../components/ui/table';
-import {useToast} from '../hooks/use-toast';
+} from '../../components/ui/table';
+import {useToast} from '../../hooks/use-toast';
 import {format, parseISO} from 'date-fns';
 
 interface Paciente {
@@ -34,7 +34,7 @@ const tipos = [
     {value: 'QUIRURGICO', label: 'Quirúrgico'},
 ];
 
-export default function AntecedentesAdmin() {
+export default function AntecedentesEnf() {
     const {toast} = useToast();
     const queryClient = useQueryClient();
     const [pacienteId, setPacienteId] = useState<string>('');
@@ -78,15 +78,6 @@ export default function AntecedentesAdmin() {
             toast({title: 'Actualizado', description: 'Antecedente modificado.'});
             queryClient.invalidateQueries({queryKey: ['antecedentes', pacienteId]});
             resetForm();
-        }
-    });
-
-    // Mutación para eliminar
-    const deleteMutation = useMutation({
-        mutationFn: (id: number) => API.delete(`/antecedentes/${id}`),
-        onSuccess: () => {
-            toast({title: 'Eliminado', description: 'Antecedente eliminado.'});
-            queryClient.invalidateQueries({queryKey: ['antecedentes', pacienteId]});
         }
     });
 
@@ -195,7 +186,7 @@ export default function AntecedentesAdmin() {
                                 <TableHead>Tipo</TableHead>
                                 <TableHead>Descripción</TableHead>
                                 <TableHead>Fecha Registro</TableHead>
-                                <TableHead>Acciones</TableHead>
+                                <TableHead>Acción</TableHead>
                             </TableRow>
                         </TableHeader>
                         <TableBody>
@@ -213,17 +204,9 @@ export default function AntecedentesAdmin() {
                                             <Button
                                                 variant="outline"
                                                 size="sm"
-                                                className="mr-2"
                                                 onClick={() => handleEdit(a)}
                                             >
                                                 Editar
-                                            </Button>
-                                            <Button
-                                                variant="destructive"
-                                                size="sm"
-                                                onClick={() => deleteMutation.mutate(a.id)}
-                                            >
-                                                Eliminar
                                             </Button>
                                         </TableCell>
                                     </TableRow>
