@@ -145,10 +145,17 @@ const DoctorAppointments: React.FC = () => {
                                 <TableCell>{cita.paciente.nombre} {cita.paciente.apellido}</TableCell>
                                 <TableCell>{cita.estado}</TableCell>
                                 <TableCell className="flex flex-wrap gap-2">
-                                    {!hasTriajeMap[cita.id] && (
-                                        <Button size="sm" onClick={() => setSelectedCita(cita)}>
-                                            Triaje
-                                        </Button>
+                                    {hasTriajeMap[cita.id] && (
+                                        <>
+                                            <Link to={`/ver-triaje/${cita.id}`}>
+                                                <Button size="sm" variant="outline">
+                                                    Ver Triaje
+                                                </Button>
+                                            </Link>
+                                            <Button size="sm" onClick={() => setSelectedCita(cita)}>
+                                                Registrar Atención
+                                            </Button>
+                                        </>
                                     )}
                                     <Button size="sm" onClick={() => marcarRealizada(cita.id)}>
                                         Realizada
