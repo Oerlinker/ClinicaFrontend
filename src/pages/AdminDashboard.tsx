@@ -15,7 +15,10 @@ import DisponibilidadForm from "./DisponibilidadForm";
 import DisponibilidadReport from "./Reportes/DisponibilidadReport";
 import AdminDepartamentosDashboard from "./AdminDepartamentosDashboard";
 import AntecedentesAdmin from "./AntecedentesAdmin";
+import {toast} from "../hooks/use-toast";
 import {Button} from "../components/ui/button";
+import API from "../services/api";
+
 
 const AdminDashboard: React.FC = () => {
     const {user} = useAuth();
@@ -31,19 +34,40 @@ const AdminDashboard: React.FC = () => {
         );
     }
 
+    const downloadBackup = async () => {
+        try {
+            const response = await API.get("/backup", { responseType: "blob" });
+            const blob = new Blob([response.data], { type: "application/sql" });
+            const url = window.URL.createObjectURL(blob);
+            const link = document.createElement("a");
+            link.href = url;
+            link.setAttribute("download", "backup.sql");
+            document.body.appendChild(link);
+            link.click();
+            link.remove();
+            window.URL.revokeObjectURL(url);
+        } catch (e) {
+            console.error(e);
+            toast({
+                title: "Error",
+                description: "No se pudo descargar el backup.",
+                variant: "destructive",
+            });
+        }
+    };
+
     return (
         <div className="min-h-screen bg-gray-50">
-            <Header/>
+            <Header />
             <main className="container mx-auto px-4 py-8">
                 <div className="flex justify-between items-center mb-4">
                     <h1 className="text-3xl font-bold">Dashboard de Administración</h1>
-                    <a
-                        href="/backup"
-                        className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded"
-                        download
+                    <Button
+                        onClick={downloadBackup}
+                        className="bg-blue-600 hover:bg-blue-700 text-white"
                     >
                         Descargar Backup
-                    </a>
+                    </Button>
                 </div>
                 <Accordion type="single" collapsible>
                     <AccordionItem value="roles">
