@@ -1,14 +1,13 @@
-// src/pages/Appointment.tsx
-import React, { useState, useEffect } from "react";
-import { Button } from "../components/ui/button";
-import { Input } from "../components/ui/input";
-import { Label } from "../components/ui/label";
-import { useQuery } from "@tanstack/react-query";
+import React, {useState, useEffect} from "react";
+import {Button} from "../components/ui/button";
+import {Input} from "../components/ui/input";
+import {Label} from "../components/ui/label";
+import {useQuery} from "@tanstack/react-query";
 import API from "../services/api";
-import { useAuth } from "../contexts/AuthContext";
+import {useAuth} from "../contexts/AuthContext";
 import Header from "../components/Header";
-import { useNavigate } from "react-router-dom";
-import { useToast } from "../hooks/use-toast";
+import {useNavigate} from "react-router-dom";
+import {useToast} from "../hooks/use-toast";
 
 interface Doctor {
     id: number;
@@ -33,9 +32,9 @@ interface Servicio {
 }
 
 const Appointment: React.FC = () => {
-    const { user } = useAuth();
+    const {user} = useAuth();
     const navigate = useNavigate();
-    const { toast } = useToast();
+    const {toast} = useToast();
 
     const [formData, setFormData] = useState({
         fecha: "",
@@ -61,7 +60,7 @@ const Appointment: React.FC = () => {
 
     useEffect(() => {
         API.get<Servicio[]>("/servicios")
-            .then(({ data }) => setServicios(data))
+            .then(({data}) => setServicios(data))
             .catch(() =>
                 toast({
                     title: "Error",
@@ -73,16 +72,16 @@ const Appointment: React.FC = () => {
 
 
     useEffect(() => {
-        const { doctorId, fecha } = formData;
+        const {doctorId, fecha} = formData;
         if (!doctorId || !fecha) {
             setSlots([]);
             return;
         }
         API.get<DisponibilidadDTO>(
             `/disponibilidades/empleado/${doctorId}/slots`,
-            { params: { fecha } }
+            {params: {fecha}}
         )
-            .then(({ data }) => {
+            .then(({data}) => {
                 setSlots(
                     data.slots.filter((s) => s.cuposRestantes > 0).map((s) => s.hora)
                 );
@@ -93,12 +92,12 @@ const Appointment: React.FC = () => {
     const handleChange = (
         e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>
     ) => {
-        setFormData({ ...formData, [e.target.id]: e.target.value });
+        setFormData({...formData, [e.target.id]: e.target.value});
     };
 
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
-        const { fecha, hora, servicioId, doctorId } = formData;
+        const {fecha, hora, servicioId, doctorId} = formData;
         if (!user || !fecha || !hora || !servicioId || !doctorId) {
             toast({
                 title: "Error",
@@ -113,13 +112,13 @@ const Appointment: React.FC = () => {
             hora: `${hora}:00`,
             estado: "AGENDADA",
             servicioId: Number(servicioId),
-            paciente: { id: user.id },
-            doctor: { id: Number(doctorId) },
+            paciente: {id: user.id},
+            doctor: {id: Number(doctorId)},
         };
 
         try {
             const response = await API.post("/citas", appointmentData);
-            const { id, precio } = response.data;
+            const {id, precio} = response.data;
             toast({
                 title: "Cita agendada",
                 description: "Redirigiendo a pago.",
@@ -136,7 +135,7 @@ const Appointment: React.FC = () => {
 
     return (
         <div className="min-h-screen flex flex-col">
-            <Header />
+            <Header/>
             <main className="flex-grow bg-gray-50 flex flex-col items-center justify-center p-4">
                 <h2 className="text-2xl font-bold mb-4">Agendar Cita</h2>
                 <form
