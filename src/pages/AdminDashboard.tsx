@@ -38,7 +38,7 @@ const AdminDashboard: React.FC = () => {
                 <div className="flex justify-between items-center mb-4">
                     <h1 className="text-3xl font-bold">Dashboard de Administración</h1>
                     <Button
-                        onClick={() => window.open('/api/backup', '_blank')}
+                        onClick={() => window.open('/backup', '_blank')}
                         className="bg-blue-600 hover:bg-blue-700 text-white"
                     >
                         Descargar Backup
