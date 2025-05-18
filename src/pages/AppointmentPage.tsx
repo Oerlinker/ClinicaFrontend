@@ -1,33 +1,33 @@
-import React, {useState, useEffect} from 'react';
-import {useQuery} from '@tanstack/react-query';
+import React, { useState, useEffect } from 'react';
+import { useQuery } from '@tanstack/react-query';
 import API from '../services/api';
-import {useAuth} from '../contexts/AuthContext';
+import { useAuth } from '../contexts/AuthContext';
 import {
     Table, TableHeader, TableRow, TableHead,
     TableBody, TableCell
 } from '../components/ui/table';
-import {Button} from '../components/ui/button';
-import {format, addWeeks, parseISO, subWeeks} from 'date-fns';
-import {Link} from 'react-router-dom';
-import {useToast} from '../hooks/use-toast';
+import { Button } from '../components/ui/button';
+import { format, subWeeks, parseISO } from 'date-fns';
+import { Link } from 'react-router-dom';
+import { useToast } from '../hooks/use-toast';
 
 interface Cita {
     id: number;
     fecha: string;
     hora: string;
     estado: string;
-    tipo: string;
+    servicio: { id: number; nombre: string; descripcion?: string; precio: number };
     doctor: { usuario: { nombre: string; apellido: string } };
     precio: number;
 }
 
 const AppointmentsPage: React.FC = () => {
-    const {user} = useAuth();
-    const {toast} = useToast();
+    const { user } = useAuth();
+    const { toast } = useToast();
     const [citas, setCitas] = useState<Cita[]>([]);
     const [showActionColumn, setShowActionColumn] = useState(true);
 
-    const {data, isLoading, error, refetch} = useQuery<Cita[]>({
+    const { data, isLoading, error, refetch } = useQuery<Cita[]>({
         queryKey: ['mis-citas'],
         queryFn: () => API.get('/citas/mis-citas').then(r => r.data),
         enabled: !!user
@@ -44,7 +44,6 @@ const AppointmentsPage: React.FC = () => {
             });
 
             setCitas(filteredCitas);
-
             const hasAgendadaCitas = filteredCitas.some(cita => cita.estado === 'AGENDADA');
             setShowActionColumn(hasAgendadaCitas);
         }
@@ -55,15 +54,15 @@ const AppointmentsPage: React.FC = () => {
             await API.patch(`/citas/${id}/cancelar`);
             refetch();
             toast({
-                title: "Cita cancelada",
-                description: "La cita ha sido cancelada exitosamente.",
+                title: 'Cita cancelada',
+                description: 'La cita ha sido cancelada exitosamente.',
             });
         } catch (error: any) {
             console.error('Error cancelando cita', error);
             toast({
-                title: "Error",
-                description: "Hubo un error al cancelar la cita.",
-                variant: "destructive",
+                title: 'Error',
+                description: 'Hubo un error al cancelar la cita.',
+                variant: 'destructive',
             });
         }
     };
@@ -87,13 +86,13 @@ const AppointmentsPage: React.FC = () => {
                                 <TableHead>Fecha</TableHead>
                                 <TableHead>Hora</TableHead>
                                 <TableHead>Doctor</TableHead>
-                                <TableHead>Tipo</TableHead>
+                                <TableHead>Servicio</TableHead>
                                 <TableHead>Estado</TableHead>
                                 {showActionColumn && <TableHead>Acción</TableHead>}
                             </TableRow>
                         </TableHeader>
                         <TableBody>
-                            {citas?.map((cita) => {
+                            {citas.map(cita => {
                                 const showCancelButton = cita.estado === 'AGENDADA';
                                 return (
                                     <TableRow key={cita.id}>
@@ -102,7 +101,7 @@ const AppointmentsPage: React.FC = () => {
                                         <TableCell>
                                             {cita.doctor.usuario.nombre} {cita.doctor.usuario.apellido}
                                         </TableCell>
-                                        <TableCell>{cita.tipo}</TableCell>
+                                        <TableCell>{cita.servicio.nombre}</TableCell>
                                         <TableCell>{cita.estado}</TableCell>
                                         {showActionColumn && (
                                             <TableCell>
@@ -128,3 +127,4 @@ const AppointmentsPage: React.FC = () => {
 };
 
 export default AppointmentsPage;
+
