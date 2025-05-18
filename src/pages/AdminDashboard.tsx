@@ -37,16 +37,17 @@ const AdminDashboard: React.FC = () => {
             <main className="container mx-auto px-4 py-8">
                 <div className="flex justify-between items-center mb-4">
                     <h1 className="text-3xl font-bold">Dashboard de Administración</h1>
-                    <Button
-                        onClick={() => window.open('/backup', '_blank')}
-                        className="bg-blue-600 hover:bg-blue-700 text-white"
+                    <a
+                        href="/backup"
+                        className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded"
+                        download
                     >
                         Descargar Backup
-                    </Button>
+                    </a>
                 </div>
                 <Accordion type="single" collapsible>
                     <AccordionItem value="roles">
-                        <AccordionTrigger>Gestión de Roles</AccordionTrigger>
+                    <AccordionTrigger>Gestión de Roles</AccordionTrigger>
                         <AccordionContent>
                             <AdminDashboardContent/>
                         </AccordionContent>
