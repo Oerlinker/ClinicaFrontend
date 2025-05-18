@@ -193,12 +193,12 @@ const DoctorAppointments: React.FC = () => {
 
             {/* Modal de Historial Clínico */}
             {showHistory && historyPatientId !== null && (
-                <div className="fixed inset-0 bg-black/50 flex justify-center items-start overflow-auto p-8">
-                    <div className="bg-white rounded-lg shadow p-6 w-full max-w-4xl">
-                        <div className="flex justify-between items-center mb-4">
+                <div className="fixed inset-0 bg-black/50 flex justify-center items-start overflow-auto py-8 z-50">
+                    <div className="bg-white rounded-lg shadow p-6 w-full max-w-4xl my-4 max-h-[90vh] overflow-y-auto">
+                        <div className="sticky top-0 bg-white pb-2 flex justify-between items-center mb-4 border-b">
                             <h3 className="text-xl font-semibold">Historia Clínica</h3>
                             <button onClick={() => setShowHistory(false)}
-                                    className="text-gray-500 hover:text-gray-700">✕
+                                    className="text-gray-500 hover:text-gray-700 p-2">✕
                             </button>
                         </div>
                         {historyLoading && <p>Cargando historial...</p>}
