@@ -43,12 +43,6 @@ interface Atencion {
     patologia?: { id: number; codigo: string; nombre: string; descripcion: string };
 }
 
-// Exportar la interfaz para que pueda ser importada por AtencionForm.tsx
-export interface AtencionFormProps {
-    cita: Cita;
-    onClose: () => void;
-}
-
 interface DoctorVisited {
     usuarioId: number;
     empleadoId: number;
@@ -181,8 +175,14 @@ const DoctorAppointments: React.FC = () => {
 
             {/* Modal de Triaje */}
             {selectedCita && (
-                <div className="fixed inset-0 bg-black/50 flex justify-center items-center">
+                <div className="fixed inset-0 bg-black/50 flex justify-center items-center z-50">
                     <div className="bg-white rounded-lg shadow p-6 w-full max-w-2xl">
+                        <div className="flex justify-between items-center mb-4">
+                            <h3 className="text-xl font-semibold">Registrar Atención</h3>
+                            <button onClick={() => setSelectedCita(null)}
+                                    className="text-gray-500 hover:text-gray-700 p-2">✕
+                            </button>
+                        </div>
                         <AtencionForm
                             citaId={selectedCita.id}
                             onSuccess={() => setSelectedCita(null)}
