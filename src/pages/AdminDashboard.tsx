@@ -16,6 +16,7 @@ import DisponibilidadReport from "./Reportes/DisponibilidadReport";
 import AdminDepartamentosDashboard from "./AdminDepartamentosDashboard";
 import AntecedentesAdmin from "./AntecedentesAdmin";
 import AdminServiciosDashboard from "./AdminServiciosDashboard";
+import AdminPatologiasDashboard from "./AdminPatologiasDashboard";
 import {toast} from "../hooks/use-toast";
 import {Button} from "../components/ui/button";
 import API from "../services/api";
@@ -87,6 +88,12 @@ const AdminDashboard: React.FC = () => {
                         <AccordionTrigger>Gestión de Servicios</AccordionTrigger>
                         <AccordionContent>
                             <AdminServiciosDashboard/>
+                        </AccordionContent>
+                    </AccordionItem>
+                    <AccordionItem value="patologias">
+                        <AccordionTrigger>Gestión de Patologías</AccordionTrigger>
+                        <AccordionContent>
+                            <AdminPatologiasDashboard/>
                         </AccordionContent>
                         </AccordionItem>
                         <AccordionItem value="bitacora">
