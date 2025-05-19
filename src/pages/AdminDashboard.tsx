@@ -15,6 +15,7 @@ import DisponibilidadForm from "./DisponibilidadForm";
 import DisponibilidadReport from "./Reportes/DisponibilidadReport";
 import AdminDepartamentosDashboard from "./AdminDepartamentosDashboard";
 import AntecedentesAdmin from "./AntecedentesAdmin";
+import AdminServiciosDashboard from "./AdminServiciosDashboard";
 import {toast} from "../hooks/use-toast";
 import {Button} from "../components/ui/button";
 import API from "../services/api";
@@ -36,8 +37,8 @@ const AdminDashboard: React.FC = () => {
 
     const downloadBackup = async () => {
         try {
-            const response = await API.get("/backup", { responseType: "blob" });
-            const blob = new Blob([response.data], { type: "application/sql" });
+            const response = await API.get("/backup", {responseType: "blob"});
+            const blob = new Blob([response.data], {type: "application/sql"});
             const url = window.URL.createObjectURL(blob);
             const link = document.createElement("a");
             link.href = url;
@@ -58,7 +59,7 @@ const AdminDashboard: React.FC = () => {
 
     return (
         <div className="min-h-screen bg-gray-50">
-            <Header />
+            <Header/>
             <main className="container mx-auto px-4 py-8">
                 <div className="flex justify-between items-center mb-4">
                     <h1 className="text-3xl font-bold">Dashboard de Administración</h1>
@@ -71,7 +72,7 @@ const AdminDashboard: React.FC = () => {
                 </div>
                 <Accordion type="single" collapsible>
                     <AccordionItem value="roles">
-                    <AccordionTrigger>Gestión de Roles</AccordionTrigger>
+                        <AccordionTrigger>Gestión de Roles</AccordionTrigger>
                         <AccordionContent>
                             <AdminDashboardContent/>
                         </AccordionContent>
@@ -82,46 +83,52 @@ const AdminDashboard: React.FC = () => {
                             <AdminEmpleadosDashboard/>
                         </AccordionContent>
                     </AccordionItem>
-                    <AccordionItem value="bitacora">
-                        <AccordionTrigger>Bitácora</AccordionTrigger>
+                    <AccordionItem value="servicios">
+                        <AccordionTrigger>Gestión de Servicios</AccordionTrigger>
                         <AccordionContent>
-                            <AdminBitacora/>
+                            <AdminServiciosDashboard/>
                         </AccordionContent>
-                    </AccordionItem>
-                    <AccordionItem value="reportes">
-                        <AccordionTrigger>Reportes de Citas</AccordionTrigger>
-                        <AccordionContent>
-                            <CitaReport/>
-                        </AccordionContent>
-                    </AccordionItem>
-                    <AccordionItem value="reportes-disp">
-                        <AccordionTrigger>Reportes de Disponibilidades</AccordionTrigger>
-                        <AccordionContent>
-                            <DisponibilidadReport/>
-                        </AccordionContent>
-                    </AccordionItem>
-                    <AccordionItem value="Disponibilidades">
-                        <AccordionTrigger>Disponibilidades</AccordionTrigger>
-                        <AccordionContent>
-                            <DisponibilidadForm/>
-                        </AccordionContent>
-                    </AccordionItem>
-                    <AccordionItem value="departamentos">
-                        <AccordionTrigger>Gestión de Departamentos</AccordionTrigger>
-                        <AccordionContent>
-                            <AdminDepartamentosDashboard/>
-                        </AccordionContent>
-                    </AccordionItem>
-                    <AccordionItem value="antecedentes">
-                        <AccordionTrigger>Gestión de Antecedentes</AccordionTrigger>
-                        <AccordionContent>
-                            <AntecedentesAdmin/>
-                        </AccordionContent>
-                    </AccordionItem>
+                        </AccordionItem>
+                        <AccordionItem value="bitacora">
+                            <AccordionTrigger>Bitácora</AccordionTrigger>
+                            <AccordionContent>
+                                <AdminBitacora/>
+                            </AccordionContent>
+                        </AccordionItem>
+                        <AccordionItem value="reportes">
+                            <AccordionTrigger>Reportes de Citas</AccordionTrigger>
+                            <AccordionContent>
+                                <CitaReport/>
+                            </AccordionContent>
+                        </AccordionItem>
+                        <AccordionItem value="reportes-disp">
+                            <AccordionTrigger>Reportes de Disponibilidades</AccordionTrigger>
+                            <AccordionContent>
+                                <DisponibilidadReport/>
+                            </AccordionContent>
+                        </AccordionItem>
+                        <AccordionItem value="Disponibilidades">
+                            <AccordionTrigger>Disponibilidades</AccordionTrigger>
+                            <AccordionContent>
+                                <DisponibilidadForm/>
+                            </AccordionContent>
+                        </AccordionItem>
+                        <AccordionItem value="departamentos">
+                            <AccordionTrigger>Gestión de Departamentos</AccordionTrigger>
+                            <AccordionContent>
+                                <AdminDepartamentosDashboard/>
+                            </AccordionContent>
+                        </AccordionItem>
+                        <AccordionItem value="antecedentes">
+                            <AccordionTrigger>Gestión de Antecedentes</AccordionTrigger>
+                            <AccordionContent>
+                                <AntecedentesAdmin/>
+                            </AccordionContent>
+                        </AccordionItem>
                 </Accordion>
             </main>
         </div>
-    );
+);
 };
 
 export default AdminDashboard;
