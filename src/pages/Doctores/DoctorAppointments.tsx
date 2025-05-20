@@ -114,10 +114,41 @@ const DoctorAppointments: React.FC = () => {
         enabled: historyPatientId !== null
     });
 
-    // Acciones de cita (simplificadas)
-    const marcarRealizada = async (id: number) => { /* ... */
+    // Acciones de cita
+    const marcarRealizada = async (id: number) => {
+        try {
+            await API.post(`/citas/${id}/realizar`);
+            setCitas(prev => prev.filter(cita => cita.id !== id));
+            toast({
+                title: "Cita completada",
+                description: "La cita se ha marcado como realizada correctamente."
+            });
+        } catch (error) {
+            console.error("Error al marcar cita como realizada:", error);
+            toast({
+                title: "Error",
+                description: "No se pudo marcar la cita como realizada.",
+                variant: "destructive"
+            });
+        }
     };
-    const cancelar = async (id: number) => { /* ... */
+    const cancelar = async (id: number) => {
+      try {
+
+        await API.post(`/citas/${id}/cancelar-doctor`);
+        setCitas(prev => prev.filter(cita => cita.id !== id));
+        toast({
+          title: "Cita cancelada",
+          description: "La cita se ha cancelado correctamente."
+        });
+      } catch (error) {
+        console.error("Error al cancelar la cita:", error);
+        toast({
+          title: "Error",
+          description: "No se pudo cancelar la cita.",
+          variant: "destructive"
+        });
+      }
     };
 
     if (isLoading) return <div>Cargando citas…</div>;
