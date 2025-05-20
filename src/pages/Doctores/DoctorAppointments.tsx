@@ -147,7 +147,7 @@ const DoctorAppointments: React.FC = () => {
                                 <TableCell className="flex flex-wrap gap-2">
                                     {hasTriajeMap[cita.id] && (
                                         <>
-                                            <Link to={`/ver-triaje/${cita.id}`}>
+                                            <Link to={`/triaje/ver/${cita.id}`}>
                                                 <Button size="sm" variant="outline">
                                                     Ver Triaje
                                                 </Button>
@@ -180,7 +180,7 @@ const DoctorAppointments: React.FC = () => {
                 </Table>
             </div>
 
-            {/* Modal de Triaje */}
+            {/* Modal de Atencion */}
             {selectedCita && (
                 <div className="fixed inset-0 bg-black/50 flex justify-center items-center z-50">
                     <div className="bg-white rounded-lg shadow p-6 w-full max-w-2xl">
