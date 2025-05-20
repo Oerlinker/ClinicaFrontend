@@ -117,7 +117,7 @@ const DoctorAppointments: React.FC = () => {
     // Acciones de cita
     const marcarRealizada = async (id: number) => {
         try {
-            await API.post(`/citas/${id}/realizar`);
+            await API.patch(`/citas/${id}/realizar`);
             setCitas(prev => prev.filter(cita => cita.id !== id));
             toast({
                 title: "Cita completada",
@@ -135,7 +135,7 @@ const DoctorAppointments: React.FC = () => {
     const cancelar = async (id: number) => {
       try {
 
-        await API.post(`/citas/${id}/cancelar-doctor`);
+        await API.patch(`/citas/${id}/cancelar-doctor`);
         setCitas(prev => prev.filter(cita => cita.id !== id));
         toast({
           title: "Cita cancelada",
