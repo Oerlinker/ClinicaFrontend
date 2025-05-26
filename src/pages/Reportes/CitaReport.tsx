@@ -107,6 +107,75 @@ const CitaReport: React.FC = () => {
         doc.save(filename + ".pdf");
     };
 
+    const exportToHTML = (rows: Cita[], filename: string) => {
+        let htmlContent = `
+        <!DOCTYPE html>
+        <html lang="es">
+        <head>
+            <meta charset="UTF-8">
+            <title>Reporte de Citas</title>
+            <style>
+                body { font-family: Arial, sans-serif; margin: 20px; }
+                table { width: 100%; border-collapse: collapse; margin-top: 20px; }
+                th, td { border: 1px solid #ddd; padding: 8px; text-align: left; }
+                th { background-color: #f2f2f2; }
+                h1 { color: #333; }
+            </style>
+        </head>
+        <body>
+            <h1>Reporte de Citas</h1>
+            <table>
+                <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>Fecha</th>
+                        <th>Hora</th>
+                        <th>Paciente</th>
+                        <th>Doctor</th>
+                        <th>Tipo</th>
+                        <th>Estado</th>
+                        <th>Precio</th>
+                    </tr>
+                </thead>
+                <tbody>
+        `;
+
+
+        rows.forEach(cita => {
+            htmlContent += `
+                <tr>
+                    <td>${cita.id}</td>
+                    <td>${format(parseISO(cita.fecha), 'dd/MM/yyyy')}</td>
+                    <td>${cita.hora.slice(11, 16)}</td>
+                    <td>${cita.paciente.nombre} ${cita.paciente.apellido}</td>
+                    <td>${cita.doctor.usuario.nombre} ${cita.doctor.usuario.apellido}</td>
+                    <td>${cita.tipo}</td>
+                    <td>${cita.estado}</td>
+                    <td>$${cita.precio}</td>
+                </tr>
+            `;
+        });
+
+
+        htmlContent += `
+                </tbody>
+            </table>
+        </body>
+        </html>
+        `;
+
+
+        const blob = new Blob([htmlContent], {type: 'text/html'});
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = filename + '.html';
+        document.body.appendChild(a);
+        a.click();
+        document.body.removeChild(a);
+        URL.revokeObjectURL(url);
+    };
+
     return (
         <div className="p-6">
             <Card>
@@ -185,6 +254,7 @@ const CitaReport: React.FC = () => {
                 <CardFooter>
                     <Button onClick={() => exportToExcel(citas, "reporte_citas")}>Exportar a Excel</Button>
                     <Button onClick={() => exportToPDF(citas, "reporte_citas")}>Exportar a PDF</Button>
+                    <Button onClick={() => exportToHTML(citas, "reporte_citas")}>Exportar a HTML</Button>
                 </CardFooter>
             </Card>
         </div>

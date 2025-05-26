@@ -8,6 +8,9 @@ import {
     Table, TableHeader, TableRow,
     TableHead, TableBody, TableCell
 } from "../../components/ui/table";
+import * as XLSX from 'xlsx';
+import jsPDF from 'jspdf';
+import 'jspdf-autotable';
 
 interface Disponibilidad {
     id: number;
@@ -42,7 +45,7 @@ const DisponibilidadReport: React.FC = () => {
     });
 
 
-    const { data: filas, isFetching } = useQuery<Disponibilidad[]>({
+    const { data: filas = [], isFetching } = useQuery<Disponibilidad[]>({
         queryKey: ["disp-report", filter],
         queryFn: () =>
             API.post<Disponibilidad[]>("/reportes/disponibilidades", {
@@ -58,6 +61,100 @@ const DisponibilidadReport: React.FC = () => {
     ) => {
         const { id, value } = e.target;
         setFilter(prev => ({ ...prev, [id]: value || undefined }));
+    };
+
+    const exportToExcel = (rows: Disponibilidad[], filename: string) => {
+        const sheet = XLSX.utils.json_to_sheet(
+            rows.map(d => ({
+                Fecha: d.fecha,
+                Inicio: d.horaInicio,
+                Fin: d.horaFin,
+                Duración: d.duracionSlot,
+                Cupos: d.cupos,
+                Doctor: `${d.empleado.usuario.nombre} ${d.empleado.usuario.apellido}`
+            }))
+        );
+        const wb = XLSX.utils.book_new();
+        XLSX.utils.book_append_sheet(wb, sheet, "Disponibilidades");
+        XLSX.writeFile(wb, filename + ".xlsx");
+    };
+
+    const exportToPDF = (rows: Disponibilidad[], filename: string) => {
+        const doc = new jsPDF();
+        (doc as any).autoTable({
+            head: [['Fecha', 'Inicio', 'Fin', 'Duración', 'Cupos', 'Doctor']],
+            body: rows.map(d => [
+                d.fecha,
+                d.horaInicio,
+                d.horaFin,
+                d.duracionSlot,
+                d.cupos,
+                `${d.empleado.usuario.nombre} ${d.empleado.usuario.apellido}`
+            ]),
+        });
+        doc.save(filename + ".pdf");
+    };
+
+    const exportToHTML = (rows: Disponibilidad[], filename: string) => {
+        let htmlContent = `
+        <!DOCTYPE html>
+        <html lang="es">
+        <head>
+            <meta charset="UTF-8">
+            <title>Reporte de Disponibilidades</title>
+            <style>
+                body { font-family: Arial, sans-serif; margin: 20px; }
+                table { width: 100%; border-collapse: collapse; margin-top: 20px; }
+                th, td { border: 1px solid #ddd; padding: 8px; text-align: left; }
+                th { background-color: #f2f2f2; }
+                h1 { color: #333; }
+            </style>
+        </head>
+        <body>
+            <h1>Reporte de Disponibilidades</h1>
+            <table>
+                <thead>
+                    <tr>
+                        <th>Fecha</th>
+                        <th>Inicio</th>
+                        <th>Fin</th>
+                        <th>Duración</th>
+                        <th>Cupos</th>
+                        <th>Doctor</th>
+                    </tr>
+                </thead>
+                <tbody>
+        `;
+
+        rows.forEach(d => {
+            htmlContent += `
+                <tr>
+                    <td>${d.fecha}</td>
+                    <td>${d.horaInicio}</td>
+                    <td>${d.horaFin}</td>
+                    <td>${d.duracionSlot}</td>
+                    <td>${d.cupos}</td>
+                    <td>${d.empleado.usuario.nombre} ${d.empleado.usuario.apellido}</td>
+                </tr>
+            `;
+        });
+
+        htmlContent += `
+                </tbody>
+            </table>
+        </body>
+        </html>
+        `;
+
+        const blob = new Blob([htmlContent], { type: 'text/html' });
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = filename + '.html';
+        document.body.appendChild(a);
+        a.click();
+        document.body.removeChild(a);
+        URL.revokeObjectURL(url);
     };
 
     return (
@@ -97,28 +194,42 @@ const DisponibilidadReport: React.FC = () => {
             {isFetching && <p>Cargando...</p>}
 
             {filas && (
-                <Table>
-                    <TableHeader>
-                        <TableRow>
-                            <TableHead>Fecha</TableHead>
-                            <TableHead>Inicio</TableHead>
-                            <TableHead>Fin</TableHead>
-                            <TableHead>Duración</TableHead>
-                            <TableHead>Cupos</TableHead>
-                        </TableRow>
-                    </TableHeader>
-                    <TableBody>
-                        {filas.map(d => (
-                            <TableRow key={d.id}>
-                                <TableCell>{d.fecha}</TableCell>
-                                <TableCell>{d.horaInicio}</TableCell>
-                                <TableCell>{d.horaFin}</TableCell>
-                                <TableCell>{d.duracionSlot}</TableCell>
-                                <TableCell>{d.cupos}</TableCell>
+                <>
+                    <Table>
+                        <TableHeader>
+                            <TableRow>
+                                <TableHead>Fecha</TableHead>
+                                <TableHead>Inicio</TableHead>
+                                <TableHead>Fin</TableHead>
+                                <TableHead>Duración</TableHead>
+                                <TableHead>Cupos</TableHead>
                             </TableRow>
-                        ))}
-                    </TableBody>
-                </Table>
+                        </TableHeader>
+                        <TableBody>
+                            {filas.map(d => (
+                                <TableRow key={d.id}>
+                                    <TableCell>{d.fecha}</TableCell>
+                                    <TableCell>{d.horaInicio}</TableCell>
+                                    <TableCell>{d.horaFin}</TableCell>
+                                    <TableCell>{d.duracionSlot}</TableCell>
+                                    <TableCell>{d.cupos}</TableCell>
+                                </TableRow>
+                            ))}
+                        </TableBody>
+                    </Table>
+
+                    <div className="mt-4 flex gap-2">
+                        <Button onClick={() => exportToExcel(filas, "Reporte_Disponibilidades")}>
+                            Exportar a Excel
+                        </Button>
+                        <Button onClick={() => exportToPDF(filas, "Reporte_Disponibilidades")}>
+                            Exportar a PDF
+                        </Button>
+                        <Button onClick={() => exportToHTML(filas, "Reporte_Disponibilidades")}>
+                            Exportar a HTML
+                        </Button>
+                    </div>
+                </>
             )}
         </div>
     );
