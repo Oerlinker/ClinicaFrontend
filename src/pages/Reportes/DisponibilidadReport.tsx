@@ -1,9 +1,9 @@
-import React, {useState} from "react";
-import {useQuery} from "@tanstack/react-query";
+import React, { useState } from "react";
+import { useQuery } from "@tanstack/react-query";
 import API from "../../services/api";
-import {Button} from "../../components/ui/button";
-import {Input} from "../../components/ui/input";
-import {Label} from "../../components/ui/label";
+import { Button } from "../../components/ui/button";
+import { Input } from "../../components/ui/input";
+import { Label } from "../../components/ui/label";
 import {
     Table, TableHeader, TableRow,
     TableHead, TableBody, TableCell
@@ -38,14 +38,14 @@ const DisponibilidadReport: React.FC = () => {
     const [enabled, setEnabled] = useState(false);
 
 
-    const {data: doctores = []} = useQuery<Doctor[]>({
+    const { data: doctores = [] } = useQuery<Doctor[]>({
         queryKey: ["disp-report-doctores"],
         queryFn: () =>
             API.get<Doctor[]>("/empleados/doctores").then(r => r.data),
     });
 
 
-    const {data: filas = [], isFetching} = useQuery<Disponibilidad[]>({
+    const { data: filas = [], isFetching } = useQuery<Disponibilidad[]>({
         queryKey: ["disp-report", filter],
         queryFn: () =>
             API.post<Disponibilidad[]>("/reportes/disponibilidades", {
@@ -59,8 +59,8 @@ const DisponibilidadReport: React.FC = () => {
     const handleChange = (
         e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>
     ) => {
-        const {id, value} = e.target;
-        setFilter(prev => ({...prev, [id]: value || undefined}));
+        const { id, value } = e.target;
+        setFilter(prev => ({ ...prev, [id]: value || undefined }));
     };
 
     const exportToExcel = (rows: Disponibilidad[], filename: string) => {
@@ -71,7 +71,9 @@ const DisponibilidadReport: React.FC = () => {
                 Fin: d.horaFin || '',
                 Duración: d.duracionSlot || 0,
                 Cupos: d.cupos || 0,
-                Doctor: `${d.doctor.usuario.nombre} ${d.doctor.usuario.apellido}`,
+                Doctor: d.doctor && d.doctor.usuario
+                    ? `${d.doctor.usuario.nombre || ''} ${d.doctor.usuario.apellido || ''}`
+                    : 'No asignado'
             }))
         );
         const wb = XLSX.utils.book_new();
@@ -89,7 +91,9 @@ const DisponibilidadReport: React.FC = () => {
                 d.horaFin || '',
                 d.duracionSlot || 0,
                 d.cupos || 0,
-                `${d.doctor.usuario.nombre} ${d.doctor.usuario.apellido}`,
+                d.doctor && d.doctor.usuario
+                    ? `${d.doctor.usuario.nombre || ''} ${d.doctor.usuario.apellido || ''}`
+                    : 'No asignado'
             ]),
         });
         doc.save(filename + ".pdf");
@@ -147,7 +151,7 @@ const DisponibilidadReport: React.FC = () => {
         </html>
         `;
 
-        const blob = new Blob([htmlContent], {type: 'text/html'});
+        const blob = new Blob([htmlContent], { type: 'text/html' });
         const url = URL.createObjectURL(blob);
         const a = document.createElement('a');
         a.href = url;
@@ -165,11 +169,11 @@ const DisponibilidadReport: React.FC = () => {
             <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-6">
                 <div>
                     <Label htmlFor="fechaDesde">Desde</Label>
-                    <Input id="fechaDesde" type="date" onChange={handleChange}/>
+                    <Input id="fechaDesde" type="date" onChange={handleChange} />
                 </div>
                 <div>
                     <Label htmlFor="fechaHasta">Hasta</Label>
-                    <Input id="fechaHasta" type="date" onChange={handleChange}/>
+                    <Input id="fechaHasta" type="date" onChange={handleChange} />
                 </div>
                 <div>
                     <Label htmlFor="doctorId">Doctor</Label>
