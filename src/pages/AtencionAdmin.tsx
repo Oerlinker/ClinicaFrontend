@@ -72,9 +72,12 @@ export default function AtencionAdmin() {
     });
 
 
+    // Carga Atenciones según filtros
     const {data: atenciones = [], isLoading: loadingAtenciones} = useQuery({
         queryKey: ['atenciones', pacienteId, doctorId],
-        queryFn: () => API.get(`/atenciones/paciente/${pacienteId}`, {
+        queryFn: () => API.post(`/atenciones/paciente/${pacienteId}`, {
+            pacienteId: pacienteId ? Number(pacienteId) : undefined,
+            doctorId: doctorId ? Number(doctorId) : undefined,
         }).then(res => res.data),
         enabled: !!(pacienteId || doctorId)
     });
