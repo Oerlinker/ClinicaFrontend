@@ -26,6 +26,7 @@ import EnfermeraDashboard from "./pages/Enfermeras/EnfermeraDashboard";
 import VerTriaje from "./pages/Doctores/VerTriaje";
 import DeptList from "./pages/DeptList";
 import DeptForm from "./pages/DeptForm";
+import AtencionAdmin from "./pages/AtencionAdmin";
 
 
 const queryClient = new QueryClient();
@@ -133,6 +134,12 @@ const App = () => (
                             element={
                                 <PrivateRoute requiredRole="ADMIN">
                                     <DeptForm/>
+                                </PrivateRoute>}/>
+                        <Route
+                            path="/admin/atenciones"
+                            element={
+                                <PrivateRoute requiredRole="ADMIN">
+                                    <AtencionAdmin/>
                                 </PrivateRoute>}/>
                         <Route
                             path="/admin/departamentos/:id"

@@ -257,7 +257,16 @@ const DoctorAppointments: React.FC = () => {
                                     <h4 className="font-semibold">Atenciones</h4>
                                     <ul className="list-disc pl-5">
                                         {history.atenciones.map((at: Atencion) => (
-                                            <li key={at.id}>{format(parseISO(at.fecha), 'dd/MM/yyyy')} - {at.diagnostico}</li>
+                                            <li key={at.id}>
+                                                <div className="mb-2">
+                                                    <strong>{format(parseISO(at.fecha), 'dd/MM/yyyy')}</strong>
+                                                    <p><span className="font-medium">Diagnóstico:</span> {at.diagnostico}</p>
+                                                    <p><span className="font-medium">Tratamiento:</span> {at.tratamiento}</p>
+                                                    {at.observaciones && (
+                                                        <p><span className="font-medium">Observaciones:</span> {at.observaciones}</p>
+                                                    )}
+                                                </div>
+                                            </li>
                                         ))}
                                     </ul>
                                 </section>
