@@ -127,7 +127,7 @@ const AdminDashboard: React.FC = () => {
                             <AdminDepartamentosDashboard/>
                         </AccordionContent>
                     </AccordionItem>
-                    <AccordionItem value="departamentos">
+                    <AccordionItem value="Atencion">
                         <AccordionTrigger>Gestión de Atencion</AccordionTrigger>
                         <AccordionContent>
                             <AtencionAdmin/>

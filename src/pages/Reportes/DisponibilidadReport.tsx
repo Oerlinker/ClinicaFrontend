@@ -66,12 +66,14 @@ const DisponibilidadReport: React.FC = () => {
     const exportToExcel = (rows: Disponibilidad[], filename: string) => {
         const sheet = XLSX.utils.json_to_sheet(
             rows.map(d => ({
-                Fecha: d.fecha,
-                Inicio: d.horaInicio,
-                Fin: d.horaFin,
-                Duración: d.duracionSlot,
-                Cupos: d.cupos,
-                Doctor: `${d.empleado.usuario.nombre} ${d.empleado.usuario.apellido}`
+                Fecha: d.fecha || '',
+                Inicio: d.horaInicio || '',
+                Fin: d.horaFin || '',
+                Duración: d.duracionSlot || 0,
+                Cupos: d.cupos || 0,
+                Doctor: d.empleado && d.empleado.usuario
+                    ? `${d.empleado.usuario.nombre || ''} ${d.empleado.usuario.apellido || ''}`
+                    : 'No asignado'
             }))
         );
         const wb = XLSX.utils.book_new();
@@ -84,12 +86,14 @@ const DisponibilidadReport: React.FC = () => {
         (doc as any).autoTable({
             head: [['Fecha', 'Inicio', 'Fin', 'Duración', 'Cupos', 'Doctor']],
             body: rows.map(d => [
-                d.fecha,
-                d.horaInicio,
-                d.horaFin,
-                d.duracionSlot,
-                d.cupos,
-                `${d.empleado.usuario.nombre} ${d.empleado.usuario.apellido}`
+                d.fecha || '',
+                d.horaInicio || '',
+                d.horaFin || '',
+                d.duracionSlot || 0,
+                d.cupos || 0,
+                d.empleado && d.empleado.usuario
+                    ? `${d.empleado.usuario.nombre || ''} ${d.empleado.usuario.apellido || ''}`
+                    : 'No asignado'
             ]),
         });
         doc.save(filename + ".pdf");
@@ -127,14 +131,18 @@ const DisponibilidadReport: React.FC = () => {
         `;
 
         rows.forEach(d => {
+            const doctorNombre = d.empleado && d.empleado.usuario
+                ? `${d.empleado.usuario.nombre || ''} ${d.empleado.usuario.apellido || ''}`
+                : 'No asignado';
+
             htmlContent += `
                 <tr>
-                    <td>${d.fecha}</td>
-                    <td>${d.horaInicio}</td>
-                    <td>${d.horaFin}</td>
-                    <td>${d.duracionSlot}</td>
-                    <td>${d.cupos}</td>
-                    <td>${d.empleado.usuario.nombre} ${d.empleado.usuario.apellido}</td>
+                    <td>${d.fecha || ''}</td>
+                    <td>${d.horaInicio || ''}</td>
+                    <td>${d.horaFin || ''}</td>
+                    <td>${d.duracionSlot || 0}</td>
+                    <td>${d.cupos || 0}</td>
+                    <td>${doctorNombre}</td>
                 </tr>
             `;
         });

@@ -74,9 +74,7 @@ export default function AtencionAdmin() {
 
     const {data: atenciones = [], isLoading: loadingAtenciones} = useQuery({
         queryKey: ['atenciones', pacienteId, doctorId],
-        queryFn: () => API.post(`/atenciones/paciente/${pacienteId}`, {
-            pacienteId: pacienteId ? Number(pacienteId) : undefined,
-            doctorId: doctorId ? Number(doctorId) : undefined,
+        queryFn: () => API.get(`/atenciones/paciente/${pacienteId}`, {
         }).then(res => res.data),
         enabled: !!(pacienteId || doctorId)
     });
