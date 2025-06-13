@@ -3,7 +3,6 @@ import { useToast } from "../hooks/use-toast";
 import tratamientoService, {
   Tratamiento,
   TratamientoDTO,
-  MedicamentoTratamiento,
   MedicamentoTratamientoDTO
 } from "../services/tratamientoService";
 import medicamentoService, { Medicamento } from "../services/medicamentoService";
@@ -27,11 +26,17 @@ import {
   AccordionItem,
   AccordionTrigger,
 } from "../components/ui/accordion";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "../components/ui/select";
 import { Button } from "../components/ui/button";
 import { Input } from "../components/ui/input";
 import { Label } from "../components/ui/label";
 import { Textarea } from "../components/ui/textarea";
-import { Select } from "../components/ui/select";
 import { Pencil, Trash2, Plus, Calendar } from "lucide-react";
 
 const AdminTratamientosDashboard: React.FC = () => {
@@ -112,6 +117,13 @@ const AdminTratamientosDashboard: React.FC = () => {
       [name]: ["medicamentoId", "dosis", "duracionDias"].includes(name)
         ? parseInt(value)
         : value,
+    });
+  };
+
+  const handleSelectChange = (name: string, value: string) => {
+    setMedicamentoFormData({
+      ...medicamentoFormData,
+      [name]: name === "medicamentoId" ? parseInt(value) : value,
     });
   };
 
@@ -497,21 +509,22 @@ const AdminTratamientosDashboard: React.FC = () => {
             <div className="grid gap-4">
               <div className="grid gap-2">
                 <Label htmlFor="medicamentoId">Medicamento</Label>
-                <select
-                  id="medicamentoId"
+                <Select
                   name="medicamentoId"
-                  value={medicamentoFormData.medicamentoId}
-                  onChange={handleMedicamentoInputChange}
-                  required
-                  className="flex w-full rounded-md border border-input bg-background px-3 py-2"
+                  value={medicamentoFormData.medicamentoId.toString()}
+                  onValueChange={(value) => handleSelectChange("medicamentoId", value)}
                 >
-                  <option value="">Seleccionar medicamento</option>
-                  {medicamentos.map(med => (
-                    <option key={med.id} value={med.id}>
-                      {med.nombre} - {med.formaFarmaceutica} {med.concentracion}
-                    </option>
-                  ))}
-                </select>
+                  <SelectTrigger className="w-full">
+                    <SelectValue placeholder="Seleccionar medicamento" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {medicamentos.map(med => (
+                      <SelectItem key={med.id} value={med.id.toString()}>
+                        {med.nombre} - {med.formaFarmaceutica} {med.concentracion}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
               </div>
               <div className="grid grid-cols-2 gap-4">
                 <div className="grid gap-2">
@@ -529,21 +542,22 @@ const AdminTratamientosDashboard: React.FC = () => {
                 </div>
                 <div className="grid gap-2">
                   <Label htmlFor="unidadMedida">Unidad de Medida</Label>
-                  <select
-                    id="unidadMedida"
+                  <Select
                     name="unidadMedida"
                     value={medicamentoFormData.unidadMedida}
-                    onChange={handleMedicamentoInputChange}
-                    required
-                    className="flex w-full rounded-md border border-input bg-background px-3 py-2"
+                    onValueChange={(value) => handleSelectChange("unidadMedida", value)}
                   >
-                    <option value="">Seleccionar</option>
-                    <option value="gotas">Gotas</option>
-                    <option value="tabletas">Tabletas</option>
-                    <option value="ml">ml</option>
-                    <option value="mg">mg</option>
-                    <option value="unidades">Unidades</option>
-                  </select>
+                    <SelectTrigger className="w-full">
+                      <SelectValue placeholder="Seleccionar" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="gotas">Gotas</SelectItem>
+                      <SelectItem value="tabletas">Tabletas</SelectItem>
+                      <SelectItem value="ml">ml</SelectItem>
+                      <SelectItem value="mg">mg</SelectItem>
+                      <SelectItem value="unidades">Unidades</SelectItem>
+                    </SelectContent>
+                  </Select>
                 </div>
               </div>
               <div className="grid gap-2">
@@ -572,22 +586,23 @@ const AdminTratamientosDashboard: React.FC = () => {
                 </div>
                 <div className="grid gap-2">
                   <Label htmlFor="viaAdministracion">Vía de Administración</Label>
-                  <select
-                    id="viaAdministracion"
+                  <Select
                     name="viaAdministracion"
                     value={medicamentoFormData.viaAdministracion}
-                    onChange={handleMedicamentoInputChange}
-                    required
-                    className="flex w-full rounded-md border border-input bg-background px-3 py-2"
+                    onValueChange={(value) => handleSelectChange("viaAdministracion", value)}
                   >
-                    <option value="">Seleccionar</option>
-                    <option value="Oral">Oral</option>
-                    <option value="Oftálmica">Oftálmica</option>
-                    <option value="Tópica">Tópica</option>
-                    <option value="Intravenosa">Intravenosa</option>
-                    <option value="Intramuscular">Intramuscular</option>
-                    <option value="Subcutánea">Subcutánea</option>
-                  </select>
+                    <SelectTrigger className="w-full">
+                      <SelectValue placeholder="Seleccionar" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="Oral">Oral</SelectItem>
+                      <SelectItem value="Oftálmica">Oftálmica</SelectItem>
+                      <SelectItem value="Tópica">Tópica</SelectItem>
+                      <SelectItem value="Intravenosa">Intravenosa</SelectItem>
+                      <SelectItem value="Intramuscular">Intramuscular</SelectItem>
+                      <SelectItem value="Subcutánea">Subcutánea</SelectItem>
+                    </SelectContent>
+                  </Select>
                 </div>
               </div>
               <div className="grid gap-2">
