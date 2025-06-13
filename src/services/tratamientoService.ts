@@ -2,28 +2,34 @@ import API from './api';
 
 export interface Tratamiento {
   id: number;
-  atencionId: number;
+  nombre: string;
   descripcion: string;
+  duracionDias: number;
   fechaInicio: string;
   fechaFin: string;
-  observaciones: string;
+  atencionId: number;
+  observaciones?: string;
   activo: boolean;
   medicamentosTratamiento: MedicamentoTratamiento[];
 }
 
 export interface TratamientoDTO {
-  atencionId: number;
+  nombre: string;
   descripcion: string;
+  duracionDias: number;
   fechaInicio: string;
   fechaFin: string;
-  observaciones: string;
+  atencionId: number;
+  observaciones?: string;
+  medicamentos?: MedicamentoTratamientoDTO[];
 }
 
 export interface MedicamentoTratamiento {
   id: number;
   medicamentoId: number;
+  tratamientoId?: number;
   nombreMedicamento?: string;
-  dosis: number;
+  dosis: string;
   unidadMedida: string;
   frecuencia: string;
   duracionDias: number;
@@ -33,7 +39,7 @@ export interface MedicamentoTratamiento {
 
 export interface MedicamentoTratamientoDTO {
   medicamentoId: number;
-  dosis: number;
+  dosis: string;
   unidadMedida: string;
   frecuencia: string;
   duracionDias: number;
