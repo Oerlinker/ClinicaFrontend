@@ -4,16 +4,16 @@ export interface Medicamento {
   id: number;
   nombre: string;
   descripcion: string;
-  formaFarmaceutica: string;
-  concentracion: string;
+  fabricante: string;
+  efectosSecundarios: string;
   activo: boolean;
 }
 
 export interface MedicamentoDTO {
   nombre: string;
   descripcion: string;
-  formaFarmaceutica: string;
-  concentracion: string;
+  fabricante: string;
+  efectosSecundarios: string;
 }
 
 const getAllMedicamentos = () => {

@@ -32,8 +32,8 @@ const AdminMedicamentosDashboard: React.FC = () => {
   const [formData, setFormData] = useState<MedicamentoDTO>({
     nombre: "",
     descripcion: "",
-    formaFarmaceutica: "",
-    concentracion: "",
+    fabricante: "",
+    efectosSecundarios: "",
   });
 
   useEffect(() => {
@@ -89,8 +89,8 @@ const AdminMedicamentosDashboard: React.FC = () => {
     setFormData({
       nombre: "",
       descripcion: "",
-      formaFarmaceutica: "",
-      concentracion: "",
+      fabricante: "",
+      efectosSecundarios: "",
     });
     setIsEditing(false);
     setCurrentMedicamento(null);
@@ -107,8 +107,8 @@ const AdminMedicamentosDashboard: React.FC = () => {
     setFormData({
       nombre: medicamento.nombre,
       descripcion: medicamento.descripcion,
-      formaFarmaceutica: medicamento.formaFarmaceutica,
-      concentracion: medicamento.concentracion,
+      fabricante: medicamento.fabricante,
+      efectosSecundarios: medicamento.efectosSecundarios,
     });
     setIsDialogOpen(true);
   };
@@ -188,8 +188,8 @@ const AdminMedicamentosDashboard: React.FC = () => {
           <TableRow>
             <TableHead>ID</TableHead>
             <TableHead>Nombre</TableHead>
-            <TableHead>Forma Farmacéutica</TableHead>
-            <TableHead>Concentración</TableHead>
+            <TableHead>Fabricante</TableHead>
+            <TableHead>Efectos Secundarios</TableHead>
             <TableHead>Estado</TableHead>
             <TableHead className="text-right">Acciones</TableHead>
           </TableRow>
@@ -208,8 +208,8 @@ const AdminMedicamentosDashboard: React.FC = () => {
               <TableRow key={medicamento.id}>
                 <TableCell>{medicamento.id}</TableCell>
                 <TableCell>{medicamento.nombre}</TableCell>
-                <TableCell>{medicamento.formaFarmaceutica}</TableCell>
-                <TableCell>{medicamento.concentracion}</TableCell>
+                <TableCell>{medicamento.fabricante}</TableCell>
+                <TableCell>{medicamento.efectosSecundarios}</TableCell>
                 <TableCell>{medicamento.activo ? "Activo" : "Inactivo"}</TableCell>
                 <TableCell className="text-right">
                   <div className="flex justify-end gap-2">
@@ -264,23 +264,22 @@ const AdminMedicamentosDashboard: React.FC = () => {
                 />
               </div>
               <div className="grid gap-2">
-                <Label htmlFor="formaFarmaceutica">Forma Farmacéutica</Label>
+                <Label htmlFor="fabricante">Fabricante</Label>
                 <Input
-                  id="formaFarmaceutica"
-                  name="formaFarmaceutica"
-                  value={formData.formaFarmaceutica}
+                  id="fabricante"
+                  name="fabricante"
+                  value={formData.fabricante}
                   onChange={handleInputChange}
                   required
                 />
               </div>
               <div className="grid gap-2">
-                <Label htmlFor="concentracion">Concentración</Label>
-                <Input
-                  id="concentracion"
-                  name="concentracion"
-                  value={formData.concentracion}
+                <Label htmlFor="efectosSecundarios">Efectos Secundarios</Label>
+                <Textarea
+                  id="efectosSecundarios"
+                  name="efectosSecundarios"
+                  value={formData.efectosSecundarios}
                   onChange={handleInputChange}
-                  required
                 />
               </div>
             </div>
