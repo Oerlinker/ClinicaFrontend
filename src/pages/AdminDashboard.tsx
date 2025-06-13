@@ -18,6 +18,8 @@ import AntecedentesAdmin from "./AntecedentesAdmin";
 import AdminServiciosDashboard from "./AdminServiciosDashboard";
 import AdminPatologiasDashboard from "./AdminPatologiasDashboard";
 import AtencionAdmin from "./AtencionAdmin";
+import AdminMedicamentosDashboard from "./AdminMedicamentosDashboard";
+import AdminTratamientosDashboard from "./AdminTratamientosDashboard";
 import {toast} from "../hooks/use-toast";
 import {Button} from "../components/ui/button";
 import API from "../services/api";
@@ -95,6 +97,18 @@ const AdminDashboard: React.FC = () => {
                         <AccordionTrigger>Gestión de Patologías</AccordionTrigger>
                         <AccordionContent>
                             <AdminPatologiasDashboard/>
+                        </AccordionContent>
+                    </AccordionItem>
+                    <AccordionItem value="medicamentos">
+                        <AccordionTrigger>Gestión de Medicamentos</AccordionTrigger>
+                        <AccordionContent>
+                            <AdminMedicamentosDashboard/>
+                        </AccordionContent>
+                    </AccordionItem>
+                    <AccordionItem value="tratamientos">
+                        <AccordionTrigger>Gestión de Tratamientos</AccordionTrigger>
+                        <AccordionContent>
+                            <AdminTratamientosDashboard/>
                         </AccordionContent>
                     </AccordionItem>
                     <AccordionItem value="bitacora">

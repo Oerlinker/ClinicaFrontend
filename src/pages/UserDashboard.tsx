@@ -2,9 +2,10 @@ import React from "react";
 import {useAuth} from "../contexts/AuthContext";
 import {Button} from "../components/ui/button";
 import Header from "../components/Header";
-import {Calendar} from "lucide-react";
+import {Calendar, Pill} from "lucide-react";
 import {Link} from "react-router-dom";
 import AppointmentsPage from "./AppointmentPage";
+import ListaTratamientos from "../components/ListaTratamientos";
 
 const UserDashboard: React.FC = () => {
     const {user} = useAuth();
@@ -81,6 +82,16 @@ const UserDashboard: React.FC = () => {
                         Mis Citas
                     </h2>
                     <AppointmentsPage/>
+                </div>
+
+                <div className="bg-white shadow rounded-lg p-6 mt-6">
+                    <div className="flex items-center mb-4">
+                        <Pill className="w-6 h-6 mr-2 text-blue-500" />
+                        <h2 className="text-2xl font-semibold text-gray-800">
+                            Mis Tratamientos
+                        </h2>
+                    </div>
+                    <ListaTratamientos userId={user.id} />
                 </div>
             </main>
         </div>
