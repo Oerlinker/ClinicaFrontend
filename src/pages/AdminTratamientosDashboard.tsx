@@ -51,8 +51,10 @@ const AdminTratamientosDashboard: React.FC = () => {
   const [currentTratamientoId, setCurrentTratamientoId] = useState<number | null>(null);
 
   const [tratamientoFormData, setTratamientoFormData] = useState<TratamientoDTO>({
+    nombre: "",
     atencionId: 0,
     descripcion: "",
+    duracionDias: 0,
     fechaInicio: "",
     fechaFin: "",
     observaciones: ""
@@ -60,7 +62,7 @@ const AdminTratamientosDashboard: React.FC = () => {
 
   const [medicamentoFormData, setMedicamentoFormData] = useState<MedicamentoTratamientoDTO>({
     medicamentoId: 0,
-    dosis: 0,
+    dosis: "",
     unidadMedida: "",
     frecuencia: "",
     duracionDias: 0,
@@ -106,7 +108,7 @@ const AdminTratamientosDashboard: React.FC = () => {
     const { name, value } = e.target;
     setTratamientoFormData({
       ...tratamientoFormData,
-      [name]: name === "atencionId" ? parseInt(value) : value,
+      [name]: ["atencionId", "duracionDias"].includes(name) ? parseInt(value) : value,
     });
   };
 
@@ -114,7 +116,7 @@ const AdminTratamientosDashboard: React.FC = () => {
     const { name, value } = e.target;
     setMedicamentoFormData({
       ...medicamentoFormData,
-      [name]: ["medicamentoId", "dosis", "duracionDias"].includes(name)
+      [name]: ["medicamentoId", "duracionDias"].includes(name)
         ? parseInt(value)
         : value,
     });
@@ -129,8 +131,10 @@ const AdminTratamientosDashboard: React.FC = () => {
 
   const resetTratamientoForm = () => {
     setTratamientoFormData({
+      nombre: "",
       atencionId: 0,
       descripcion: "",
+      duracionDias: 0,
       fechaInicio: "",
       fechaFin: "",
       observaciones: ""
@@ -142,7 +146,7 @@ const AdminTratamientosDashboard: React.FC = () => {
   const resetMedicamentoForm = () => {
     setMedicamentoFormData({
       medicamentoId: 0,
-      dosis: 0,
+      dosis: "",
       unidadMedida: "",
       frecuencia: "",
       duracionDias: 0,
@@ -160,11 +164,13 @@ const AdminTratamientosDashboard: React.FC = () => {
     setIsEditing(true);
     setCurrentTratamiento(tratamiento);
     setTratamientoFormData({
+      nombre: tratamiento.nombre,
       atencionId: tratamiento.atencionId,
       descripcion: tratamiento.descripcion,
+      duracionDias: tratamiento.duracionDias,
       fechaInicio: tratamiento.fechaInicio,
       fechaFin: tratamiento.fechaFin,
-      observaciones: tratamiento.observaciones
+      observaciones: tratamiento.observaciones || ""
     });
     setIsTratamientoDialogOpen(true);
   };
@@ -335,7 +341,9 @@ const AdminTratamientosDashboard: React.FC = () => {
               <AccordionContent className="px-4 py-2">
                 <div className="mb-4">
                   <h3 className="text-lg font-medium mb-2">Detalles del Tratamiento</h3>
+                  <p><strong>Nombre:</strong> {tratamiento.nombre}</p>
                   <p><strong>Descripción:</strong> {tratamiento.descripcion}</p>
+                  <p><strong>Duración (días):</strong> {tratamiento.duracionDias}</p>
                   <p><strong>Fecha Inicio:</strong> {formatFecha(tratamiento.fechaInicio)}</p>
                   <p><strong>Fecha Fin:</strong> {formatFecha(tratamiento.fechaFin)}</p>
                   {tratamiento.observaciones && (
@@ -438,6 +446,16 @@ const AdminTratamientosDashboard: React.FC = () => {
                 />
               </div>
               <div className="grid gap-2">
+                <Label htmlFor="nombre">Nombre del Tratamiento</Label>
+                <Input
+                  id="nombre"
+                  name="nombre"
+                  value={tratamientoFormData.nombre}
+                  onChange={handleTratamientoInputChange}
+                  required
+                />
+              </div>
+              <div className="grid gap-2">
                 <Label htmlFor="descripcion">Descripción</Label>
                 <Textarea
                   id="descripcion"
@@ -447,7 +465,19 @@ const AdminTratamientosDashboard: React.FC = () => {
                   required
                 />
               </div>
-              <div className="grid grid-cols-2 gap-4">
+              <div className="grid grid-cols-3 gap-4">
+                <div className="grid gap-2">
+                  <Label htmlFor="duracionDias">Duración (días)</Label>
+                  <Input
+                    id="duracionDias"
+                    name="duracionDias"
+                    type="number"
+                    min="1"
+                    value={tratamientoFormData.duracionDias}
+                    onChange={handleTratamientoInputChange}
+                    required
+                  />
+                </div>
                 <div className="grid gap-2">
                   <Label htmlFor="fechaInicio">Fecha Inicio</Label>
                   <div className="flex">
@@ -520,7 +550,7 @@ const AdminTratamientosDashboard: React.FC = () => {
                   <SelectContent>
                     {medicamentos.map(med => (
                       <SelectItem key={med.id} value={med.id.toString()}>
-                        {med.nombre} - {med.formaFarmaceutica} {med.concentracion}
+                        {med.nombre} - {med.fabricante}
                       </SelectItem>
                     ))}
                   </SelectContent>
@@ -532,9 +562,7 @@ const AdminTratamientosDashboard: React.FC = () => {
                   <Input
                     id="dosis"
                     name="dosis"
-                    type="number"
-                    step="0.1"
-                    min="0"
+                    type="text"
                     value={medicamentoFormData.dosis}
                     onChange={handleMedicamentoInputChange}
                     required
