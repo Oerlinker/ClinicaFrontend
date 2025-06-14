@@ -236,11 +236,14 @@ const AdminMedicamentosDashboard: React.FC = () => {
       </Table>
 
       <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
-        <DialogContent className="sm:max-w-md">
+        <DialogContent className="sm:max-w-md" aria-describedby="medicamento-dialog-description">
           <DialogHeader>
             <DialogTitle>
               {isEditing ? "Editar Medicamento" : "Agregar Nuevo Medicamento"}
             </DialogTitle>
+            <p id="medicamento-dialog-description" className="text-sm text-muted-foreground">
+              Complete el formulario para {isEditing ? "actualizar" : "crear"} un medicamento.
+            </p>
           </DialogHeader>
           <form onSubmit={handleSubmit} className="space-y-4">
             <div className="grid gap-4">
