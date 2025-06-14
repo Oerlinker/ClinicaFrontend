@@ -1,5 +1,7 @@
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import { useToast } from "../hooks/use-toast";
+import { useMutation, useQueryClient, useQuery } from "@tanstack/react-query";
+import API from "../services/api";
 import medicamentoService, { Medicamento, MedicamentoDTO } from "../services/medicamentoService";
 import {
   Table,
@@ -23,9 +25,8 @@ import { Search, Pencil, Trash2 } from "lucide-react";
 
 const AdminMedicamentosDashboard: React.FC = () => {
   const { toast } = useToast();
-  const [medicamentos, setMedicamentos] = useState<Medicamento[]>([]);
+  const queryClient = useQueryClient();
   const [searchTerm, setSearchTerm] = useState("");
-  const [isLoading, setIsLoading] = useState(true);
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [isEditing, setIsEditing] = useState(false);
   const [currentMedicamento, setCurrentMedicamento] = useState<Medicamento | null>(null);
@@ -36,44 +37,75 @@ const AdminMedicamentosDashboard: React.FC = () => {
     efectosSecundarios: "",
   });
 
-  useEffect(() => {
-    loadMedicamentos();
-  }, []);
+  // Consulta para obtener medicamentos
+  const { data: medicamentos = [], isLoading } = useQuery<Medicamento[]>({
+    queryKey: ["medicamentos"],
+    queryFn: () => medicamentoService.getAllMedicamentos().then(res => res.data),
+  });
 
-  const loadMedicamentos = async () => {
-    setIsLoading(true);
-    try {
-      const response = await medicamentoService.getAllMedicamentos();
-      setMedicamentos(response.data);
-    } catch (error) {
+  // Mutación para crear/actualizar medicamento
+  const mutation = useMutation({
+    mutationFn: async () => {
+      if (isEditing && currentMedicamento) {
+        return API.put(`/medicamentos/${currentMedicamento.id}`, formData);
+      }
+      return API.post("/medicamentos", formData);
+    },
+    onSuccess: () => {
+      toast({
+        title: isEditing ? "Actualizado" : "Creado",
+        description: `Medicamento ${isEditing ? "actualizado" : "creado"} correctamente.`,
+      });
+      setIsDialogOpen(false);
+      resetForm();
+      queryClient.invalidateQueries({ queryKey: ["medicamentos"] });
+    },
+    onError: (error: any) => {
+      console.error("Error en la mutación:", error);
       toast({
         title: "Error",
-        description: "No se pudieron cargar los medicamentos",
-        variant: "destructive",
+        description: isEditing
+          ? "No se pudo actualizar el medicamento"
+          : "No se pudo crear el medicamento",
+        variant: "destructive"
       });
-    } finally {
-      setIsLoading(false);
-    }
-  };
+    },
+  });
+
+  // Mutación para eliminar medicamento
+  const deleteMutation = useMutation({
+    mutationFn: (id: number) => API.delete(`/medicamentos/${id}`),
+    onSuccess: () => {
+      toast({
+        title: "Éxito",
+        description: "Medicamento eliminado correctamente"
+      });
+      queryClient.invalidateQueries({ queryKey: ["medicamentos"] });
+    },
+    onError: () => {
+      toast({
+        title: "Error",
+        description: "No se pudo eliminar el medicamento",
+        variant: "destructive"
+      });
+    },
+  });
 
   const handleSearch = async () => {
     if (!searchTerm.trim()) {
-      loadMedicamentos();
+      queryClient.invalidateQueries({ queryKey: ["medicamentos"] });
       return;
     }
 
-    setIsLoading(true);
     try {
       const response = await medicamentoService.buscarMedicamentosPorNombre(searchTerm);
-      setMedicamentos(response.data);
+      queryClient.setQueryData(["medicamentos"], response.data);
     } catch (error) {
       toast({
         title: "Error",
         description: "Error al buscar medicamentos",
         variant: "destructive",
       });
-    } finally {
-      setIsLoading(false);
     }
   };
 
@@ -113,54 +145,14 @@ const AdminMedicamentosDashboard: React.FC = () => {
     setIsDialogOpen(true);
   };
 
-  const handleSubmit = async (e: React.FormEvent) => {
+  const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-
-    try {
-      if (isEditing && currentMedicamento) {
-        await medicamentoService.updateMedicamento(currentMedicamento.id, formData);
-        toast({
-          title: "Éxito",
-          description: "Medicamento actualizado correctamente",
-        });
-      } else {
-        await medicamentoService.createMedicamento(formData);
-        toast({
-          title: "Éxito",
-          description: "Medicamento creado correctamente",
-        });
-      }
-
-      setIsDialogOpen(false);
-      loadMedicamentos();
-      resetForm();
-    } catch (error) {
-      toast({
-        title: "Error",
-        description: isEditing
-          ? "No se pudo actualizar el medicamento"
-          : "No se pudo crear el medicamento",
-        variant: "destructive",
-      });
-    }
+    mutation.mutate();
   };
 
   const handleDelete = async (id: number) => {
     if (window.confirm("¿Estás seguro de que deseas eliminar este medicamento?")) {
-      try {
-        await medicamentoService.deleteMedicamento(id);
-        toast({
-          title: "Éxito",
-          description: "Medicamento eliminado correctamente",
-        });
-        loadMedicamentos();
-      } catch (error) {
-        toast({
-          title: "Error",
-          description: "No se pudo eliminar el medicamento",
-          variant: "destructive",
-        });
-      }
+      deleteMutation.mutate(id);
     }
   };
 
@@ -224,6 +216,7 @@ const AdminMedicamentosDashboard: React.FC = () => {
                       onClick={() => handleDelete(medicamento.id)}
                       variant="destructive"
                       size="icon"
+                      disabled={deleteMutation.isPending}
                     >
                       <Trash2 className="h-4 w-4" />
                     </Button>
@@ -290,7 +283,7 @@ const AdminMedicamentosDashboard: React.FC = () => {
               <Button type="button" variant="outline" onClick={() => setIsDialogOpen(false)}>
                 Cancelar
               </Button>
-              <Button type="submit">
+              <Button type="submit" disabled={mutation.isPending}>
                 {isEditing ? "Actualizar" : "Guardar"}
               </Button>
             </div>
