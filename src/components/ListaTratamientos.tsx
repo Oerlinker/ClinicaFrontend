@@ -23,7 +23,7 @@ const ListaTratamientos: React.FC<ListaTratamientosProps> = ({ userId }) => {
       setIsLoading(true);
       try {
         // Primero obtenemos las atenciones del paciente
-        const responseAtenciones = await API.get(`/atenciones/paciente/${userId}`);
+        const responseAtenciones = await API.get(`/atenciones/usuario/${userId}`);
         const atenciones = responseAtenciones.data;
 
         // Para cada atención, obtenemos los tratamientos asociados

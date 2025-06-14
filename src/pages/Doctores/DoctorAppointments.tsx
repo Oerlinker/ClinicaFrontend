@@ -51,7 +51,7 @@ interface Tratamiento {
     fechaInicio: string;
     fechaFin: string;
     observaciones?: string;
-    medicamentosTratamiento: MedicamentoTratamientoItem[];
+    medicamentos: MedicamentoTratamientoItem[];
 }
 
 interface Atencion {
@@ -264,7 +264,7 @@ const DoctorAppointments: React.FC = () => {
                                                             {t.nombre} ({format(parseISO(t.fechaInicio), "dd/MM/yyyy")} –{" "}
                                                             {format(parseISO(t.fechaFin), "dd/MM/yyyy")})
                                                             <ul className="list-circle pl-5">
-                                                                {t.medicamentosTratamiento.map(m => (
+                                                                {t.medicamentos && t.medicamentos.map(m => (
                                                                     <li key={m.id}>
                                                                         {m.dosis} de <em>{m.nombreMedicamento}</em>, {m.frecuencia},{" "}
                                                                         {m.duracionDias} días ({m.viaAdministracion})
