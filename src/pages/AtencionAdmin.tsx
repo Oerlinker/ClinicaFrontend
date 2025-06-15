@@ -19,11 +19,18 @@ import {
     CardHeader,
     CardTitle,
 } from '../components/ui/card';
+import {
+    Accordion,
+    AccordionContent,
+    AccordionItem,
+    AccordionTrigger,
+} from "../components/ui/accordion";
 import {useToast} from '../hooks/use-toast';
 import {format, parseISO} from 'date-fns';
 import * as XLSX from 'xlsx';
 import jsPDF from 'jspdf';
 import 'jspdf-autotable';
+import tratamientoService, { Tratamiento } from '../services/tratamientoService';
 
 
 
@@ -89,6 +96,12 @@ export default function AtencionAdmin() {
         enabled: !!selectedAtencion
     });
 
+    const {data: tratamientos = [], isLoading: loadingTratamientos} = useQuery({
+        queryKey: ['tratamientos-atencion', selectedAtencion?.id],
+        queryFn: () => tratamientoService.getTratamientosByAtencion(selectedAtencion!.id).then(res => res.data),
+        enabled: !!selectedAtencion
+    });
+
     const handleSelectAtencion = (atencion: Atencion) => {
         setSelectedAtencion(atencion);
     };
@@ -97,6 +110,10 @@ export default function AtencionAdmin() {
         setSelectedAtencion(null);
     };
 
+    const formatFecha = (fechaStr: string) => {
+        const fecha = new Date(fechaStr);
+        return fecha.toLocaleDateString();
+    };
 
     const exportToExcel = (rows: Atencion[], filename: string) => {
         const sheet = XLSX.utils.json_to_sheet(
@@ -389,6 +406,76 @@ export default function AtencionAdmin() {
                                             <p className="mt-1">{selectedAtencion.observaciones}</p>
                                         </div>
                                     )}
+
+                                    {/* Sección de Tratamientos */}
+                                    <div className="mt-6">
+                                        <h3 className="text-lg font-semibold mb-3">Tratamientos Detallados</h3>
+
+                                        {loadingTratamientos ? (
+                                            <p>Cargando tratamientos...</p>
+                                        ) : tratamientos.length === 0 ? (
+                                            <p className="text-gray-500 italic">No hay tratamientos registrados para esta atención</p>
+                                        ) : (
+                                            <Accordion type="single" collapsible className="w-full">
+                                                {tratamientos.map((tratamiento: Tratamiento) => (
+                                                    <AccordionItem key={tratamiento.id} value={`tratamiento-${tratamiento.id}`}>
+                                                        <AccordionTrigger className="px-4 py-2 bg-gray-50 hover:bg-gray-100">
+                                                            <div className="flex justify-between w-full">
+                                                                <span className="font-medium">{tratamiento.nombre}</span>
+                                                                <span className="text-sm text-gray-600">
+                                                                    {formatFecha(tratamiento.fechaInicio)} - {formatFecha(tratamiento.fechaFin)}
+                                                                </span>
+                                                            </div>
+                                                        </AccordionTrigger>
+                                                        <AccordionContent className="px-4 py-2">
+                                                            <div className="mb-4">
+                                                                <p><strong>Descripción:</strong> {tratamiento.descripcion}</p>
+                                                                <p><strong>Duración (días):</strong> {tratamiento.duracionDias}</p>
+                                                                <p><strong>Fecha Inicio:</strong> {formatFecha(tratamiento.fechaInicio)}</p>
+                                                                <p><strong>Fecha Fin:</strong> {formatFecha(tratamiento.fechaFin)}</p>
+                                                                {tratamiento.observaciones && (
+                                                                    <p><strong>Observaciones:</strong> {tratamiento.observaciones}</p>
+                                                                )}
+                                                            </div>
+
+                                                            <div className="mt-4">
+                                                                <h4 className="font-medium mb-2">Medicamentos del Tratamiento</h4>
+                                                                {tratamiento.medicamentosTratamiento &&
+                                                                 tratamiento.medicamentosTratamiento.length > 0 ? (
+                                                                    <Table>
+                                                                        <TableHeader>
+                                                                            <TableRow>
+                                                                                <TableHead>Medicamento</TableHead>
+                                                                                <TableHead>Dosis</TableHead>
+                                                                                <TableHead>Frecuencia</TableHead>
+                                                                                <TableHead>Duración</TableHead>
+                                                                                <TableHead>Vía</TableHead>
+                                                                                <TableHead>Instrucciones</TableHead>
+                                                                            </TableRow>
+                                                                        </TableHeader>
+                                                                        <TableBody>
+                                                                            {tratamiento.medicamentosTratamiento.map((med: import('../services/tratamientoService').MedicamentoTratamiento) => (
+                                                                                <TableRow key={med.id}>
+                                                                                    <TableCell>{med.nombreMedicamento}</TableCell>
+                                                                                    <TableCell>{med.dosis} {med.unidadMedida}</TableCell>
+                                                                                    <TableCell>{med.frecuencia}</TableCell>
+                                                                                    <TableCell>{med.duracionDias} días</TableCell>
+                                                                                    <TableCell>{med.viaAdministracion}</TableCell>
+                                                                                    <TableCell>{med.instrucciones}</TableCell>
+                                                                                </TableRow>
+                                                                            ))}
+                                                                        </TableBody>
+                                                                    </Table>
+                                                                ) : (
+                                                                    <p className="text-gray-500 italic">No hay medicamentos asignados a este tratamiento</p>
+                                                                )}
+                                                            </div>
+                                                        </AccordionContent>
+                                                    </AccordionItem>
+                                                ))}
+                                            </Accordion>
+                                        )}
+                                    </div>
                                 </div>
                             )}
                         </CardContent>
