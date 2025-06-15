@@ -16,6 +16,7 @@ import {
   DialogContent,
   DialogHeader,
   DialogTitle,
+  DialogDescription,
 } from "../components/ui/dialog";
 import { Button } from "../components/ui/button";
 import { Input } from "../components/ui/input";
@@ -234,9 +235,9 @@ const AdminMedicamentosDashboard: React.FC = () => {
             <DialogTitle>
               {isEditing ? "Editar Medicamento" : "Agregar Nuevo Medicamento"}
             </DialogTitle>
-            <p id="medicamento-dialog-description" className="text-sm text-muted-foreground">
+            <DialogDescription id="medicamento-dialog-description">
               Complete el formulario para {isEditing ? "actualizar" : "crear"} un medicamento.
-            </p>
+            </DialogDescription>
           </DialogHeader>
           <form onSubmit={handleSubmit} className="space-y-4">
             <div className="grid gap-4">

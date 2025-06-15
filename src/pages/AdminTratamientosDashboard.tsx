@@ -19,6 +19,7 @@ import {
   DialogContent,
   DialogHeader,
   DialogTitle,
+  DialogDescription,
 } from "../components/ui/dialog";
 import {
   Accordion,
@@ -431,6 +432,11 @@ const AdminTratamientosDashboard: React.FC = () => {
             <DialogTitle>
               {isEditing ? "Editar Tratamiento" : "Agregar Nuevo Tratamiento"}
             </DialogTitle>
+            <DialogDescription>
+              {isEditing
+                ? "Modifica los detalles del tratamiento existente."
+                : "Completa el formulario para agregar un nuevo tratamiento."}
+            </DialogDescription>
           </DialogHeader>
           <form onSubmit={handleTratamientoSubmit} className="space-y-4">
             <div className="grid gap-4">
@@ -534,6 +540,9 @@ const AdminTratamientosDashboard: React.FC = () => {
         <DialogContent className="sm:max-w-lg">
           <DialogHeader>
             <DialogTitle>Añadir Medicamento al Tratamiento</DialogTitle>
+            <DialogDescription>
+              Selecciona un medicamento y completa los detalles para asignarlo al tratamiento.
+            </DialogDescription>
           </DialogHeader>
           <form onSubmit={handleMedicamentoSubmit} className="space-y-4">
             <div className="grid gap-4">
