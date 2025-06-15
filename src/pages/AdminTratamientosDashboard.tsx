@@ -378,8 +378,8 @@ const AdminTratamientosDashboard: React.FC = () => {
                     </Button>
                   </div>
 
-                  {tratamiento.medicamentos &&
-                   tratamiento.medicamentos.length > 0 ? (
+                  {tratamiento.medicamentosTratamiento &&
+                   tratamiento.medicamentosTratamiento.length > 0 ? (
                     <Table>
                       <TableHeader>
                         <TableRow>
@@ -393,7 +393,7 @@ const AdminTratamientosDashboard: React.FC = () => {
                         </TableRow>
                       </TableHeader>
                       <TableBody>
-                        {tratamiento.medicamentos.map((med) => (
+                        {tratamiento.medicamentosTratamiento.map((med) => (
                           <TableRow key={med.id}>
                             <TableCell>{med.nombreMedicamento}</TableCell>
                             <TableCell>{med.dosis} {med.unidadMedida}</TableCell>
