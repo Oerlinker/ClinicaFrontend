@@ -10,7 +10,7 @@ export interface Tratamiento {
   atencionId: number;
   observaciones?: string;
   activo: boolean;
-  medicamentosTratamiento: MedicamentoTratamiento[];
+  medicamentos: MedicamentoTratamiento[];
 }
 
 export interface TratamientoDTO {
