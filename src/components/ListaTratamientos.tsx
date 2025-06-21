@@ -39,12 +39,23 @@ const ListaTratamientos: React.FC<ListaTratamientosProps> = ({ userId }) => {
           }
         }
 
+        // Obtenemos la fecha actual sin tiempo (solo año, mes y día)
+        const hoy = new Date();
+        hoy.setHours(0, 0, 0, 0);
+
+        // Filtramos los tratamientos para mostrar solo los que no han caducado
+        const tratamientosVigentes = todosTratamientos.filter(tratamiento => {
+          const fechaFin = new Date(tratamiento.fechaFin);
+          fechaFin.setHours(0, 0, 0, 0);
+          return fechaFin >= hoy;
+        });
+
         // Ordenamos los tratamientos por fecha de inicio (más recientes primero)
-        todosTratamientos.sort((a, b) =>
+        tratamientosVigentes.sort((a, b) =>
           new Date(b.fechaInicio).getTime() - new Date(a.fechaInicio).getTime()
         );
 
-        setTratamientos(todosTratamientos);
+        setTratamientos(tratamientosVigentes);
       } catch (error) {
         console.error('Error al cargar atenciones del paciente', error);
         toast({
