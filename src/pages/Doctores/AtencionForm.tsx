@@ -223,47 +223,50 @@ export default function AtencionForm({ citaId, onSuccess }: AtencionFormProps) {
             </div>
 
             {/* Toggle para tratamiento estructurado */}
-            <div className="flex items-center space-x-2">
+            <div className="flex items-center space-x-2 p-2 bg-gray-50 rounded-md">
                 <Checkbox
                     id="showTratamientoForm"
                     checked={showTratamientoForm}
                     onCheckedChange={c => setShowTratamientoForm(c === true)}
                 />
-                <label htmlFor="showTratamientoForm" className="select-none">
+                <label htmlFor="showTratamientoForm" className="select-none font-medium">
                     Crear tratamiento estructurado
                 </label>
             </div>
 
             {/* Subformulario de Tratamiento */}
             {showTratamientoForm && (
-                <div className="border rounded p-4 space-y-4">
-                    <h4 className="font-semibold">Detalles del Tratamiento</h4>
+                <div className="border rounded p-4 space-y-4 bg-gray-50 shadow-sm overflow-auto max-h-[60vh]">
+                    <h4 className="font-semibold text-lg border-b pb-2">Detalles del Tratamiento</h4>
 
                     {/* Nombre y Descripción */}
-                    <div>
-                        <label className="block mb-1">Nombre:</label>
-                        <input
-                            name="nombre"
-                            type="text"
-                            required
-                            value={tratamientoForm.nombre}
-                            onChange={handleTratamientoChange}
-                            className="w-full border rounded p-2"
-                        />
-                    </div>
-                    <div>
-                        <label className="block mb-1">Descripción:</label>
-                        <textarea
-                            name="descripcion"
-                            required
-                            value={tratamientoForm.descripcion}
-                            onChange={handleTratamientoChange}
-                            className="w-full border rounded p-2"
-                        />
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <div>
+                            <label className="block mb-1">Nombre:</label>
+                            <input
+                                name="nombre"
+                                type="text"
+                                required
+                                value={tratamientoForm.nombre}
+                                onChange={handleTratamientoChange}
+                                className="w-full border rounded p-2"
+                            />
+                        </div>
+                        <div>
+                            <label className="block mb-1">Descripción:</label>
+                            <textarea
+                                name="descripcion"
+                                required
+                                value={tratamientoForm.descripcion}
+                                onChange={handleTratamientoChange}
+                                className="w-full border rounded p-2"
+                                rows={2}
+                            />
+                        </div>
                     </div>
 
                     {/* Duración y Fechas */}
-                    <div className="grid grid-cols-3 gap-4">
+                    <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                         <div>
                             <label className="block mb-1">Duración (días):</label>
                             <input
@@ -308,21 +311,23 @@ export default function AtencionForm({ citaId, onSuccess }: AtencionFormProps) {
                             value={tratamientoForm.observaciones}
                             onChange={handleTratamientoChange}
                             className="w-full border rounded p-2"
+                            rows={2}
                         />
                     </div>
 
                     {/* Medicamentos dentro del Tratamiento */}
-                    <div className="space-y-3">
-                        <h5 className="font-medium">Agregar Medicamento</h5>
-                        <div className="grid grid-cols-2 gap-4">
-                            {/* Selección de Medicamento */}
+                    <div className="space-y-3 border-t pt-3">
+                        <h5 className="font-medium text-blue-600">Agregar Medicamento</h5>
+
+                        {/* Selección y Dosis */}
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                             <div>
-                                <label className="block mb-1">Medicamento:</label>
+                                <label className="block mb-1 text-sm">Medicamento:</label>
                                 <select
                                     name="medicamentoId"
                                     value={nuevoMedicamento.medicamentoId}
                                     onChange={handleNuevoMedicamentoChange}
-                                    className="w-full border rounded p-2"
+                                    className="w-full border rounded p-2 bg-white"
                                 >
                                     <option value={0}>-- Seleccionar --</option>
                                     {medicamentos.map(m => (
@@ -333,10 +338,9 @@ export default function AtencionForm({ citaId, onSuccess }: AtencionFormProps) {
                                 </select>
                             </div>
 
-                            {/* Dosis y Unidad */}
                             <div className="grid grid-cols-2 gap-2">
                                 <div>
-                                    <label className="block mb-1">Dosis:</label>
+                                    <label className="block mb-1 text-sm">Dosis:</label>
                                     <input
                                         name="dosis"
                                         type="text"
@@ -347,12 +351,12 @@ export default function AtencionForm({ citaId, onSuccess }: AtencionFormProps) {
                                     />
                                 </div>
                                 <div>
-                                    <label className="block mb-1">Unidad:</label>
+                                    <label className="block mb-1 text-sm">Unidad:</label>
                                     <select
                                         name="unidadMedida"
                                         value={nuevoMedicamento.unidadMedida}
                                         onChange={handleNuevoMedicamentoChange}
-                                        className="w-full border rounded p-2"
+                                        className="w-full border rounded p-2 bg-white"
                                     >
                                         <option value="">-- --</option>
                                         <option value="gotas">Gotas</option>
@@ -365,9 +369,9 @@ export default function AtencionForm({ citaId, onSuccess }: AtencionFormProps) {
                         </div>
 
                         {/* Frecuencia, Duración y Vía */}
-                        <div className="grid grid-cols-3 gap-4">
+                        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                             <div>
-                                <label className="block mb-1">Frecuencia:</label>
+                                <label className="block mb-1 text-sm">Frecuencia:</label>
                                 <input
                                     name="frecuencia"
                                     type="text"
@@ -378,7 +382,7 @@ export default function AtencionForm({ citaId, onSuccess }: AtencionFormProps) {
                                 />
                             </div>
                             <div>
-                                <label className="block mb-1">Duración (días):</label>
+                                <label className="block mb-1 text-sm">Duración (días):</label>
                                 <input
                                     name="duracionDias"
                                     type="number"
@@ -389,12 +393,12 @@ export default function AtencionForm({ citaId, onSuccess }: AtencionFormProps) {
                                 />
                             </div>
                             <div>
-                                <label className="block mb-1">Vía:</label>
+                                <label className="block mb-1 text-sm">Vía:</label>
                                 <select
                                     name="viaAdministracion"
                                     value={nuevoMedicamento.viaAdministracion}
                                     onChange={handleNuevoMedicamentoChange}
-                                    className="w-full border rounded p-2"
+                                    className="w-full border rounded p-2 bg-white"
                                 >
                                     <option value="">-- --</option>
                                     <option value="Oral">Oral</option>
@@ -407,7 +411,7 @@ export default function AtencionForm({ citaId, onSuccess }: AtencionFormProps) {
 
                         {/* Instrucciones */}
                         <div>
-                            <label className="block mb-1">Instrucciones:</label>
+                            <label className="block mb-1 text-sm">Instrucciones:</label>
                             <input
                                 name="instrucciones"
                                 type="text"
@@ -418,46 +422,48 @@ export default function AtencionForm({ citaId, onSuccess }: AtencionFormProps) {
                         </div>
 
                         {/* Botón Agregar */}
-                        <Button type="button" onClick={agregarMedicamento} className="w-full">
+                        <Button type="button" onClick={agregarMedicamento} className="w-full mt-2">
                             Agregar al tratamiento
                         </Button>
                     </div>
 
                     {/* Lista de Medicamentos Agregados */}
                     {tratamientoForm.medicamentos.length > 0 && (
-                        <div className="mt-4">
-                            <h5 className="font-medium mb-2">Medicamentos en este tratamiento</h5>
-                            <table className="w-full text-sm">
-                                <thead className="bg-gray-50">
-                                <tr>
-                                    <th className="px-2 py-1 text-left">Medicamento</th>
-                                    <th className="px-2 py-1 text-left">Dosis</th>
-                                    <th className="px-2 py-1 text-left">Frecuencia</th>
-                                    <th className="px-2 py-1 text-right">Acción</th>
-                                </tr>
-                                </thead>
-                                <tbody>
-                                {tratamientoForm.medicamentos.map((med, i) => {
-                                    const m = medicamentos.find(x => x.id === med.medicamentoId);
-                                    return (
-                                        <tr key={i}>
-                                            <td className="px-2 py-1">{m?.nombre}</td>
-                                            <td className="px-2 py-1">{med.dosis} {med.unidadMedida}</td>
-                                            <td className="px-2 py-1">{med.frecuencia}</td>
-                                            <td className="px-2 py-1 text-right">
-                                                <Button
-                                                    variant="destructive"
-                                                    size="sm"
-                                                    onClick={() => eliminarMedicamento(i)}
-                                                >
-                                                    <Trash2 className="h-4 w-4" />
-                                                </Button>
-                                            </td>
-                                        </tr>
-                                    );
-                                })}
-                                </tbody>
-                            </table>
+                        <div className="mt-4 border-t pt-3">
+                            <h5 className="font-medium mb-2 text-green-600">Medicamentos en este tratamiento</h5>
+                            <div className="overflow-x-auto">
+                                <table className="w-full text-sm">
+                                    <thead className="bg-gray-100">
+                                    <tr>
+                                        <th className="px-2 py-1 text-left">Medicamento</th>
+                                        <th className="px-2 py-1 text-left">Dosis</th>
+                                        <th className="px-2 py-1 text-left">Frecuencia</th>
+                                        <th className="px-2 py-1 text-right">Acción</th>
+                                    </tr>
+                                    </thead>
+                                    <tbody className="bg-white">
+                                    {tratamientoForm.medicamentos.map((med, i) => {
+                                        const m = medicamentos.find(x => x.id === med.medicamentoId);
+                                        return (
+                                            <tr key={i} className="border-b">
+                                                <td className="px-2 py-1">{m?.nombre}</td>
+                                                <td className="px-2 py-1">{med.dosis} {med.unidadMedida}</td>
+                                                <td className="px-2 py-1">{med.frecuencia}</td>
+                                                <td className="px-2 py-1 text-right">
+                                                    <Button
+                                                        variant="destructive"
+                                                        size="sm"
+                                                        onClick={() => eliminarMedicamento(i)}
+                                                    >
+                                                        <Trash2 className="h-4 w-4" />
+                                                    </Button>
+                                                </td>
+                                            </tr>
+                                        );
+                                    })}
+                                    </tbody>
+                                </table>
+                            </div>
                         </div>
                     )}
                 </div>
