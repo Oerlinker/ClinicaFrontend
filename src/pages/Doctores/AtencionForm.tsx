@@ -1,4 +1,4 @@
-import { FormEvent, useEffect, useState } from "react";
+import { FormEvent, useEffect, useState, useRef } from "react";
 import API from "../../services/api";
 import { useToast } from "../../hooks/use-toast";
 import { Checkbox } from "../../components/ui/checkbox";
@@ -35,6 +35,11 @@ export default function AtencionForm({ citaId, onSuccess }: AtencionFormProps) {
     const [patologias, setPatologias] = useState<Patologia[]>([]);
     const [patologiaId, setPatologiaId] = useState<number | "">("");
     const [error, setError] = useState<string | null>(null);
+
+    // Referencias para el desplazamiento
+    const formContainerRef = useRef<HTMLDivElement>(null);
+    const guardarBtnRef = useRef<HTMLButtonElement>(null);
+    const inicioFormRef = useRef<HTMLDivElement>(null);
 
     // Para el tratamiento estructurado
     const [showTratamientoForm, setShowTratamientoForm] = useState(false);
@@ -151,6 +156,26 @@ export default function AtencionForm({ citaId, onSuccess }: AtencionFormProps) {
             return { ...tf, medicamentos: meds };
         });
     };
+
+    // Funciones para el desplazamiento
+    const scrollToGuardar = () => {
+        guardarBtnRef.current?.scrollIntoView({ behavior: 'smooth' });
+    };
+
+    const scrollToInicio = () => {
+        inicioFormRef.current?.scrollIntoView({ behavior: 'smooth' });
+    };
+
+    // Efecto para ajustar la altura máxima del contenedor cuando cambia el estado del formulario de tratamiento
+    useEffect(() => {
+        if (showTratamientoForm && formContainerRef.current) {
+            // Ajustar la altura cuando se muestra el tratamiento
+            formContainerRef.current.style.maxHeight = '80vh';
+        } else if (formContainerRef.current) {
+            // Restaurar la altura cuando se oculta
+            formContainerRef.current.style.maxHeight = 'auto';
+        }
+    }, [showTratamientoForm]);
 
     // Envío del formulario
     const handleSubmit = async (e: FormEvent) => {
