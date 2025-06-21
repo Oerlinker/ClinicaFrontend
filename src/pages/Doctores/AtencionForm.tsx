@@ -77,7 +77,6 @@ export default function AtencionForm({ citaId, onSuccess }: AtencionFormProps) {
                 })
             );
 
-        // Carga de medicamentos
         medicamentoService
             .getAllMedicamentos()
             .then(res => setMedicamentos(res.data))
