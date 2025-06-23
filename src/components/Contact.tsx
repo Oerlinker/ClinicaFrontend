@@ -51,7 +51,7 @@ const Contact = () => {
                             <li>Domingo: Closed</li>
                         </ul>
                         <Button variant="link" className="text-blue-600">
-                            Request Appointment
+                            Agenda una Cita
                         </Button>
                     </div>
 
@@ -70,7 +70,7 @@ const Contact = () => {
                             Email: oerlinker@gmail.com<br/>
                         </p>
                         <Button variant="link" className="text-blue-600">
-                            Call Now
+                            LLama Ahora
                         </Button>
                     </div>
                 </div>
