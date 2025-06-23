@@ -6,6 +6,7 @@ import { Button } from "../../components/ui/button";
 import { Trash2 } from "lucide-react";
 import medicamentoService, { Medicamento } from "../../services/medicamentoService";
 import { MedicamentoTratamientoDTO } from "../../services/tratamientoService";
+import { cn } from "../../lib/utils";
 
 interface AtencionFormProps {
     citaId: number;
@@ -165,16 +166,7 @@ export default function AtencionForm({ citaId, onSuccess }: AtencionFormProps) {
         inicioFormRef.current?.scrollIntoView({ behavior: 'smooth' });
     };
 
-    // Efecto para ajustar la altura máxima del contenedor cuando cambia el estado del formulario de tratamiento
-    useEffect(() => {
-        if (showTratamientoForm && formContainerRef.current) {
-            // Ajustar la altura cuando se muestra el tratamiento
-            formContainerRef.current.style.maxHeight = '80vh';
-        } else if (formContainerRef.current) {
-            // Restaurar la altura cuando se oculta
-            formContainerRef.current.style.maxHeight = 'auto';
-        }
-    }, [showTratamientoForm]);
+
 
     // Envío del formulario
     const handleSubmit = async (e: FormEvent) => {
@@ -222,12 +214,10 @@ export default function AtencionForm({ citaId, onSuccess }: AtencionFormProps) {
     return (
       <div
         ref={formContainerRef}
-        className="
-          mx-auto max-w-4xl              /* ancho máximo y centrado */
-          max-h-[calc(100vh-8rem)]       /* altura = 100vh menos espacio para header/footer */
-          overflow-y-auto overflow-x-hidden
-          bg-white p-6 rounded-lg shadow-lg
-        "
+        className={cn(
+          "mx-auto max-w-4xl overflow-y-auto overflow-x-hidden bg-white p-6 rounded-lg shadow-lg",
+          showTratamientoForm ? "max-h-[80vh]" : "max-h-[calc(100vh-8rem)]"
+        )}
       >
            <div ref={inicioFormRef}></div>
            <form onSubmit={handleSubmit} className="space-y-6 pb-32">
