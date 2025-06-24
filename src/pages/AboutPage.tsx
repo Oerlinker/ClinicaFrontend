@@ -56,7 +56,7 @@ const AboutPage: React.FC = () => {
           <div className="mb-12">
             <h2 className="text-2xl font-bold text-gray-800 mb-6">Nuestra Historia</h2>
             <p className="text-gray-600 mb-4">
-              Fundada en 2010, la Clínica Horus comenzó como un pequeño consultorio con la visión del Dr. Roberto Méndez de brindar atención oftalmológica especializada y accesible. A lo largo de los años, hemos crecido hasta convertirnos en un centro de referencia en salud visual.
+              Fundada en 2010, la Clínica Horus comenzó como un pequeño consultorio con la visión del Dr. Andres Segovia de brindar atención oftalmológica especializada y accesible. A lo largo de los años, hemos crecido hasta convertirnos en un centro de referencia en salud visual.
             </p>
             <p className="text-gray-600 mb-4">
               En 2015, expandimos nuestras instalaciones e incorporamos tecnología de vanguardia para diagnósticos más precisos y tratamientos más efectivos. Desde entonces, nuestro equipo ha continuado creciendo con especialistas en diversos campos de la oftalmología.
