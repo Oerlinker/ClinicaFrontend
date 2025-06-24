@@ -2,16 +2,17 @@ import React from 'react';
 import Header from '../components/Header';
 import { Card, CardContent } from '../components/ui/card';
 import { Button } from '../components/ui/button';
+import doctorAndresImage from '../assets/images/doctorAndresImage.png';
 
 const DoctorsPage: React.FC = () => {
   // Datos de ejemplo de médicos
   const doctors = [
     {
       id: 1,
-      name: 'Dr. Carlos Méndez',
-      specialty: 'Oftalmología General',
-      image: 'https://images.unsplash.com/photo-1612349317150-e413f6a5b16d?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=400&h=400&q=80',
-      description: 'Especialista con más de 15 años de experiencia en diagnóstico y tratamiento de enfermedades oculares.'
+      name: 'Dr. Andres Segovia',
+      specialty: 'Cirugía Refractiva',
+      image: doctorAndresImage,
+      description: 'Experto en procedimientos de corrección visual como LASIK y cirugías para cataratas con tecnología de vanguardia.'
     },
     {
       id: 2,
@@ -23,9 +24,9 @@ const DoctorsPage: React.FC = () => {
     {
       id: 3,
       name: 'Dr. Miguel Torres',
-      specialty: 'Cirugía Refractiva',
+      specialty: 'Oftalmología General',
       image: 'https://images.unsplash.com/photo-1622253692010-333f2da6031d?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=400&h=400&q=80',
-      description: 'Experto en procedimientos de corrección visual como LASIK y cirugías para cataratas con tecnología de vanguardia.'
+      description: 'Especialista con más de 15 años de experiencia en diagnóstico y tratamiento de enfermedades oculares.'
     },
     {
       id: 4,
@@ -53,11 +54,18 @@ const DoctorsPage: React.FC = () => {
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-12">
           {doctors.map(doctor => (
             <Card key={doctor.id} className="overflow-hidden hover:shadow-lg transition-shadow">
-              <div className="h-60 overflow-hidden">
+              <div className="h-60 overflow-hidden relative">
                 <img
                   src={doctor.image}
                   alt={doctor.name}
-                  className="w-full h-full object-cover"
+                  className="w-full h-full object-cover object-center absolute inset-0"
+                  style={{
+                    // Ajustes específicos para las imágenes problemáticas
+                    objectPosition:
+                      doctor.id === 2 ? 'center top' :
+                      doctor.id === 3 ? 'center 25%' :
+                      'center'
+                  }}
                 />
               </div>
               <CardContent className="p-5">
