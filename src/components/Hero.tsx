@@ -1,7 +1,14 @@
 import {Button} from "./ui/button";
 import {Link} from "react-router-dom";
+import {useAuth} from "../contexts/AuthContext";
 
 const Hero = () => {
+    // Usando el hook de autenticación para verificar si el usuario está logueado
+    const {user} = useAuth();
+
+    // Determinar la URL de destino para el botón "Reservar Cita" según el estado de autenticación
+    const reservarCitaUrl = user ? "/dashboard" : "/register";
+
     return (
         <div className="relative bg-gradient-to-r from-blue-50 to-indigo-50">
             <div className="container mx-auto px-4 py-16 md:py-24 flex flex-col md:flex-row items-center">
@@ -10,13 +17,12 @@ const Hero = () => {
                         Tu Vision, <span className="text-blue-600">Nuestra Prioridad</span>
                     </h1>
                     <p className="text-lg text-gray-600 mb-8">
-
                         Soluciones avanzadas para el cuidado de la vista con un enfoque personalizado. Nuestros
                         especialistas experimentados se dedican a preservar y mejorar su visión con tecnología de
                         vanguardia..
                     </p>
                     <div className="flex space-x-4">
-                        <Link to="/login">
+                        <Link to={reservarCitaUrl}>
                             <Button className="bg-blue-600 text-white hover:bg-blue-700 px-6 py-2">
                                 Reservar Cita
                             </Button>

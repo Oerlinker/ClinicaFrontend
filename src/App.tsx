@@ -27,6 +27,10 @@ import VerTriaje from "./pages/Doctores/VerTriaje";
 import DeptList from "./pages/DeptList";
 import DeptForm from "./pages/DeptForm";
 import AtencionAdmin from "./pages/AtencionAdmin";
+import ServicesPage from "./pages/ServicesPage";
+import DoctorsPage from "./pages/DoctorsPage";
+import AboutPage from "./pages/AboutPage";
+import ContactPage from "./pages/ContactPage";
 
 
 const queryClient = new QueryClient();
@@ -42,6 +46,11 @@ const App = () => (
                         <Route path="/" element={<Index/>}/>
                         <Route path="/login" element={<Login/>}/>
                         <Route path="/register" element={<Register/>}/>
+                        {/* Nuevas rutas para las páginas públicas */}
+                        <Route path="/services" element={<ServicesPage/>}/>
+                        <Route path="/doctors" element={<DoctorsPage/>}/>
+                        <Route path="/about" element={<AboutPage/>}/>
+                        <Route path="/contact" element={<ContactPage/>}/>
                         <Route path="/payment/:citaId/:pacienteId/:amount/:currency" element={<PaymentRoute/>}/>
                         <Route path="/pago-exitoso" element={<PaymentSuccessPage/>}/>
                         <Route path="/no-permission" element={<NoPermissionPage/>}/>
